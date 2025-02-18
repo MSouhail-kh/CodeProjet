@@ -217,6 +217,16 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 />
               </Form.Group>
 
+              <Form.Group controlId="formColoris">
+                <Form.Label>Coloris</Form.Label>
+                <Form.Control
+                  type="color"
+                  name="coloris"
+                  value={formData.coloris}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+
               <Form.Group controlId="formDateReceptionBonComment" className="mb-4">
                 <Form.Label>Date Réception Bon Comment</Form.Label>
                 <StyledFormControl
@@ -229,6 +239,15 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
             </Col>
 
             <Col md={6}>
+              <Form.Group controlId="formDossierTechnique">
+                <Form.Label>Image (PNG, JPG...)</Form.Label>
+                <Form.Control
+                  type="file"
+                  name="image"
+                  accept="image/png, image/jpeg"
+                  onChange={handleChange}
+                />
+              </Form.Group>
               <Form.Group controlId="formDossierTechnique" className="mb-4">
                 <Form.Label>Dossier Technique (PDF)</Form.Label>
                 <StyledFileInput
