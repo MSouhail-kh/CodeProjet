@@ -1,0 +1,74 @@
+/* NyNavbar.css */
+.custom-navbar {
+    background: linear-gradient(135deg, #6a11cb, #2575fc) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-brand {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.5rem !important;
+  }
+  
+  .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-link:hover {
+    color: white !important;
+    transform: translateY(-2px);
+  }
+  
+  .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+  
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  }
+
+
+  /* Ajouter ces styles */
+.btn-gradient {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+    border: none !important;
+    color: white !important;
+    padding: 8px 25px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  }
+  
+  .btn-gradient:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: all 0.5s;
+  }
+  
+  .btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  }
+  
+  .btn-gradient:hover:before {
+    left: 100%;
+  }
+  
+  .btn-gradient:active {
+    transform: translateY(0);
+    background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%) !important;
+  }

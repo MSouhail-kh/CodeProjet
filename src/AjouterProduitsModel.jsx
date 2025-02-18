@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import styled from 'styled-components';
 
-// Définir le style avec animation
-const AnimatedModal = styled(Modal)`
+export const AnimatedModal = styled(Modal)`
   animation: fadeInUp 0.5s ease-out;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+
+  .modal-content {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
 
   @keyframes fadeInUp {
     from {
@@ -19,31 +26,116 @@ const AnimatedModal = styled(Modal)`
   }
 `;
 
+export const ModalBody = styled(Modal.Body)`
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+`;
+
+export const ModalHeader = styled(Modal.Header)`
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  border-bottom: none;
+  
+  .modal-title {
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .btn-close {
+    filter: invert(1);
+  }
+`;
+export const StyledFormControl = styled(Form.Control)`
+  width: 100%;
+  height: 45px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+`;
+
+export const StyledTextArea = styled(Form.Control)`
+  width: 100%;
+  height: 120px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+`;
+
+export const StyledFileInput = styled(Form.Control)`
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+`;
+
+export const GradientButton = styled(Button)`
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  border: none;
+  color: white;
+  padding: 10px 30px;
+  font-size: 16px;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+  }
+`;
 const AjouterProduitsModel = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({
     titre: '',
     name: '',
-    image: '',
+    image: null,
     qty: 0,
-    dossier_technique: null, // Maintenant un fichier
-    chaine_production: null, // Maintenant un fichier
+    dossier_technique: null,
+    dossier_serigraphie: null,
+    bon_de_commande: null,
+    patronage: null,
     date_reception_bon_comment: '',
     date_livraison_comment: '',
     descriptions: '',
-    position_id: 6, // Position ID fixé à 6 par défaut
+    position_id: 6,
+    coloris: '',
+    po: '',
   });
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
-    if (files && files.length > 0) {
-      // Si c'est un fichier, on le met à jour dans l'état
+    if (files) {
       setFormData({
         ...formData,
         [name]: files[0],
       });
     } else {
-      // Sinon, on gère les champs texte
       setFormData({
         ...formData,
         [name]: value,
@@ -54,14 +146,12 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
-    
-    // Ajouter les champs du formulaire à l'objet FormData
-    Object.keys(formData).forEach(key => {
+    Object.keys(formData).forEach((key) => {
       if (formData[key]) {
         formDataToSend.append(key, formData[key]);
       }
     });
-  
+
     try {
       const response = await axios.post('http://127.0.0.1:5000/ajouter/produits', formDataToSend, {
         headers: {
@@ -69,105 +159,131 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
         },
       });
       console.log(response.data.message);
-      handleClose();  // Ferme le modal après l'ajout
-      window.location.reload(); // Rafraîchit la page
+      handleClose();
+      window.location.reload();
     } catch (error) {
-      console.error("Erreur lors de l'ajout du produit", error);
+      console.error('Erreur lors de l\'ajout du produit', error);
     }
   };
-  
+
   return (
-    <AnimatedModal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Ajouter un Produit</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
+    <AnimatedModal show={show} onHide={handleClose} size="lg">
+      <ModalHeader closeButton>
+        <Modal.Title>✨ Ajouter un Produit</Modal.Title>
+      </ModalHeader>
+      <ModalBody>
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="formTitre">
-            <Form.Label>Titre</Form.Label>
-            <Form.Control
-              type="text"
-              name="titre"
-              value={formData.titre}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formTitre" className="mb-4">
+                <Form.Label>Titre</Form.Label>
+                <StyledFormControl
+                  type="text"
+                  name="titre"
+                  value={formData.titre}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
 
-          <Form.Group controlId="formName">
-            <Form.Label>Nom</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+              <Form.Group controlId="formName" className="mb-4">
+                <Form.Label>Nom</Form.Label>
+                <StyledFormControl
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
 
-          <Form.Group controlId="formImage">
-            <Form.Label>Image (PNG, JPG...)</Form.Label>
-            <Form.Control
-                type="file"
-                name="image"
-                accept="image/png, image/jpeg"
-                onChange={handleChange}
-            />
-            </Form.Group>
+              <Form.Group controlId="formPO" className="mb-4">
+                <Form.Label>PO</Form.Label>
+                <StyledFormControl
+                  type="text"
+                  name="po"
+                  value={formData.po}
+                  onChange={handleChange}
+                />
+              </Form.Group>
 
-          <Form.Group controlId="formQty">
-            <Form.Label>Quantité</Form.Label>
-            <Form.Control
-              type="number"
-              name="qty"
-              value={formData.qty}
-              onChange={handleChange}
-            />
-          </Form.Group>
+              <Form.Group controlId="formQty" className="mb-4">
+                <Form.Label>Quantité</Form.Label>
+                <StyledFormControl
+                  type="number"
+                  name="qty"
+                  value={formData.qty}
+                  onChange={handleChange}
+                />
+              </Form.Group>
 
-          <Form.Group controlId="formDossierTechnique">
-            <Form.Label>Dossier Technique (PDF)</Form.Label>
-            <Form.Control
-              type="file"
-              name="dossier_technique"
-              accept="application/pdf"
-              onChange={handleChange}
-            />
-          </Form.Group>
+              <Form.Group controlId="formDateReceptionBonComment" className="mb-4">
+                <Form.Label>Date Réception Bon Comment</Form.Label>
+                <StyledFormControl
+                  type="date"
+                  name="date_reception_bon_comment"
+                  value={formData.date_reception_bon_comment}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
 
-          <Form.Group controlId="formChaineProduction">
-            <Form.Label>Chaine de Production (PDF)</Form.Label>
-            <Form.Control
-              type="file"
-              name="chaine_production"
-              accept="application/pdf"
-              onChange={handleChange}
-            />
-          </Form.Group>
+            <Col md={6}>
+              <Form.Group controlId="formDossierTechnique" className="mb-4">
+                <Form.Label>Dossier Technique (PDF)</Form.Label>
+                <StyledFileInput
+                  type="file"
+                  name="dossier_technique"
+                  accept="application/pdf"
+                  onChange={handleChange}
+                />
+              </Form.Group>
 
-          <Form.Group controlId="formDateReceptionBonComment">
-            <Form.Label>Date Réception Bon Comment</Form.Label>
-            <Form.Control
-              type="date"
-              name="date_reception_bon_comment"
-              value={formData.date_reception_bon_comment}
-              onChange={handleChange}
-            />
-          </Form.Group>
+              <Form.Group controlId="formDossierSerigraphie" className="mb-4">
+                <Form.Label>Dossier Sérigraphie (PDF)</Form.Label>
+                <StyledFileInput
+                  type="file"
+                  name="dossier_serigraphie"
+                  accept="application/pdf"
+                  onChange={handleChange}
+                />
+              </Form.Group>
 
-          <Form.Group controlId="formDateLivraisonComment">
-            <Form.Label>Date Livraison Comment</Form.Label>
-            <Form.Control
-              type="date"
-              name="date_livraison_comment"
-              value={formData.date_livraison_comment}
-              onChange={handleChange}
-            />
-          </Form.Group>
+              <Form.Group controlId="formBonDeCommande" className="mb-4">
+                <Form.Label>Bon de Commande (PDF)</Form.Label>
+                <StyledFileInput
+                  type="file"
+                  name="bon_de_commande"
+                  accept="application/pdf"
+                  onChange={handleChange}
+                />
+              </Form.Group>
 
-          <Form.Group controlId="formDescriptions">
+              <Form.Group controlId="formPatronage" className="mb-4">
+                <Form.Label>Patronage (PDF)</Form.Label>
+                <StyledFileInput
+                  type="file"
+                  name="patronage"
+                  accept="application/pdf"
+                  onChange={handleChange}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formDateLivraisonComment" className="mb-4">
+                <Form.Label>Date Livraison Comment</Form.Label>
+                <StyledFormControl
+                  type="date"
+                  name="date_livraison_comment"
+                  value={formData.date_livraison_comment}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Form.Group controlId="formDescriptions" className="mb-4">
             <Form.Label>Descriptions</Form.Label>
-            <Form.Control
+            <StyledTextArea
               as="textarea"
               rows={3}
               name="descriptions"
@@ -175,12 +291,11 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
               onChange={handleChange}
             />
           </Form.Group>
-
-          <Button variant="primary" type="submit" className="mt-3">
-            Ajouter le Produit
-          </Button>
+          <GradientButton type="submit" className="btn-sm">
+            🚀 Ajouter le Produit
+          </GradientButton>
         </Form>
-      </Modal.Body>
+      </ModalBody>
     </AnimatedModal>
   );
 };
