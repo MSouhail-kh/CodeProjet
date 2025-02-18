@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'; 
-import Chaines from "./Chaines";
-import ProduitDetails from './ProduitDetails';
-import EnhancedSwiper from './Swiper';
+import Chaines from "./Chaines/Chaines";
+import ProduitDetails from './Produits/ProduitDetails';
+import EnhancedSwiper from './Swiper/Swiper';
 
 function App() {
   return (
@@ -11,12 +11,9 @@ function App() {
         <Route path="/" element={<Chaines />} />
         <Route path="/produit/:id" element={
           <>
-          <ProduitDetails/>
-          <EnhancedSwiper />
-          </>
-           
-          } />
-        
+            <ProduitDetails/>
+            <EnhancedSwiper />
+          </>}/>
       </Routes>
     </Router>
   );

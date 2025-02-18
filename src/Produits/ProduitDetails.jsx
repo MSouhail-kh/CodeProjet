@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import MyNavbar from './MyNavbar';
+import MyNavbar from '../Navbar/Navbar';
 
 // Container général
 const Container = styled.div`

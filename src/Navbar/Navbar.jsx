@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
-import AjouterProduitsModel from './AjouterProduitsModel';
-import './NyNavbar.css'; // Import du CSS
+import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
+import './Navbar.css';
 
 const MyNavbar = ({ darkMode }) => {
   const [showModal, setShowModal] = useState(false);

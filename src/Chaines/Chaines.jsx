@@ -11,7 +11,7 @@ import {
   Collapse,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import MyNavbar from "./MyNavbar";
+import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 
 const StyledCard = styled(Card)`
