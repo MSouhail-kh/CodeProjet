@@ -9,8 +9,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Chaines />} />
-        <Route path="/produit/:id" element={
-          <>
+        <Route path="/produit/:id" element=
+          {<>
             <ProduitDetails/>
             <EnhancedSwiper />
           </>}/>

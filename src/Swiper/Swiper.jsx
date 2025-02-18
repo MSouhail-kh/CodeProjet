@@ -5,7 +5,6 @@ import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
-// Importation des styles Swiper nécessaires
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';

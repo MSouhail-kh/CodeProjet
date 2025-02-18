@@ -1,8 +1,7 @@
-/* App.css */
 body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #6a11cb, #2575fc); /* Dégradé moderne */
+  background: linear-gradient(135deg, #6a11cb, #2575fc); 
   min-height: 100vh;
 }

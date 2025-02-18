@@ -14,13 +14,13 @@ const MyNavbar = ({ darkMode }) => {
       <Navbar 
         expand="lg" 
         variant="dark" 
-        className="custom-navbar shadow" // Ajout de la classe custom
+        className="custom-navbar shadow" 
       >
         <Container>
           <Navbar.Brand href="/">🚀 Production</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto"> {/* Utilisation de ms-auto pour aligner à droite */}
+            <Nav className="ms-auto"> 
             <Nav.Link 
                 className="btn gradient-btn" 
                 onClick={handleShow}

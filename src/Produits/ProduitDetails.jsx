@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import MyNavbar from '../Navbar/Navbar';
 
-// Container général
 const Container = styled.div`
   max-width: 100%;
   margin: 1rem auto;
@@ -12,7 +11,6 @@ const Container = styled.div`
   font-family: 'Arial', sans-serif;
 `;
 
-// Carte du produit avec disposition en ligne et styles épurés
 const ProductCard = styled.div`
   display: flex;
   flex-direction: row;
@@ -25,7 +23,6 @@ const ProductCard = styled.div`
   }
 `;
 
-// Conteneur de l'image avec fond neutre
 const ImageWrapper = styled.div`
   flex: 1;
   background-color: #f0f0f0;
@@ -34,14 +31,12 @@ const ImageWrapper = styled.div`
   justify-content: center;
 `;
 
-// Image du produit avec ajustement pour s'adapter au conteneur
 const ProductImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
 `;
 
-// Placeholder pour l'absence d'image
 const PlaceholderImage = styled.div`
   width: 100%;
   height: 100%;
@@ -54,7 +49,6 @@ const PlaceholderImage = styled.div`
   padding: 1rem;
 `;
 
-// Informations sur le produit avec espacement réduit
 const ProductInfo = styled.div`
   flex: 2;
   padding: 1.5rem;
@@ -63,12 +57,10 @@ const ProductInfo = styled.div`
   justify-content: space-between;
 `;
 
-// Section du titre avec marges réduites
 const TitleSection = styled.div`
   margin-bottom: 1rem;
 `;
 
-// Titre du produit avec taille de police réduite
 const ProductTitle = styled.h1`
   font-size: 2rem;
   color: #333;
@@ -76,7 +68,6 @@ const ProductTitle = styled.h1`
   font-weight: 700;
 `;
 
-// Sous-titre du produit avec taille de police réduite
 const ProductSubtitle = styled.h2`
   font-size: 1.5rem;
   color: #777;
@@ -84,7 +75,6 @@ const ProductSubtitle = styled.h2`
   font-weight: 400;
 `;
 
-// Quantité du produit avec taille de police réduite
 const Quantity = styled.span`
   font-size: 0.8rem;
   font-weight: bold;
@@ -116,7 +106,6 @@ const ColorCircle = styled.span`
   display: inline-block;
 `;
 
-// Section des dates avec espacement réduit
 const Dates = styled.div`
   margin-bottom: 1rem;
   display: flex;
@@ -124,7 +113,6 @@ const Dates = styled.div`
   gap: 1rem;
 `;
 
-// Étiquette de date avec taille de police réduite
 const DateLabel = styled.div`
   font-size: 0.85rem;
   color: #555;
@@ -134,7 +122,6 @@ const DateLabel = styled.div`
   flex: 1;
 `;
 
-// Section de description avec mise en forme améliorée
 const DescriptionSection = styled.div`
   margin-top: 1rem;
   font-size: 1rem;
@@ -146,7 +133,6 @@ const DescriptionSection = styled.div`
   border: 1px solid #eee;
 `;
 
-// Bouton de téléchargement retravaillé
 const DownloadLink = styled.a`
   color: #fff;
   text-decoration: none;
@@ -155,7 +141,7 @@ const DownloadLink = styled.a`
 `;
 
 const ProduitDetails = () => {
-  const { id } = useParams(); // Récupération de l'ID via l'URL
+  const { id } = useParams(); 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
