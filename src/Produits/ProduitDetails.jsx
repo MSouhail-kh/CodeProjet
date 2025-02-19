@@ -199,12 +199,12 @@ const ProduitDetails = () => {
               <DateLabel>
                 <strong>Date de Réception:</strong>
                 <br />
-                {product.date_reception_bon_comment}
+                {product.date_reception_bon_commande}
               </DateLabel>
               <DateLabel>
                 <strong>Date de Livraison:</strong>
                 <br />
-                {product.date_livraison_comment}
+                {product.date_livraison_commande}
               </DateLabel>
             </Dates>
             <DescriptionSection>

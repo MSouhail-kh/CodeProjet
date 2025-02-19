@@ -27,7 +27,6 @@ const SwiperContainer = styled.div`
   .swiper-button-prev,
   .swiper-button-next {
     color: #007aff;
-    background: rgba(255, 255, 255, 0.8);
     padding: 15px;
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -83,7 +82,6 @@ const ImageContainer = styled.div`
   align-items: center;
   overflow: hidden;
   border-radius: 10px;
-  background: #f0f0f0;
 
   img {
     width: 90%; 

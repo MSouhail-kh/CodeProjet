@@ -120,8 +120,8 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     dossier_serigraphie: null,
     bon_de_commande: null,
     patronage: null,
-    date_reception_bon_comment: '',
-    date_livraison_comment: '',
+    date_reception_bon_commande: '',
+    date_livraison_commande: '',
     descriptions: '',
     position_id: 6,
     coloris: '',
@@ -231,8 +231,8 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 <Form.Label>Date Réception Bon Comment</Form.Label>
                 <StyledFormControl
                   type="date"
-                  name="date_reception_bon_comment"
-                  value={formData.date_reception_bon_comment}
+                  name="date_reception_bon_commande"
+                  value={formData.date_reception_bon_commande}
                   onChange={handleChange}
                 />
               </Form.Group>
@@ -292,8 +292,8 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 <Form.Label>Date Livraison Comment</Form.Label>
                 <StyledFormControl
                   type="date"
-                  name="date_livraison_comment"
-                  value={formData.date_livraison_comment}
+                  name="date_livraison_commande"
+                  value={formData.date_livraison_commande}
                   onChange={handleChange}
                 />
               </Form.Group>
