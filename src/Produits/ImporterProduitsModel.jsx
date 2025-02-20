@@ -1,14 +1,144 @@
 import React, { useState, useRef } from 'react';
-import { Modal, Button, Table, Alert } from 'react-bootstrap';
-import { FilePlus } from 'react-bootstrap-icons';
+import { Modal, Button, Table ,Form} from 'react-bootstrap';
+import { X, CloudUpload ,FilePlus} from 'react-bootstrap-icons';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
+import styled from 'styled-components';
 
-const ImporterProduitsModal = ({ show, handleClose }) => {
+export const AnimatedModal = styled(Modal)`
+  animation: fadeInUp 0.5s ease-out;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+
+  .modal-content {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+export const ModalBody = styled(Modal.Body)`
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+`;
+
+export const ModalHeader = styled(Modal.Header)`
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  border-bottom: none;
+  
+  .modal-title {
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .btn-close {
+    filter: invert(1);
+  }
+`;
+export const StyledFormControl = styled(Form.Control)`
+  width: 100%;
+  height: 45px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+`;
+
+export const StyledTextArea = styled(Form.Control)`
+  width: 100%;
+  height: 120px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+`;
+
+export const StyledFileInput = styled(Form.Control)`
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+`;
+
+export const GradientButton = styled(Button)`
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  border: none;
+  color: white;
+  padding: 2px 15px;
+  font-size: 15px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+  }
+`;
+
+export const FermerButton = styled(Button)`
+  background: linear-gradient(135deg,rgb(120, 1, 247), #2575fc);
+  border: none;
+  color: white;
+  padding: 2px 15px;
+  font-size: 15px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+  }
+`;
+
+const ImporterProduitsModal = ({  show, handleClose}) => {
   const [data, setData] = useState([]);
   const [file, setFile] = useState(null);
-  const [uploadMessage, setUploadMessage] = useState(null);
-  const [uploadError, setUploadError] = useState(null);
   const [productImages, setProductImages] = useState({});
   const [dossierTechnique, setDossierTechnique] = useState({});
   const [dossierSerigraphie, setDossierSerigraphie] = useState({});
@@ -20,8 +150,16 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
   const bonDeCommandeInputRef = useRef(null);
   const patronageInputRef = useRef(null);
   const [selectedRow, setSelectedRow] = useState(null);
+  const fileStateMap = {
+    image: productImages,
+    dossierTechnique: dossierTechnique,
+    dossierSerigraphie: dossierSerigraphie,
+    bonDeCommande: bonDeCommande,
+    patronage: patronage
+  };
+  
 
-  // Lecture du fichier Excel
+
   const handleFile = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
@@ -39,7 +177,6 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
     reader.readAsBinaryString(selectedFile);
   };
 
-  // Sélection d'un fichier pour une ligne donnée
   const handleRowFileButtonClick = (rowIndex, fileType) => {
     setSelectedRow(rowIndex);
     if (fileType === 'image') {
@@ -55,50 +192,63 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
     }
   };
 
-  // Gestion de la sélection de fichier
   const handleRowFileChange = (e, fileType) => {
     const file = e.target.files[0];
     if (!file || selectedRow === null) return;
     const previewUrl = URL.createObjectURL(file);
     
-    if (fileType === 'image') {
-      setProductImages((prev) => ({
-        ...prev,
-        [selectedRow]: { file, preview: previewUrl }
-      }));
-    } else if (fileType === 'dossierTechnique') {
-      setDossierTechnique((prev) => ({
-        ...prev,
-        [selectedRow]: { file, preview: previewUrl }
-      }));
-    } else if (fileType === 'dossierSerigraphie') {
-      setDossierSerigraphie((prev) => ({
-        ...prev,
-        [selectedRow]: { file, preview: previewUrl }
-      }));
-    } else if (fileType === 'bonDeCommande') {
-      setBonDeCommande((prev) => ({
-        ...prev,
-        [selectedRow]: { file, preview: previewUrl }
-      }));
-    } else if (fileType === 'patronage') {
-      setPatronage((prev) => ({
-        ...prev,
-        [selectedRow]: { file, preview: previewUrl }
-      }));
+    // Utilisez les setState appropriés pour chaque type de fichier
+    switch (fileType) {
+        case 'image':
+            setProductImages(prev => ({
+                ...prev,
+                [selectedRow]: { file, preview: previewUrl }
+            }));
+            break;
+        case 'dossierTechnique':
+            setDossierTechnique(prev => ({
+                ...prev,
+                [selectedRow]: { file, preview: previewUrl }
+            }));
+            break;
+        case 'dossierSerigraphie':
+            setDossierSerigraphie(prev => ({
+                ...prev,
+                [selectedRow]: { file, preview: previewUrl }
+            }));
+            break;
+        case 'bonDeCommande':
+            setBonDeCommande(prev => ({
+                ...prev,
+                [selectedRow]: { file, preview: previewUrl }
+            }));
+            break;
+        case 'patronage':
+            setPatronage(prev => ({
+                ...prev,
+                [selectedRow]: { file, preview: previewUrl }
+            }));
+            break;
+        default:
+            break;
     }
-  };
+};
 
-  // Envoi combiné du fichier Excel et des fichiers associés
+  
+  const setFileState = (state, rowIndex, file, previewUrl) => {
+    state(prev => ({
+      ...prev,
+      [rowIndex]: { file, preview: previewUrl }
+    }));
+  }
+  
   const handleFullImport = async () => {
     if (!file) {
-      setUploadError("Veuillez sélectionner un fichier Excel.");
       return;
     }
     const formData = new FormData();
     formData.append('excel_file', file);
 
-    // Ajouter les fichiers associés au FormData
     Object.keys(productImages).forEach((rowIndex) => {
       const imageData = productImages[rowIndex];
       formData.append(`image_${parseInt(rowIndex) + 1}`, imageData.file);
@@ -125,30 +275,82 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
     });
 
     try {
-      const response = await axios.post(
+      await axios.post(
         'http://127.0.0.1:5000/importer/produits-images',
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
-      setUploadMessage(response.data.message);
-      setUploadError(null);
     } catch (error) {
-      setUploadError(
-        error.response?.data?.message || "Erreur lors de l'importation."
-      );
-      setUploadMessage(null);
+      console.error("Erreur lors de l'importation.", error);
     }
   };
 
+  const handleDeleteFile = (rowIndex, fileType) => {
+    if (fileType === 'image') {
+      setProductImages((prev) => {
+        const newImages = { ...prev };
+        if (newImages[rowIndex]) {
+          URL.revokeObjectURL(newImages[rowIndex].preview);
+          delete newImages[rowIndex];
+        }
+        return newImages;
+      });
+    } else if (fileType === 'dossierTechnique') {
+      setDossierTechnique((prev) => {
+        const newDossier = { ...prev };
+        if (newDossier[rowIndex]) {
+          URL.revokeObjectURL(newDossier[rowIndex].preview);
+          delete newDossier[rowIndex];
+        }
+        return newDossier;
+      });
+    } else if (fileType === 'dossierSerigraphie') {
+      setDossierSerigraphie((prev) => {
+        const newDossier = { ...prev };
+        if (newDossier[rowIndex]) {
+          URL.revokeObjectURL(newDossier[rowIndex].preview);
+          delete newDossier[rowIndex];
+        }
+        return newDossier;
+      });
+    } else if (fileType === 'bonDeCommande') {
+      setBonDeCommande((prev) => {
+        const newDossier = { ...prev };
+        if (newDossier[rowIndex]) {
+          URL.revokeObjectURL(newDossier[rowIndex].preview);
+          delete newDossier[rowIndex];
+        }
+        return newDossier;
+      });
+    } else if (fileType === 'patronage') {
+      setPatronage((prev) => {
+        const newDossier = { ...prev };
+        if (newDossier[rowIndex]) {
+          URL.revokeObjectURL(newDossier[rowIndex].preview);
+          delete newDossier[rowIndex];
+        }
+        return newDossier;
+      });
+    }
+  };
+
+  const handleCloseModal = () => {
+    setFile(null); 
+    setData([]); 
+    handleClose(); };
+
+  const Close = () => {
+    handleClose()};
+
   return (
-    <Modal show={show} onHide={handleClose} size="xl">
-      <Modal.Header closeButton>
+    <AnimatedModal show={show} onHide={Close} size="xl">
+      <ModalHeader closeButton>
         <Modal.Title>
-          Importer un fichier Excel et les fichiers associés
+          📃*🧾 Importer un fichier Excel et les fichiers associés
         </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <input
+      </ModalHeader>
+      <ModalBody>
+        <StyledFileInput
           type="file"
           accept=".xls,.xlsx"
           onChange={handleFile}
@@ -185,15 +387,17 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
                           objectFit: 'cover',
                           cursor: 'pointer',
                         }}
-                        onClick={() => handleRowFileButtonClick(rowIndex, 'image')}
-                      />
+                        onContextMenu={(e) => { e.preventDefault(); handleDeleteFile(rowIndex, 'image'); }}/>
                     ) : (
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <FilePlus
-                        size={50}
-                        color="gray"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => handleRowFileButtonClick(rowIndex, 'image')}
-                      />
+                        style={{
+                          cursor: 'pointer',
+                          height: '50px',
+                          color: 'gray',  
+                        }}
+                        onClick={() => handleRowFileButtonClick(rowIndex, 'image')} />
+                      </div>
                     )}
                   </td>
                   <td>
@@ -202,16 +406,20 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
                         href={dossierTechnique[rowIndex].preview}
                         target="_blank"
                         rel="noopener noreferrer"
-                      >
+                        onContextMenu={(e) => { e.preventDefault(); handleDeleteFile(rowIndex, 'dossierTechnique'); }} >
                         Dossier Technique
                       </a>
                     ) : (
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <FilePlus
-                        size={50}
-                        color="gray"
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          height: '50px',
+                          color: 'gray',  
+                        }}
                         onClick={() => handleRowFileButtonClick(rowIndex, 'dossierTechnique')}
                       />
+                      </div>
                     )}
                   </td>
                   <td>
@@ -220,16 +428,20 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
                         href={dossierSerigraphie[rowIndex].preview}
                         target="_blank"
                         rel="noopener noreferrer"
-                      >
+                        onContextMenu={(e) => { e.preventDefault(); handleDeleteFile(rowIndex, 'dossierSerigraphie');}} >
                         Dossier Sérigraphie
                       </a>
                     ) : (
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <FilePlus
-                        size={50}
-                        color="gray"
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          height: '50px',
+                          color: 'gray',  
+                        }}
                         onClick={() => handleRowFileButtonClick(rowIndex, 'dossierSerigraphie')}
                       />
+                      </div>
                     )}
                   </td>
                   <td>
@@ -238,16 +450,24 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
                         href={bonDeCommande[rowIndex].preview}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          handleDeleteFile(rowIndex, 'bonDeCommande');
+                        }}
                       >
                         Bon de Commande
                       </a>
                     ) : (
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <FilePlus
-                        size={50}
-                        color="gray"
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          height: '50px',
+                          color: 'gray',  
+                        }}
                         onClick={() => handleRowFileButtonClick(rowIndex, 'bonDeCommande')}
                       />
+                      </div>
                     )}
                   </td>
                   <td>
@@ -256,16 +476,24 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
                         href={patronage[rowIndex].preview}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          handleDeleteFile(rowIndex, 'patronage');
+                        }}
                       >
                         Patronage
                       </a>
                     ) : (
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <FilePlus
-                        size={50}
-                        color="gray"
-                        style={{ cursor: 'pointer' }}
+                        style={{
+                          cursor: 'pointer',
+                          height: '50px',
+                          color: 'gray',  
+                        }}
                         onClick={() => handleRowFileButtonClick(rowIndex, 'patronage')}
                       />
+                      </div>
                     )}
                   </td>
                 </tr>
@@ -275,31 +503,16 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
         ) : (
           <p>Veuillez télécharger un fichier Excel.</p>
         )}
-        {uploadMessage && (
-          <Alert variant="success" className="mt-3">
-            {uploadMessage}
-          </Alert>
-        )}
-        {uploadError && (
-          <Alert variant="danger" className="mt-3">
-            {uploadError}
-          </Alert>
-        )}
-      </Modal.Body>
+      </ModalBody>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Fermer
-        </Button>
-        <Button
-          variant="primary"
-          onClick={handleFullImport}
-          disabled={!file || !data.length}
-        >
-          Importer
-        </Button>
-      </Modal.Footer>
+        <FermerButton variant="secondary" onClick={handleCloseModal}>
+          <X style={{fontSize: '18px',height:"3.5vh"}}/> Fermer
+        </FermerButton>
 
-      {/* Fichiers */}
+        <GradientButton onClick={handleFullImport} disabled={!file || !data.length}>
+          <CloudUpload style={{fontSize: '18px',height:"3.5vh"}}/>  Importer
+        </GradientButton>
+      </Modal.Footer>
       <input
         ref={fileInputRef}
         type="file"
@@ -335,8 +548,8 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
         className="d-none"
         onChange={(e) => handleRowFileChange(e, 'patronage')}
       />
-    </Modal>
+    </AnimatedModal>
   );
+  
 };
-
 export default ImporterProduitsModal;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import {
   Container,
   Row,
@@ -12,6 +12,44 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
+
+const LoaderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+`;
+
+const pulseAnimation = keyframes`
+  0% { transform: scale(0.8); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.7; }
+`;
+
+const BouncingLoader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Dot = styled.div`
+  width: 20px;
+  height: 20px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: #007bff; // Couleur bleue (peut être modifiée)
+  animation: ${pulseAnimation} 1.4s infinite ease-in-out;
+  animation-delay: ${(props) => props.delay || "0s"};
+
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+`;
 
 const StyledCard = styled(Card)`
   height: 100%;
@@ -143,7 +181,15 @@ export default function Chaines() {
   };
 
   if (Object.keys(data).length === 0) {
-    return <div className="loading">Chargement...</div>;
+    return (
+      <LoaderContainer>
+        <BouncingLoader>
+          <Dot />
+          <Dot delay="0.2s" />
+          <Dot delay="0.4s" />
+        </BouncingLoader>
+      </LoaderContainer>
+    );
   }
 
   return (
@@ -225,27 +271,27 @@ export default function Chaines() {
           )}
         </Row>
       </Container>
-      
+
       {hoveredItem && (
-      <HoverCard x={hoverPosition.x} y={hoverPosition.y}>
-        <Card className="shadow-custom">
-          {hoveredItem.image ? (
-            <Card.Img 
-              variant="top" 
-              src={
-                hoveredItem.image.startsWith("http")
-                  ? hoveredItem.image
-                  : `http://localhost:5000/static/uploads/${hoveredItem.image}`
-              }
-              style={{ height: '100px', objectFit: 'cover' }}
-            />
-          ) : null}
-          <Card.Body>
-            <Card.Title>{hoveredItem.title || hoveredItem.name}</Card.Title>
-            <span>{hoveredItem.name} / Qty: {hoveredItem.qty}</span>
-          </Card.Body>
-        </Card>
-      </HoverCard>
+        <HoverCard x={hoverPosition.x} y={hoverPosition.y}>
+          <Card className="shadow-custom">
+            {hoveredItem.image ? (
+              <Card.Img 
+                variant="top" 
+                src={
+                  hoveredItem.image.startsWith("http")
+                    ? hoveredItem.image
+                    : `http://localhost:5000/static/uploads/${hoveredItem.image}`
+                }
+                style={{ height: '100px', objectFit: 'cover' }}
+              />
+            ) : null}
+            <Card.Body>
+              <Card.Title>{hoveredItem.title || hoveredItem.name}</Card.Title>
+              <span>{hoveredItem.name} / Qty: {hoveredItem.qty}</span>
+            </Card.Body>
+          </Card>
+        </HoverCard>
       )}
     </>
   );

@@ -7,13 +7,16 @@ import './Navbar.css';
 const MyNavbar = ({ darkMode }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showExcelModal, setShowExcelModal] = useState(false);
+  const [file, setFile] = useState(null); 
 
   const handleShowProduit = () => setShowProduitModal(true);
   const handleCloseProduit = () => setShowProduitModal(false);
 
   const handleShowExcel = () => setShowExcelModal(true);
-  const handleCloseExcel = () => setShowExcelModal(false);
-
+  const handleCloseExcel = () => {
+    setShowExcelModal(false); // Fermer le modal
+    setFile(null); // Réinitialiser le fichier Excel
+  };
   return (
     <>
       <Navbar expand="lg" variant="dark" className="custom-navbar shadow">
@@ -33,8 +36,13 @@ const MyNavbar = ({ darkMode }) => {
         </Container>
       </Navbar>
       <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
-      <ImporterProduitsModel show={showExcelModal} handleClose={handleCloseExcel} />
-    </>
+      <ImporterProduitsModel
+        show={showExcelModal}
+        handleClose={handleCloseExcel}
+        file={file}
+        setFile={setFile} 
+      />
+      </>
   );
 };
 

@@ -1,8 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled , {keyframes} from 'styled-components';
 import { useParams } from 'react-router-dom';
 import MyNavbar from '../Navbar/Navbar';
+
+
+const LoaderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+`;
+
+const pulseAnimation = keyframes`
+  0% { transform: scale(0.8); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.7; }
+`;
+
+const BouncingLoader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Dot = styled.div`
+  width: 20px;
+  height: 20px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: #007bff; // Couleur bleue (peut être modifiée)
+  animation: ${pulseAnimation} 1.4s infinite ease-in-out;
+  animation-delay: ${(props) => props.delay || "0s"};
+
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+`;
 
 const Container = styled.div`
   max-width: 100%;
@@ -141,7 +180,7 @@ const DownloadLink = styled.a`
 `;
 
 const ProduitDetails = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -163,7 +202,15 @@ const ProduitDetails = () => {
   }, [id]);
 
   if (loading) {
-    return <Container>Chargement en cours...</Container>;
+    return (
+      <LoaderContainer>
+        <BouncingLoader>
+          <Dot />
+          <Dot delay="0.2s" />
+          <Dot delay="0.4s" />
+        </BouncingLoader>
+      </LoaderContainer>
+    );
   }
 
   if (error) {
@@ -173,6 +220,7 @@ const ProduitDetails = () => {
   if (!product) {
     return <Container>Aucun produit trouvé</Container>;
   }
+
   return (
     <>
       <MyNavbar />
@@ -192,7 +240,7 @@ const ProduitDetails = () => {
                 {product.name} /
                 <Quantity>Quantité : {product.qty}</Quantity> /
                 <Po>Po : {product.po}</Po> /
-                <Coloris >Color : <ColorCircle customColor={product.coloris} /> </Coloris>
+                <Coloris>Color : <ColorCircle customColor={product.coloris} /> </Coloris>
               </ProductSubtitle>
             </TitleSection>
             <Dates>
@@ -238,7 +286,6 @@ const ProduitDetails = () => {
                 className='link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover'
                 target="_blank"
                 rel="noopener noreferrer"
-
               >
                 Télécharger le Bon de Commande
               </DownloadLink>
@@ -258,6 +305,6 @@ const ProduitDetails = () => {
       </Container>
     </>
   );
-  };
+};
 
 export default ProduitDetails;
