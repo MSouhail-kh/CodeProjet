@@ -3,12 +3,16 @@ import './App.css';
 import Chaines from "./Chaines/Chaines";
 import ProduitDetails from './Produits/ProduitDetails';
 import EnhancedSwiper from './Swiper/Swiper';
+import DeleteButton from './Chaines/DeleteButton';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Chaines />} />
+        <Route path="/" element=
+          {<>
+            <Chaines />
+          </>} />
         <Route path="/produit/:id" element=
           {<>
             <ProduitDetails/>
@@ -16,7 +20,5 @@ function App() {
           </>}/>
       </Routes>
     </Router>
-  );
-}
-
+  );}
 export default App;

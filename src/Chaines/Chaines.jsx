@@ -12,6 +12,7 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
+import DeleteButton from "./DeleteButton"; 
 
 const LoaderContainer = styled.div`
   display: flex;
@@ -74,7 +75,7 @@ const StyledListGroupItem = styled(ListGroup.Item)`
 const HoverCard = styled.div`
   position: absolute;
   left: ${({ x }) => x + 15}px;
-  top: ${({ y }) => y - 90}px;
+  top: ${({ y }) => y - 80}px;
   z-index: 900;
   width: 220px;
 `;
@@ -88,8 +89,9 @@ const ControlButton = styled(Button)`
   justify-content: center;
 `;
 
+
 export default function Chaines() {
-  const [showPosition6, setShowPosition6] = useState(true); 
+  const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
@@ -112,6 +114,18 @@ export default function Chaines() {
         console.error("Erreur lors de la récupération des produits :", error);
       });
   }, []);
+
+  const handleDeleteSuccess = (deletedItem) => {
+    setData((prevData) => {
+      const newData = { ...prevData };
+      for (const key in newData) {
+        newData[key] = newData[key].filter(
+          (produit) => produit.id !== deletedItem.id
+        );
+      }
+      return newData;
+    });
+  };
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -272,6 +286,10 @@ export default function Chaines() {
         </Row>
       </Container>
 
+      <Col md="auto" className="d-flex align-items-center justify-content-end p-4 m-auto">
+            <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
+      </Col>
+      
       {hoveredItem && (
         <HoverCard x={hoverPosition.x} y={hoverPosition.y}>
           <Card className="shadow-custom">
@@ -283,7 +301,7 @@ export default function Chaines() {
                     ? hoveredItem.image
                     : `http://localhost:5000/static/uploads/${hoveredItem.image}`
                 }
-                style={{ height: '100px', objectFit: 'cover' }}
+                style={{ height: '120px', objectFit: 'cover' }}
               />
             ) : null}
             <Card.Body>
