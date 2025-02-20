@@ -196,8 +196,6 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
     const file = e.target.files[0];
     if (!file || selectedRow === null) return;
     const previewUrl = URL.createObjectURL(file);
-    
-    // Utilisez les setState appropriés pour chaque type de fichier
     switch (fileType) {
         case 'image':
             setProductImages(prev => ({
@@ -234,7 +232,7 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
     }
 };
 
-  
+
   const setFileState = (state, rowIndex, file, previewUrl) => {
     state(prev => ({
       ...prev,

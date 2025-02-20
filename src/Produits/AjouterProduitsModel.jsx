@@ -93,9 +93,9 @@ export const GradientButton = styled(Button)`
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   border: none;
   color: white;
-  padding: 10px 30px;
-  font-size: 16px;
-  border-radius: 25px;
+  padding: 2px 15px;
+  font-size: 15px;
+  border-radius: 20px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
 
