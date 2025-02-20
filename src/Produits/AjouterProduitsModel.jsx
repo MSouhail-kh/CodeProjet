@@ -228,7 +228,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
               </Form.Group>
 
               <Form.Group controlId="formDateReceptionBonComment" className="mb-4">
-                <Form.Label>Date Réception Bon Comment</Form.Label>
+                <Form.Label>Date Réception Bon Commande</Form.Label>
                 <StyledFormControl
                   type="date"
                   name="date_reception_bon_commande"
@@ -289,7 +289,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
               </Form.Group>
 
               <Form.Group controlId="formDateLivraisonComment" className="mb-4">
-                <Form.Label>Date Livraison Comment</Form.Label>
+                <Form.Label>Date Livraison Commande</Form.Label>
                 <StyledFormControl
                   type="date"
                   name="date_livraison_commande"

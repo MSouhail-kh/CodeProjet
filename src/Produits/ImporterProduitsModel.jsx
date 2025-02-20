@@ -126,13 +126,13 @@ export const FermerButton = styled(Button)`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+    box-shadow: 0 6px 20px rgb(235, 6, 6);
     background: linear-gradient(135deg, #2575fc, #6a11cb);
   }
 
   &:active {
     transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+    box-shadow: 0 4px 15px rgb(235, 6, 6);
   }
 `;
 
@@ -150,14 +150,14 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
   const bonDeCommandeInputRef = useRef(null);
   const patronageInputRef = useRef(null);
   const [selectedRow, setSelectedRow] = useState(null);
-  const fileStateMap = {
-    image: productImages,
-    dossierTechnique: dossierTechnique,
-    dossierSerigraphie: dossierSerigraphie,
-    bonDeCommande: bonDeCommande,
-    patronage: patronage
-  };
-  
+
+  const handleCloseModal = () => {
+    setFile(null); 
+    setData([]); 
+    handleClose(); };
+
+  const Close = () => {
+    handleClose()};
 
 
   const handleFile = (e) => {
@@ -280,6 +280,8 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
+      handleCloseModal();
+      window.location.reload();
     } catch (error) {
       console.error("Erreur lors de l'importation.", error);
     }
@@ -333,14 +335,6 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
       });
     }
   };
-
-  const handleCloseModal = () => {
-    setFile(null); 
-    setData([]); 
-    handleClose(); };
-
-  const Close = () => {
-    handleClose()};
 
   return (
     <AnimatedModal show={show} onHide={Close} size="xl">
