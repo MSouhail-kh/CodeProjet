@@ -6,8 +6,9 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
+    "backend": "python c:/React/reactcode/backend/app.py",
+    "electron:dev": "concurrently -k \"npm run backend\" \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "vite build",
-    "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:build": "vite build && electron-builder"
   },
   "dependencies": {

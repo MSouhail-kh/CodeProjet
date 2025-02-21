@@ -1,9 +1,29 @@
-// Dans votre main process (exemple: main.js)
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
-import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
+import path from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
 let mainWindow;
+let backendProcess;
+
+function startBackend() {
+  backendProcess = spawn(
+    "C:/Users/lenovo/AppData/Local/Programs/Python/Python313/python.exe",
+    ["c:/React/reactcode/backend/app.py"],
+    { shell: true }
+  );
+
+  backendProcess.stdout.on("data", (data) => {
+    console.log(`Backend: ${data}`);
+  });
+
+  backendProcess.stderr.on("data", (data) => {
+    console.error(`Backend Error: ${data}`);
+  });
+
+  backendProcess.on("close", (code) => {
+    console.log(`Backend exited with code ${code}`);
+  });
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -14,7 +34,7 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: true,
-      preload: "./preload.js" 
+      preload: "./preload.js"
     }
   });
 
@@ -25,10 +45,14 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  startBackend();
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    if (backendProcess) backendProcess.kill(); 
     app.quit();
   }
 });
