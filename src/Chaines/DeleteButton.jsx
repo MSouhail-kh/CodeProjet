@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
-import styled from 'styled-components';
-import { Trash } from 'react-bootstrap-icons'; 
+import styled from "styled-components";
+import { Trash } from "react-bootstrap-icons";
+import ConfirmationModal from "./ConfirmationModal";
 
 export const StyledDeleteButton = styled(Button)`
   background: linear-gradient(135deg, #ff416c, #ff4b2b);
@@ -36,17 +37,25 @@ export const StyledDeleteButton = styled(Button)`
 `;
 
 const DeleteButton = ({ onDeleteSuccess }) => {
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const handleDrop = async (e) => {
     e.preventDefault();
     try {
       const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
       const item = transferData.item;
 
-      await axios.delete(`http://localhost:5000/produits/${item.id}`);
+      if (!item || !item.id) {
+        throw new Error("Données de transfert invalides");
+      }
+
+      await axios.delete(`http://localhost:5000/supprimer/produits/${item.id}`);
       onDeleteSuccess(item.id);
+      alert("Produit supprimé avec succès !");
       window.location.reload();
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
+      alert("Échec de la suppression du produit !");
     }
   };
 
@@ -54,16 +63,33 @@ const DeleteButton = ({ onDeleteSuccess }) => {
     e.preventDefault();
   };
 
+  const handleClick = () => {
+    setShowConfirm(true);
+  };
+
+  const handleCancel = () => {
+    setShowConfirm(false);
+  };
+
   return (
-    <StyledDeleteButton
-      variant="danger"
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      draggable={false}
-    >
-      <Trash className="bi bi-trash" />
-      Supprimer
-    </StyledDeleteButton>
+    <>
+      <StyledDeleteButton
+        variant="danger"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onClick={handleClick}
+        draggable={false}
+      >
+        <Trash className="bi bi-trash" />
+        Supprimer
+      </StyledDeleteButton>
+
+      <ConfirmationModal
+        show={showConfirm}
+        message="Voulez-vous supprimer tous les produits ?"
+        onCancel={handleCancel}
+      />
+    </>
   );
 };
 

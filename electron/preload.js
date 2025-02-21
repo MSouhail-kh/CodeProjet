@@ -1,7 +1,7 @@
 // preload.js
 import { contextBridge, ipcRenderer } from 'electron';
 
-contextBridge.exposeInMainWorld('electronAPI', {
-    sendMessage: (channel, data) => ipcRenderer.send(channel, data),
-    onMessage: (channel, callback) => ipcRenderer.on(channel, callback)
+contextBridge.exposeInMainWorld('electron', {
+  confirmDialog: (message) => ipcRenderer.invoke('confirm-dialog', message),
+  promptDialog: (message) => ipcRenderer.invoke('prompt-dialog', message)
 });

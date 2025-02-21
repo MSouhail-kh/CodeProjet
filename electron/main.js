@@ -1,49 +1,66 @@
-import { app, BrowserWindow } from 'electron';
-import path from 'path';
+// Dans votre main process (exemple: main.js)
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import { fileURLToPath } from 'url';
 
-// Conversion de l'URL du module en chemin de fichier
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 let mainWindow;
 
-// Fonction pour créer la fenêtre principale
 function createWindow() {
-    mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        icon: "./src/assets/logo.png",
-        webPreferences: {
-            nodeIntegration: false, 
-            contextIsolation: true, 
-            sandbox: true, 
-            preload: "./reactcode/electron/preload.js"
-        }
-    });
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    icon: "./src/assets/logo.png",
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+      preload: "./preload.js" 
+    }
+  });
 
-    // Charger l'URL de l'application
-    mainWindow.loadURL('http://localhost:5173');
+  mainWindow.loadURL('http://localhost:5173');
 
-    // Gestion de la fermeture de la fenêtre
-    mainWindow.on('closed', () => {
-        mainWindow = null;
-    });
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 }
 
-// Quand l'application est prête, créer la fenêtre
 app.whenReady().then(createWindow);
 
-// Gestion de la fermeture de l'application (MacOS)
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
-// Gestion de la réactivation de l'application (MacOS)
 app.on('activate', () => {
-    if (mainWindow === null) {
-        createWindow();
-    }
+  if (mainWindow === null) {
+    createWindow();
+  }
+});
+
+// Gestion de la boîte de confirmation (remplace window.confirm)
+ipcMain.handle("confirm-dialog", async (event, message) => {
+  const result = dialog.showMessageBoxSync(mainWindow, {
+    type: "warning",
+    buttons: ["Annuler", "OK"],
+    defaultId: 1,
+    title: "Confirmation",
+    message: message,
+  });
+  return result === 1;
+});
+
+// Gestion de la boîte de saisie du mot de passe (remplace prompt)
+ipcMain.handle("prompt-dialog", async (event, message) => {
+  const { response, checkboxChecked } = await dialog.showMessageBox(mainWindow, {
+    type: "question",
+    buttons: ["Annuler", "OK"],
+    title: "Mot de passe requis",
+    message: message,
+    detail: "Entrez le mot de passe ci-dessous :",
+    inputType: "password", // Note : Electron ne gère pas nativement les champs de saisie dans showMessageBox.
+  });
+
+  return response === 1 ? checkboxChecked : null;
 });
