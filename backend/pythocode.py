@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request, current_app, send_from_directory
+from datetime import datetime
 from werkzeug.utils import secure_filename
 import pandas as pd
 import os
@@ -60,7 +61,84 @@ def get_produit_by_id(produit_id):
         'po': produit.po
     }
     return jsonify(produit_dict)
+from datetime import datetime
+from flask import request, jsonify
 
+@main.route('/update/produits/<int:produit_id>', methods=['PUT'])
+def update_produit(produit_id):
+    # Récupérer le produit existant
+    produit = Produit.query.get(produit_id)
+    if not produit:
+        return jsonify({'error': 'Produit non trouvé'}), 404
+
+    # Mettre à jour les champs du formulaire
+    if 'titre' in request.form:
+        produit.titre = request.form.get('titre')
+    if 'name' in request.form:
+        produit.name = request.form.get('name')
+    if 'qty' in request.form:
+        produit.qty = float(request.form.get('qty')) if request.form.get('qty') else None
+    if 'date_reception_bon_commande' in request.form:
+        produit.date_reception_bon_commande = request.form.get('date_reception_bon_commande')
+    if 'date_livraison_commande' in request.form:
+        produit.date_livraison_commande = request.form.get('date_livraison_commande')
+    if 'descriptions' in request.form:
+        produit.descriptions = request.form.get('descriptions')
+    if 'position_id' in request.form:
+        produit.position_id = request.form.get('position_id')
+    if 'po' in request.form:
+        produit.po = request.form.get('po')
+    if 'coloris' in request.form:
+        produit.coloris = request.form.get('coloris')
+
+    # Gérer les fichiers téléchargés
+    if 'image' in request.files:
+        image_file = request.files.get('image')
+        if image_file and allowed_file(image_file.filename):
+            image_filename = secure_filename(image_file.filename)
+            image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
+            image_file.save(image_path)
+            produit.image = image_filename
+
+    if 'dossier_technique' in request.files:
+        dossier_file = request.files.get('dossier_technique')
+        if dossier_file and allowed_file(dossier_file.filename):
+            dossier_filename = secure_filename(dossier_file.filename)
+            dossier_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_filename)
+            dossier_file.save(dossier_path)
+            produit.dossier_technique = dossier_filename
+
+    if 'dossier_serigraphie' in request.files:
+        dossier_serigraphie_file = request.files.get('dossier_serigraphie')
+        if dossier_serigraphie_file and allowed_file(dossier_serigraphie_file.filename):
+            dossier_serigraphie_filename = secure_filename(dossier_serigraphie_file.filename)
+            dossier_serigraphie_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_serigraphie_filename)
+            dossier_serigraphie_file.save(dossier_serigraphie_path)
+            produit.dossier_serigraphie = dossier_serigraphie_filename
+
+    if 'bon_de_commande' in request.files:
+        bon_de_commande_file = request.files.get('bon_de_commande')
+        if bon_de_commande_file and allowed_file(bon_de_commande_file.filename):
+            bon_de_commande_filename = secure_filename(bon_de_commande_file.filename)
+            bon_de_commande_path = os.path.join(current_app.config['UPLOAD_FOLDER'], bon_de_commande_filename)
+            bon_de_commande_file.save(bon_de_commande_path)
+            produit.bon_de_commande = bon_de_commande_filename
+
+    if 'patronage' in request.files:
+        patronage_file = request.files.get('patronage')
+        if patronage_file and allowed_file(patronage_file.filename):
+            patronage_filename = secure_filename(patronage_file.filename)
+            patronage_path = os.path.join(current_app.config['UPLOAD_FOLDER'], patronage_filename)
+            patronage_file.save(patronage_path)
+            produit.patronage = patronage_filename
+
+    try:
+        db.session.commit()
+        return jsonify({'message': 'Produit mis à jour avec succès', 'produit_id': produit.id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Erreur lors de la mise à jour du produit : {str(e)}'}), 500
+    
 @main.route('/produits/position/<int:produit_id>', methods=['GET'])
 def get_produits_by_position_id(produit_id):
     BASE_URL = "http://localhost:5173"
@@ -321,7 +399,6 @@ def supprimer_tous_les_produits():
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": "Erreur lors de la suppression", "error": str(e)}), 500
-
     
 @main.route("/drag", methods=["POST", "OPTIONS"])
 def handle_drag():

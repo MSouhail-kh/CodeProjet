@@ -305,7 +305,7 @@ export default function Chaines() {
               />
             ) : null}
             <Card.Body>
-              <Card.Title>{hoveredItem.title || hoveredItem.name}</Card.Title>
+              <Card.Title>{hoveredItem.titre}</Card.Title>
               <span>{hoveredItem.name} / Qty: {hoveredItem.qty}</span>
             </Card.Body>
           </Card>

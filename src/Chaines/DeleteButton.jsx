@@ -51,7 +51,6 @@ const DeleteButton = ({ onDeleteSuccess }) => {
 
       await axios.delete(`http://localhost:5000/supprimer/produits/${item.id}`);
       onDeleteSuccess(item.id);
-      alert("Produit supprimé avec succès !");
       window.location.reload();
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
