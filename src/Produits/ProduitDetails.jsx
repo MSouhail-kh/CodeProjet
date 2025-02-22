@@ -4,10 +4,47 @@ import { useParams } from 'react-router-dom';
 import MyNavbar from '../Navbar/Navbar';
 import { Container, Card, Form, Button, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText ,XCircle} from 'react-bootstrap-icons';
-import styled from 'styled-components';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import styled, { keyframes } from "styled-components";
 
-// Styles avec Styled Components
+const LoaderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+`;
+
+const pulseAnimation = keyframes`
+  0% { transform: scale(0.8); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.7; }
+`;
+
+const BouncingLoader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Dot = styled.div`
+  width: 20px;
+  height: 20px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: #007bff; 
+  animation: ${pulseAnimation} 1.4s infinite ease-in-out;
+  animation-delay: ${(props) => props.delay || "0s"};
+
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+`;
+
+
 const StyledCard = styled(Card)`
   border: 1px solid #e0e0e0;
   border-radius: 12px;
@@ -95,8 +132,6 @@ const ProduitDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [previewImage, setPreviewImage] = useState(null);
-
-  // États pour stocker les noms des fichiers sélectionnés
   const [imageFileName, setImageFileName] = useState('');
   const [dossierTechniqueFileName, setDossierTechniqueFileName] = useState('');
   const [dossierSerigraphieFileName, setDossierSerigraphieFileName] = useState('');
@@ -109,6 +144,7 @@ const ProduitDetails = () => {
         const response = await axios.get(`http://localhost:5000/produits/${id}`);
         setProduct(response.data);
         setEditedData(response.data);
+        setLoading(false); 
       } catch (err) {
         setError('Erreur lors de la récupération des données');
         console.error(err);
@@ -124,13 +160,11 @@ const ProduitDetails = () => {
     const { name, value, files } = e.target;
 
     if (files && files[0]) {
-      // Si c'est un fichier, stockez le fichier dans editedData
       setEditedData(prev => ({
         ...prev,
         [name]: files[0],
       }));
 
-      // Mettre à jour le nom du fichier sélectionné
       switch (name) {
         case 'image':
           setImageFileName(files[0].name);
@@ -151,12 +185,10 @@ const ProduitDetails = () => {
           break;
       }
 
-      // Afficher un aperçu de l'image sélectionnée
       if (name === 'image') {
         setPreviewImage(URL.createObjectURL(files[0]));
       }
     } else {
-      // Sinon, stockez la valeur normale
       setEditedData(prev => ({
         ...prev,
         [name]: value,
@@ -168,7 +200,6 @@ const ProduitDetails = () => {
     try {
       const formData = new FormData();
 
-      // Ajoutez tous les champs modifiés au FormData
       Object.keys(editedData).forEach((key) => {
         if (editedData[key] !== null && editedData[key] !== undefined) {
           formData.append(key, editedData[key]);
@@ -180,15 +211,16 @@ const ProduitDetails = () => {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data', // Important pour les fichiers
+            'Content-Type': 'multipart/form-data', 
           },
         }
       );
 
       setProduct(response.data);
       setIsEditing(false);
-      setPreviewImage(null); // Réinitialiser l'aperçu de l'image
-      window.location.reload(); // Recharger la page pour afficher les nouvelles données
+      setPreviewImage(null);
+      setLoading(false);
+      window.location.reload(); 
     } catch (err) {
       console.error(err);
     }
@@ -196,11 +228,13 @@ const ProduitDetails = () => {
 
   if (loading) {
     return (
-      <Container className="d-flex justify-content-center align-items-center vh-100">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Chargement...</span>
-        </Spinner>
-      </Container>
+      <LoaderContainer>
+        <BouncingLoader>
+          <Dot />
+          <Dot delay="0.2s" />
+          <Dot delay="0.4s" />
+        </BouncingLoader>
+      </LoaderContainer>
     );
   }
 
@@ -257,7 +291,6 @@ const ProduitDetails = () => {
                   </Card.Title>
 
                   <div className="d-flex align-items-center gap-2">
-                    {/* Bouton Modifier/Sauvegarder */}
                     <Button
                       variant={isEditing ? 'success' : 'outline-primary'}
                       onClick={isEditing ? handleSave : () => setIsEditing(true)}
@@ -434,7 +467,6 @@ const ProduitDetails = () => {
 
             {isEditing ? (
               <>
-                {/* Champ pour changer l'image du produit */}
                 <FileInputLabel>
                   <Image size={20} />
                   <span>Changer l'image du produit</span>
@@ -448,7 +480,6 @@ const ProduitDetails = () => {
                   {imageFileName && <FileName>{imageFileName}</FileName>}
                 </FileInputLabel>
 
-                {/* Champ pour changer le dossier technique */}
                 <FileInputLabel className="mt-3">
                   <FilePdf size={20} />
                   <span>Changer le dossier technique (PDF)</span>
@@ -462,7 +493,6 @@ const ProduitDetails = () => {
                   {dossierTechniqueFileName && <FileName>{dossierTechniqueFileName}</FileName>}
                 </FileInputLabel>
 
-                {/* Champ pour changer le dossier de sérigraphie */}
                 <FileInputLabel className="mt-3">
                   <FilePdf size={20} />
                   <span>Changer le dossier de sérigraphie (PDF)</span>
@@ -476,7 +506,6 @@ const ProduitDetails = () => {
                   {dossierSerigraphieFileName && <FileName>{dossierSerigraphieFileName}</FileName>}
                 </FileInputLabel>
 
-                {/* Champ pour changer le bon de commande */}
                 <FileInputLabel className="mt-3">
                   <FilePdf size={20} />
                   <span>Changer le bon de commande (PDF)</span>
@@ -490,7 +519,6 @@ const ProduitDetails = () => {
                   {bonDeCommandeFileName && <FileName>{bonDeCommandeFileName}</FileName>}
                 </FileInputLabel>
 
-                {/* Champ pour changer le patronage */}
                 <FileInputLabel className="mt-3">
                   <FilePdf size={20} />
                   <span>Changer le patronage (PDF)</span>
@@ -506,7 +534,6 @@ const ProduitDetails = () => {
               </>
             ) : (
               <>
-                {/* Afficher les liens de téléchargement si les fichiers existent */}
                 {product.dossier_technique && (
                   <DownloadLink
                     href={product.dossier_technique}
