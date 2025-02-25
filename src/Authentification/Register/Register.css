@@ -5,16 +5,15 @@
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
 }
 
 .signup-form h2 {
-    text-align: center;
-    color: #007bff; /* Changement de couleur en bleu */
+    text-align: start;
+    color: #2575fc;
     font-family: 'Poppins', sans-serif;
     margin-bottom: 1.5rem;
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 900;
     text-transform: uppercase;
 }
 
@@ -29,44 +28,35 @@
 }
 
 .form-control:focus {
-    border-color: #007bff; /* Changement de couleur en bleu */
+    border-color: #2575fc;
     outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Changement de couleur en bleu */
+    box-shadow: 0 0 5px rgba(37, 117, 252, 0.3);
+}
+
+.error-message, .success-message {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .error-message {
     background: #ffebeb;
     color: #d32f2f;
-    padding: 10px;
     border: 1px solid #d32f2f;
-    border-radius: 5px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.error-icon {
-    font-size: 18px;
 }
 
 .success-message {
-    background: #e8f5e9;
-    color: #2e7d32;
-    padding: 10px;
-    border: 1px solid #2e7d32;
-    border-radius: 5px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
-    transition: opacity 0.3s ease-in-out;
+    background: #e7f8eb;
+    color: #1b5e20;
+    border: 1px solid #1b5e20;
 }
 
-.success-icon {
+.error-icon, .success-icon {
     font-size: 18px;
 }
 
@@ -74,20 +64,19 @@
     width: 30%;
     padding: 5px;
     border-radius: 5px;
-    background-color: #28a745;
+    background-color: #2575fc;
     color: white;
     border: none;
     cursor: pointer;
     font-size: 12px;
-    transition: background-color 0.3s ease;}
-
-.btn-signup:hover {
-    background-color: #0056b3; /* Changement de couleur en bleu plus foncé */
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-signup:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
+.btn-signup:hover {
+    background-color: #1b5fd9;
 }
 
 .signup-icon {
