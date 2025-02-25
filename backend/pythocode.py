@@ -1,15 +1,162 @@
-from flask import Blueprint, jsonify, request, current_app, send_from_directory
-from datetime import datetime
+from flask_mail import Mail, Message
+from flask_cors import CORS ,cross_origin
+import jwt
+from functools import wraps
+from flask import Blueprint, jsonify, request, current_app, send_from_directory , make_response
+from datetime import datetime, timedelta, timezone
 from werkzeug.utils import secure_filename
 import pandas as pd
 import os
-from models import db, Produit, Position
+from models import db, Produit, Position ,User
 import webcolors
 import uuid
 
+mail = Mail()
+
+def send_reset_email(email, reset_link):
+    msg = Message(
+        subject="Réinitialisation de votre mot de passe",
+        sender="no-reply@votreapp.com",
+        recipients=[email]
+    )
+    msg.body = f"Pour réinitialiser votre mot de passe, cliquez sur ce lien : {reset_link}"
+    mail.send(msg)
+
 main = Blueprint('main', __name__)
+CORS(main, supports_credentials=True)
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
+@main.record_once
+def on_load(state):
+    mail.init_app(state.app)
+
+def generate_token(email):
+    utc_now = datetime.now(timezone.utc)
+    payload = {
+        'email': email,
+        'exp': utc_now + timedelta(minutes=30),
+        'iat': utc_now
+    }
+    return jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
+blacklisted_tokens = set()
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if request.method == "OPTIONS":
+            response = make_response()
+            response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+            response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            response.headers.add('Access-Control-Allow-Credentials', 'true')
+            return response, 200
+
+        token = None
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            parts = auth_header.split()
+            if len(parts) == 2 and parts[0] == 'Bearer':
+                token = parts[1]
+
+        if not token:
+            return jsonify({'message': 'Token manquant!'}), 401
+
+        try:
+            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            current_user_email = payload['email']
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token expiré!'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'message': 'Token invalide!'}), 401
+
+        return f(current_user_email, *args, **kwargs)
+    return decorated
+
+@main.route('/login', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:5173', supports_credentials=True)
+def login():
+    if request.method == 'OPTIONS':
+        response = jsonify({'message': 'Preflight request handled'})
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response, 200
+
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({'message': 'Email et mot de passe requis'}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user or not user.check_password(password):
+        return jsonify({'message': 'Email ou mot de passe invalide'}), 401
+
+    token = generate_token(email)
+    return jsonify({'token': token}), 200
+
+@main.route('/signup', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='http://localhost:5173', supports_credentials=True)
+def signup():
+    if request.method == 'OPTIONS':
+        response = jsonify({'message': 'Preflight request handled'})
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response, 200
+
+    data = request.get_json()
+    prénom = data.get('prénom')
+    nom = data.get('nom')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not prénom or not nom or not email or not password:
+        return jsonify({'message': 'Prénom, nom, email et mot de passe requis'}), 400
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({'message': 'Cet email est déjà utilisé'}), 400
+
+    token = generate_token(email) 
+
+    new_user = User(prénom=prénom, nom=nom, email=email, token=token)
+    new_user.set_password(password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    response = jsonify({'token': token})
+    return response, 201
+
+@main.route('/user', methods=['GET', 'OPTIONS'])
+@cross_origin(origin='http://localhost:5173', supports_credentials=True)
+@token_required
+def get_user(current_user_email):
+    user = User.query.filter_by(email=current_user_email).first()
+    if not user:
+        return jsonify({'message': 'Utilisateur non trouvé'}), 404
+
+    user_data = {
+        'prénom': user.prénom,
+        'nom': user.nom,
+        'email': user.email
+    }
+    response = jsonify(user_data)
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response, 200
+
+@main.route('/logout', methods=['POST'])
+@cross_origin(origin='http://localhost:5173', supports_credentials=True, methods=['POST'])
+@token_required
+def logout():
+    response = jsonify({'message': 'Déconnexion réussie'})
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response, 200
 
 @main.route('/produits', methods=['GET'])
 def get_produits():
@@ -37,6 +184,28 @@ def get_produits():
     }
     return jsonify(produits_dict)
 
+@main.route('/api/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email')
+
+    if not email:
+        return jsonify({'message': 'Adresse e-mail requise'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'message': 'Si cet e-mail est enregistré, vous recevrez un email'}), 200
+
+    reset_token = User.generate_reset_token()
+    user.reset_token = reset_token
+    db.session.commit()
+
+    reset_link = f"http://localhost:3000/reset-password/{user.id}?token={reset_token}"
+    
+    send_reset_email(email, reset_link)
+
+    return jsonify({'message': 'Un email a été envoyé avec un lien de réinitialisation'}), 200
+
 @main.route('/produits/<int:produit_id>', methods=['GET'])
 def get_produit_by_id(produit_id):
     BASE_URL = "http://localhost:5173"
@@ -61,8 +230,6 @@ def get_produit_by_id(produit_id):
         'po': produit.po
     }
     return jsonify(produit_dict)
-from datetime import datetime
-from flask import request, jsonify
 
 @main.route('/update/produits/<int:produit_id>', methods=['PUT'])
 def update_produit(produit_id):
@@ -388,7 +555,6 @@ def delete_produit(id):
     except Exception as e:
         db.session.rollback() 
         return jsonify({"error": "Une erreur est survenue lors de la suppression du produit", "details": str(e)}), 500
-
 
 @main.route("/supprimer/produits", methods=["DELETE"])
 def supprimer_tous_les_produits():

@@ -1,0 +1,76 @@
+.login-container {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+}
+
+.login-image {
+    background: url("../assets/Linux.png") no-repeat center center/cover;
+    width: 50%;
+    position: relative;
+}
+
+.login-form-container {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    padding: 40px;
+}
+
+.overlay {
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.overlay h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.overlay p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.overlay button {
+    background-color: #28a745;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.overlay button:active {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .login-image {
+        display: none;
+    }
+
+    .login-form-container {
+        width: 100%;
+        padding: 20px;
+    }
+}

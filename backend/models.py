@@ -1,6 +1,29 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+import secrets
+import uuid
 
 db = SQLAlchemy()
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    prénom = db.Column(db.String(100), nullable=False)
+    nom = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(2000), nullable=False)
+    token = db.Column(db.String(2000))
+    role = db.Column(db.String(50), default='user')
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    @staticmethod
+    def generate_reset_token():
+        return str(uuid.uuid4())
 
 class ProduitPosition(db.Model):
     __tablename__ = 'positions_produit'

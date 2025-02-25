@@ -89,7 +89,6 @@ const ControlButton = styled(Button)`
   justify-content: center;
 `;
 
-
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});

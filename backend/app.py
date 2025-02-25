@@ -12,9 +12,9 @@ app.config.from_object(Config)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+CORS(app, supports_credentials=True, origins="http://localhost:5173")
 
 app.register_blueprint(main_blueprint)
 
 if __name__ == '__main__':
-    app.run(debug=os.getenv('FLASK_DEBUG') == 'True')
+    app.run(debug=True)

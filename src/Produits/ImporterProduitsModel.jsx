@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Modal, Button, Table ,Form} from 'react-bootstrap';
-import { X, CloudUpload ,FilePlus} from 'react-bootstrap-icons';
+import { XLg, CloudUpload ,FilePlus} from 'react-bootstrap-icons';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -104,8 +104,8 @@ export const GradientButton = styled(Button)`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    box-shadow: 0 6px 20px rgba(121, 3, 248, 0.56);
+    background: linear-gradient(135deg, #6a11cb);
   }
 
   &:active {
@@ -498,11 +498,11 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
       </ModalBody>
       <Modal.Footer>
         <FermerButton variant="secondary" onClick={handleCloseModal}>
-          <X style={{fontSize: '18px',height:"3.5vh"}}/> Fermer
+          <XLg /> Fermer
         </FermerButton>
 
         <GradientButton onClick={handleFullImport} disabled={!file || !data.length}>
-          <CloudUpload style={{fontSize: '18px',height:"3.5vh"}}/>  Importer
+          <CloudUpload />  Importer
         </GradientButton>
       </Modal.Footer>
       <input

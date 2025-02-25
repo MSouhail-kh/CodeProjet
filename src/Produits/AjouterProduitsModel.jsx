@@ -99,10 +99,11 @@ export const GradientButton = styled(Button)`
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
 
+
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    box-shadow: 0 6px 20px rgba(121, 3, 248, 0.56);
+    background: linear-gradient(135deg, #6a11cb);
   }
 
   &:active {
