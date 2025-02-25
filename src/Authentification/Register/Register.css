@@ -1,15 +1,20 @@
 .signup-form {
     width: 100%;
     max-width: 400px;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
 }
 
 .signup-form h2 {
-    text-align: start;
-    color: #2575fc;
+    text-align: center;
+    color: #007bff; /* Changement de couleur en bleu */
     font-family: 'Poppins', sans-serif;
     margin-bottom: 1.5rem;
-    font-size: 2.5rem;
-    font-weight: 900;
+    font-size: 2rem;
+    font-weight: 700;
     text-transform: uppercase;
 }
 
@@ -20,30 +25,71 @@
     font-size: 16px;
     margin-bottom: 15px;
     width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff; /* Changement de couleur en bleu */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Changement de couleur en bleu */
+}
+
+.error-message {
+    background: #ffebeb;
+    color: #d32f2f;
+    padding: 10px;
+    border: 1px solid #d32f2f;
+    border-radius: 5px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.error-icon {
+    font-size: 18px;
+}
+
+.success-message {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 10px;
+    border: 1px solid #2e7d32;
+    border-radius: 5px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.success-icon {
+    font-size: 18px;
 }
 
 .btn-signup {
-    width: 35%;
+    width: 30%;
     padding: 5px;
     border-radius: 5px;
-    background-color: #2575fc;
+    background-color: #28a745;
     color: white;
     border: none;
     cursor: pointer;
     font-size: 12px;
-    transition: background-color 0.3s ease;
-}
+    transition: background-color 0.3s ease;}
 
 .btn-signup:hover {
-    background-color: #1b5fd9;
+    background-color: #0056b3; /* Changement de couleur en bleu plus foncé */
 }
 
-.error-message {
-    color: red;
-    margin-bottom: 1rem;
+.btn-signup:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
 }
 
-.success-message {
-    color: green;
-    margin-bottom: 1rem;
+.signup-icon {
+    font-size: 1.2rem;
 }

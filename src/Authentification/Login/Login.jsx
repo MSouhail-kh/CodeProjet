@@ -1,61 +1,90 @@
-import React, { useState, useContext } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../AuthContext';
-import './Login.css';
+import React, { useState, useContext } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../AuthContext";
+import { ExclamationCircleFill, BoxArrowInRight, Eye, EyeSlash } from "react-bootstrap-icons";
+import { InputGroup, FormControl, Button } from "react-bootstrap";
+import "./Login.css";
 
 const Login = ({ onLoginSuccess }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State for showing/hiding password
   const navigate = useNavigate();
   const { setAuthTokens } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/login',
+        "http://localhost:5000/login",
         { email, password },
         { withCredentials: true }
       );
       onLoginSuccess(response.data.token);
-      const token = response.data.token;
-      setAuthTokens(token); 
-      navigate('/Chaines'); 
+      setAuthTokens(response.data.token);
+      navigate("/Chaines");
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || 'Erreur lors de la connexion.');
+      setError(err.response?.data?.message || "Erreur lors de la connexion.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <form className="login-form" onSubmit={handleLogin}>
       <h2>Connexion</h2>
-      {error && <p className="error-message">{error}</p>}
-      <input
-        type="email"
-        className="form-control"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        className="form-control"
-        placeholder="Mot de passe"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit" className="btn-login" disabled={loading}>
-        {loading ? 'Chargement...' : 'SE CONNECTER'}
-      </button>
+
+      {error && (
+        <div className="error-message">
+          <ExclamationCircleFill className="error-icon" />
+          {error}
+        </div>
+      )}
+
+      <InputGroup className="mb-3">
+        <FormControl
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </InputGroup>
+
+      <InputGroup className="mb-3 d-flex flex-row">
+        <FormControl
+          type={showPassword ? "text" : "password"}
+          className="p-2"
+          placeholder="Mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <Button
+            onClick={togglePasswordVisibility}
+            className="p-2 h-100 bg-success outline-secondary"
+            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+          >
+            {showPassword ? <EyeSlash /> : <Eye />}
+          </Button>
+
+      </InputGroup>
+
+      <Button type="submit" className="btn-login btn-success btn-sm" disabled={loading}>
+        {loading ? "Chargement..." : <BoxArrowInRight className="login-icon" />}
+      </Button>
     </form>
   );
 };

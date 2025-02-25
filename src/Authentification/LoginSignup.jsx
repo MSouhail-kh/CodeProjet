@@ -27,13 +27,13 @@ const LoginSignup = () => {
                         <>
                             <h1>Bienvenue!</h1>
                             <p>Déjà membre? Connectez-vous ici.</p>
-                            <button onClick={toggleForm}>SE CONNECTER</button>
+                            <button className="bg-success" onClick={toggleForm}>SE CONNECTER</button>
                         </>
                     ) : (
                         <>
                             <h1>Rejoignez-nous!</h1>
                             <p>Pas encore membre? Inscrivez-vous ici.</p>
-                            <button onClick={toggleForm}>INSCRIVEZ-VOUS</button>
+                            <button className="bg-primary" onClick={toggleForm}>INSCRIVEZ-VOUS</button>
                         </>
                     )}
                 </div>
