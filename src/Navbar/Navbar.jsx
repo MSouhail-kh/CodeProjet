@@ -30,7 +30,7 @@ const MyNavbar = ({ darkMode }) => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto align-items-center">
               <Nav.Link className="btn gradient-btn" onClick={handleShowProduit}>
-                Créer un Modal
+                Créer un produit
               </Nav.Link>
               <Nav.Link className="btn gradient-btn ms-2" onClick={handleShowExcel}>
                 Importer Excel
