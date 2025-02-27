@@ -33,7 +33,7 @@ class ProduitPosition(db.Model):
 class Produit(db.Model):
     __tablename__ = 'produit'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    style = db.Column(db.String(100), nullable=False)
     position_id = db.Column(db.Integer, db.ForeignKey('position.id'), nullable=False)
     titre = db.Column(db.String(255))
     image = db.Column(db.Text)
@@ -44,9 +44,13 @@ class Produit(db.Model):
     patronage = db.Column(db.Text)
     date_reception_bon_commande = db.Column(db.Date)
     date_livraison_commande = db.Column(db.Date)
-    descriptions = db.Column(db.Text)
     coloris = db.Column(db.Text)
     po = db.Column(db.Text)
+    brand = db.Column(db.String(255))
+    type_de_commande = db.Column(db.String(255))
+    etat_de_commande = db.Column(db.String(255))
+    reference = db.Column(db.String(255))
+    type_de_produit = db.Column(db.String(255))
 
 class Position(db.Model):
     __tablename__ = 'position'

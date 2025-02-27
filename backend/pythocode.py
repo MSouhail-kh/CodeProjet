@@ -7,10 +7,8 @@ from datetime import datetime, timedelta, timezone
 from werkzeug.utils import secure_filename
 import pandas as pd
 import os
-from models import db, Produit, Position ,User
-import webcolors
+from models import db, Produit,User
 import uuid
-
 mail = Mail()
 
 def send_reset_email(email, reset_link):
@@ -150,39 +148,34 @@ def get_user(current_user_email):
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response, 200
 
-@main.route('/logout', methods=['POST'])
-@cross_origin(origin='http://localhost:5173', supports_credentials=True, methods=['POST'])
-@token_required
-def logout():
-    response = jsonify({'message': 'Déconnexion réussie'})
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    return response, 200
-
 @main.route('/produits', methods=['GET'])
 def get_produits():
-    BASE_URL = "http://localhost:5173"
-    produits = Produit.query.all()
-    produits_dict = {
-        produit.id: {
-            'id': produit.id,
-            'titre': produit.titre,
-            'name': produit.name,
-            'image': f"{BASE_URL}/static/uploads/{produit.image}" if produit.image else None,
-            'qty': produit.qty,
-            'dossier_technique': f"{BASE_URL}/static/uploads/{produit.dossier_technique}" if produit.dossier_technique else None,
-            'dossier_serigraphie': f"{BASE_URL}/static/uploads/{produit.dossier_serigraphie}" if produit.dossier_serigraphie else None,
-            'bon_de_commande': f"{BASE_URL}/static/uploads/{produit.bon_de_commande}" if produit.bon_de_commande else None,
-            'patronage': f"{BASE_URL}/static/uploads/{produit.patronage}" if produit.patronage else None,
-            'date_reception_bon_commande': produit.date_reception_bon_commande,
-            'date_livraison_commande': produit.date_livraison_commande,
-            'descriptions': produit.descriptions,
-            'position_id': produit.position_id,
-            'po': produit.po,
-            'coloris': produit.coloris
+        BASE_URL = "http://localhost:5173"
+        produits = Produit.query.all()
+        produits_dict = {
+            produit.id: {
+                'id': produit.id,
+                'style': produit.style,  
+                'image': f"{BASE_URL}/static/uploads/{produit.image}" if produit.image else None,
+                'qty': produit.qty,
+                'dossier_technique': f"{BASE_URL}/static/uploads/{produit.dossier_technique}" if produit.dossier_technique else None,
+                'dossier_serigraphie': f"{BASE_URL}/static/uploads/{produit.dossier_serigraphie}" if produit.dossier_serigraphie else None,
+                'bon_de_commande': f"{BASE_URL}/static/uploads/{produit.bon_de_commande}" if produit.bon_de_commande else None,
+                'patronage': f"{BASE_URL}/static/uploads/{produit.patronage}" if produit.patronage else None,
+                'date_reception_bon_commande': produit.date_reception_bon_commande,
+                'date_livraison_commande': produit.date_livraison_commande,
+                'position_id': produit.position_id,
+                'po': produit.po,
+                'coloris': produit.coloris,
+                'brand': produit.brand,
+                'type_de_commande': produit.type_de_commande,
+                'etat_de_commande': produit.etat_de_commande,
+                'reference': produit.reference,
+                'type_de_produit': produit.type_de_produit
+            }
+            for produit in produits
         }
-        for produit in produits
-    }
-    return jsonify(produits_dict)
+        return jsonify(produits_dict)
 
 @main.route('/api/forgot-password', methods=['POST'])
 def forgot_password():
@@ -208,230 +201,216 @@ def forgot_password():
 
 @main.route('/produits/<int:produit_id>', methods=['GET'])
 def get_produit_by_id(produit_id):
-    BASE_URL = "http://localhost:5173"
-    produit = Produit.query.get(produit_id)
-    if not produit:
-        return jsonify({'error': 'Produit non trouvé'}), 404
-    produit_dict = {
-        'id': produit.id,
-        'titre': produit.titre,
-        'name': produit.name,
-        'image': f"{BASE_URL}/static/uploads/{produit.image}" if produit.image else None,
-        'qty': produit.qty,
-        'dossier_technique': f"{BASE_URL}/static/uploads/{produit.dossier_technique}" if produit.dossier_technique else None,
-        'dossier_serigraphie': f"{BASE_URL}/static/uploads/{produit.dossier_serigraphie}" if produit.dossier_serigraphie else None,
-        'bon_de_commande': f"{BASE_URL}/static/uploads/{produit.bon_de_commande}" if produit.bon_de_commande else None,
-        'patronage': f"{BASE_URL}/static/uploads/{produit.patronage}" if produit.patronage else None,
-        'date_reception_bon_commande': produit.date_reception_bon_commande,
-        'date_livraison_commande': produit.date_livraison_commande,
-        'descriptions': produit.descriptions,
-        'position_id': produit.position_id,
-        'coloris': produit.coloris,
-        'po': produit.po
-    }
-    return jsonify(produit_dict)
+        BASE_URL = "http://localhost:5173"
+        produit = Produit.query.get(produit_id)
+        if not produit:
+            return jsonify({'error': 'Produit non trouvé'}), 404
+        produit_dict = {
+            'id': produit.id,
+            'style': produit.style,
+            'image': f"{BASE_URL}/static/uploads/{produit.image}" if produit.image else None,
+            'qty': produit.qty,
+            'dossier_technique': f"{BASE_URL}/static/uploads/{produit.dossier_technique}" if produit.dossier_technique else None,
+            'dossier_serigraphie': f"{BASE_URL}/static/uploads/{produit.dossier_serigraphie}" if produit.dossier_serigraphie else None,
+            'bon_de_commande': f"{BASE_URL}/static/uploads/{produit.bon_de_commande}" if produit.bon_de_commande else None,
+            'patronage': f"{BASE_URL}/static/uploads/{produit.patronage}" if produit.patronage else None,
+            'date_reception_bon_commande': produit.date_reception_bon_commande,
+            'date_livraison_commande': produit.date_livraison_commande,
+            'position_id': produit.position_id,
+            'coloris': produit.coloris,
+            'po': produit.po,
+            'brand': produit.brand,
+            'type_de_commande': produit.type_de_commande,
+            'etat_de_commande': produit.etat_de_commande,
+            'reference': produit.reference,
+            'type_de_produit': produit.type_de_produit
+        }
+        return jsonify(produit_dict)
 
 @main.route('/update/produits/<int:produit_id>', methods=['PUT'])
 def update_produit(produit_id):
-    # Récupérer le produit existant
-    produit = Produit.query.get(produit_id)
-    if not produit:
-        return jsonify({'error': 'Produit non trouvé'}), 404
+            produit = Produit.query.get(produit_id)
+            if not produit:
+                return jsonify({'error': 'Produit non trouvé'}), 404
 
-    # Mettre à jour les champs du formulaire
-    if 'titre' in request.form:
-        produit.titre = request.form.get('titre')
-    if 'name' in request.form:
-        produit.name = request.form.get('name')
-    if 'qty' in request.form:
-        produit.qty = float(request.form.get('qty')) if request.form.get('qty') else None
-    if 'date_reception_bon_commande' in request.form:
-        produit.date_reception_bon_commande = request.form.get('date_reception_bon_commande')
-    if 'date_livraison_commande' in request.form:
-        produit.date_livraison_commande = request.form.get('date_livraison_commande')
-    if 'descriptions' in request.form:
-        produit.descriptions = request.form.get('descriptions')
-    if 'position_id' in request.form:
-        produit.position_id = request.form.get('position_id')
-    if 'po' in request.form:
-        produit.po = request.form.get('po')
-    if 'coloris' in request.form:
-        produit.coloris = request.form.get('coloris')
+            if 'style' in request.form:
+                produit.style = request.form.get('style')
+            if 'qty' in request.form:
+                produit.qty = float(request.form.get('qty')) if request.form.get('qty') else None
+            if 'date_reception_bon_commande' in request.form:
+                produit.date_reception_bon_commande = request.form.get('date_reception_bon_commande')
+            if 'date_livraison_commande' in request.form:
+                produit.date_livraison_commande = request.form.get('date_livraison_commande')
+            if 'position_id' in request.form:
+                produit.position_id = request.form.get('position_id')
+            if 'po' in request.form:
+                produit.po = request.form.get('po')
+            if 'coloris' in request.form:
+                produit.coloris = request.form.get('coloris')
+            if 'brand' in request.form:
+                produit.brand = request.form.get('brand')
+            if 'type_de_commande' in request.form:
+                produit.type_de_commande = request.form.get('type_de_commande')
+            if 'etat_de_commande' in request.form:
+                produit.etat_de_commande = request.form.get('etat_de_commande')
+            if 'reference' in request.form:
+                produit.reference = request.form.get('reference')
+            if 'type_de_produit' in request.form:
+                produit.type_de_produit = request.form.get('type_de_produit')
 
-    # Gérer les fichiers téléchargés
-    if 'image' in request.files:
-        image_file = request.files.get('image')
-        if image_file and allowed_file(image_file.filename):
-            image_filename = secure_filename(image_file.filename)
-            image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
-            image_file.save(image_path)
-            produit.image = image_filename
+            if 'image' in request.files:
+                image_file = request.files.get('image')
+                if image_file and allowed_file(image_file.filename):
+                    image_filename = secure_filename(image_file.filename)
+                    image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
+                    image_file.save(image_path)
+                    produit.image = image_filename
 
-    if 'dossier_technique' in request.files:
-        dossier_file = request.files.get('dossier_technique')
-        if dossier_file and allowed_file(dossier_file.filename):
-            dossier_filename = secure_filename(dossier_file.filename)
-            dossier_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_filename)
-            dossier_file.save(dossier_path)
-            produit.dossier_technique = dossier_filename
+            if 'dossier_technique' in request.files:
+                dossier_file = request.files.get('dossier_technique')
+                if dossier_file and allowed_file(dossier_file.filename):
+                    dossier_filename = secure_filename(dossier_file.filename)
+                    dossier_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_filename)
+                    dossier_file.save(dossier_path)
+                    produit.dossier_technique = dossier_filename
 
-    if 'dossier_serigraphie' in request.files:
-        dossier_serigraphie_file = request.files.get('dossier_serigraphie')
-        if dossier_serigraphie_file and allowed_file(dossier_serigraphie_file.filename):
-            dossier_serigraphie_filename = secure_filename(dossier_serigraphie_file.filename)
-            dossier_serigraphie_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_serigraphie_filename)
-            dossier_serigraphie_file.save(dossier_serigraphie_path)
-            produit.dossier_serigraphie = dossier_serigraphie_filename
+            if 'dossier_serigraphie' in request.files:
+                dossier_serigraphie_file = request.files.get('dossier_serigraphie')
+                if dossier_serigraphie_file and allowed_file(dossier_serigraphie_file.filename):
+                    dossier_serigraphie_filename = secure_filename(dossier_serigraphie_file.filename)
+                    dossier_serigraphie_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_serigraphie_filename)
+                    dossier_serigraphie_file.save(dossier_serigraphie_path)
+                    produit.dossier_serigraphie = dossier_serigraphie_filename
 
-    if 'bon_de_commande' in request.files:
-        bon_de_commande_file = request.files.get('bon_de_commande')
-        if bon_de_commande_file and allowed_file(bon_de_commande_file.filename):
-            bon_de_commande_filename = secure_filename(bon_de_commande_file.filename)
-            bon_de_commande_path = os.path.join(current_app.config['UPLOAD_FOLDER'], bon_de_commande_filename)
-            bon_de_commande_file.save(bon_de_commande_path)
-            produit.bon_de_commande = bon_de_commande_filename
+            if 'bon_de_commande' in request.files:
+                bon_de_commande_file = request.files.get('bon_de_commande')
+                if bon_de_commande_file and allowed_file(bon_de_commande_file.filename):
+                    bon_de_commande_filename = secure_filename(bon_de_commande_file.filename)
+                    bon_de_commande_path = os.path.join(current_app.config['UPLOAD_FOLDER'], bon_de_commande_filename)
+                    bon_de_commande_file.save(bon_de_commande_path)
+                    produit.bon_de_commande = bon_de_commande_filename
 
-    if 'patronage' in request.files:
-        patronage_file = request.files.get('patronage')
-        if patronage_file and allowed_file(patronage_file.filename):
-            patronage_filename = secure_filename(patronage_file.filename)
-            patronage_path = os.path.join(current_app.config['UPLOAD_FOLDER'], patronage_filename)
-            patronage_file.save(patronage_path)
-            produit.patronage = patronage_filename
+            if 'patronage' in request.files:
+                patronage_file = request.files.get('patronage')
+                if patronage_file and allowed_file(patronage_file.filename):
+                    patronage_filename = secure_filename(patronage_file.filename)
+                    patronage_path = os.path.join(current_app.config['UPLOAD_FOLDER'], patronage_filename)
+                    patronage_file.save(patronage_path)
+                    produit.patronage = patronage_filename
 
-    try:
-        db.session.commit()
-        return jsonify({'message': 'Produit mis à jour avec succès', 'produit_id': produit.id}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': f'Erreur lors de la mise à jour du produit : {str(e)}'}), 500
-    
+            try:
+                db.session.commit()
+                return jsonify({'message': 'Produit mis à jour avec succès', 'produit_id': produit.id}), 200
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'error': f'Erreur lors de la mise à jour du produit : {str(e)}'}), 500
+
 @main.route('/produits/position/<int:produit_id>', methods=['GET'])
 def get_produits_by_position_id(produit_id):
-    BASE_URL = "http://localhost:5173"
-    produit = Produit.query.get(produit_id)
-    if not produit:
-        return jsonify({'error': 'Produit non trouvé'}), 404
+        BASE_URL = "http://localhost:5173"
+        produit = Produit.query.get(produit_id)
+        if not produit:
+            return jsonify({'error': 'Produit non trouvé'}), 404
 
-    position_id = produit.position_id
-    produits = Produit.query.filter_by(position_id=position_id).all()
-    if not produits:
-        return jsonify({'error': 'Aucun produit trouvé pour cette position_id'}), 404
+        position_id = produit.position_id
+        produits = Produit.query.filter_by(position_id=position_id).all()
+        if not produits:
+            return jsonify({'error': 'Aucun produit trouvé pour cette position_id'}), 404
 
-    produits_list = []
-    for produit in produits:
-        produit_dict = {
-            'id': produit.id,
-            'name': produit.name,
-            'image': f"{BASE_URL}/static/uploads/{produit.image}" if produit.image else None,
-            'position_id': produit.position_id
-        }
-        produits_list.append(produit_dict)
+        produits_list = []
+        for produit in produits:
+            produit_dict = {
+                'id': produit.id,
+                'style': produit.style,
+                'image': f"{BASE_URL}/static/uploads/{produit.image}" if produit.image else None,
+                'position_id': produit.position_id
+            }
+            produits_list.append(produit_dict)
 
-    return jsonify(produits_list)
+        return jsonify(produits_list)
 
 @main.route('/static/uploads/<filename>')
 def serve_file(filename):
-    return send_from_directory(current_app.config["UPLOAD_FOLDER"], filename)
+            return send_from_directory(current_app.config["UPLOAD_FOLDER"], filename)
 
 @main.route('/ajouter/produits', methods=['POST'])
 def add_produit():
-    titre = request.form.get('titre')
-    name = request.form.get('name')
-    qty = request.form.get('qty')
-    date_reception_bon_commande = request.form.get('date_reception_bon_commande')
-    date_livraison_commande = request.form.get('date_livraison_commande')
-    descriptions = request.form.get('descriptions')
-    position_id = request.form.get('position_id')
-    po = request.form.get('po')
-    coloris = request.form.get('coloris')
+                style = request.form.get('style')
+                qty = request.form.get('qty')
+                date_reception_bon_commande = request.form.get('date_reception_bon_commande')
+                date_livraison_commande = request.form.get('date_livraison_commande')
+                position_id = request.form.get('position_id')
+                po = request.form.get('po')
+                coloris = request.form.get('coloris')
+                brand = request.form.get('brand')
+                type_de_commande = request.form.get('type_de_commande')
+                etat_de_commande = request.form.get('etat_de_commande')
+                reference = request.form.get('reference')
+                type_de_produit = request.form.get('type_de_produit')
 
-    image_file = request.files.get('image')
-    dossier_file = request.files.get('dossier_technique')
-    dossier_serigraphie_file = request.files.get('dossier_serigraphie')
-    bon_de_commande_file = request.files.get('bon_de_commande')
-    patronage_file = request.files.get('patronage')
+                image_file = request.files.get('image')
+                dossier_file = request.files.get('dossier_technique')
+                dossier_serigraphie_file = request.files.get('dossier_serigraphie')
+                bon_de_commande_file = request.files.get('bon_de_commande')
+                patronage_file = request.files.get('patronage')
 
-    image_filename = None
-    if image_file and allowed_file(image_file.filename):
-        image_filename = secure_filename(image_file.filename)
-        image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
-        image_file.save(image_path)
+                image_filename = None
+                if image_file and allowed_file(image_file.filename):
+                    image_filename = secure_filename(image_file.filename)
+                    image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
+                    image_file.save(image_path)
 
-    dossier_filename = None
-    if dossier_file and allowed_file(dossier_file.filename):
-        dossier_filename = secure_filename(dossier_file.filename)
-        dossier_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_filename)
-        dossier_file.save(dossier_path)
+                dossier_filename = None
+                if dossier_file and allowed_file(dossier_file.filename):
+                    dossier_filename = secure_filename(dossier_file.filename)
+                    dossier_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_filename)
+                    dossier_file.save(dossier_path)
 
-    dossier_serigraphie_filename = None
-    if dossier_serigraphie_file and allowed_file(dossier_serigraphie_file.filename):
-        dossier_serigraphie_filename = secure_filename(dossier_serigraphie_file.filename)
-        dossier_serigraphie_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_serigraphie_filename)
-        dossier_serigraphie_file.save(dossier_serigraphie_path)
+                dossier_serigraphie_filename = None
+                if dossier_serigraphie_file and allowed_file(dossier_serigraphie_file.filename):
+                    dossier_serigraphie_filename = secure_filename(dossier_serigraphie_file.filename)
+                    dossier_serigraphie_path = os.path.join(current_app.config['UPLOAD_FOLDER'], dossier_serigraphie_filename)
+                    dossier_serigraphie_file.save(dossier_serigraphie_path)
 
-    bon_de_commande_filename = None
-    if bon_de_commande_file and allowed_file(bon_de_commande_file.filename):
-        bon_de_commande_filename = secure_filename(bon_de_commande_file.filename)
-        bon_de_commande_path = os.path.join(current_app.config['UPLOAD_FOLDER'], bon_de_commande_filename)
-        bon_de_commande_file.save(bon_de_commande_path)
+                bon_de_commande_filename = None
+                if bon_de_commande_file and allowed_file(bon_de_commande_file.filename):
+                    bon_de_commande_filename = secure_filename(bon_de_commande_file.filename)
+                    bon_de_commande_path = os.path.join(current_app.config['UPLOAD_FOLDER'], bon_de_commande_filename)
+                    bon_de_commande_file.save(bon_de_commande_path)
 
-    patronage_filename = None
-    if patronage_file and allowed_file(patronage_file.filename):
-        patronage_filename = secure_filename(patronage_file.filename)
-        patronage_path = os.path.join(current_app.config['UPLOAD_FOLDER'], patronage_filename)
-        patronage_file.save(patronage_path)
+                patronage_filename = None
+                if patronage_file and allowed_file(patronage_file.filename):
+                    patronage_filename = secure_filename(patronage_file.filename)
+                    patronage_path = os.path.join(current_app.config['UPLOAD_FOLDER'], patronage_filename)
+                    patronage_file.save(patronage_path)
 
-    try:
-        nouveau_produit = Produit(
-            titre=titre,
-            name=name,
-            image=image_filename,
-            qty=float(qty) if qty else None,
-            dossier_technique=dossier_filename,
-            dossier_serigraphie=dossier_serigraphie_filename,
-            bon_de_commande=bon_de_commande_filename,
-            patronage=patronage_filename,
-            date_reception_bon_commande=date_reception_bon_commande,
-            date_livraison_commande=date_livraison_commande,
-            descriptions=descriptions,
-            position_id=position_id,
-            po=po,
-            coloris=coloris,
-        )
+                try:
+                    nouveau_produit = Produit(
+                        style=style,
+                        image=image_filename,
+                        qty=float(qty) if qty else None,
+                        dossier_technique=dossier_filename,
+                        dossier_serigraphie=dossier_serigraphie_filename,
+                        bon_de_commande=bon_de_commande_filename,
+                        patronage=patronage_filename,
+                        date_reception_bon_commande=date_reception_bon_commande,
+                        date_livraison_commande=date_livraison_commande,
+                        position_id=position_id,
+                        po=po,
+                        coloris=coloris,
+                        brand=brand,
+                        type_de_commande=type_de_commande,
+                        etat_de_commande=etat_de_commande,
+                        reference=reference,
+                        type_de_produit=type_de_produit
+                    )
 
-        db.session.add(nouveau_produit)
-        db.session.commit()
-        return jsonify({'message': 'Produit ajouté avec succès'}), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'message': f'Erreur lors de l\'ajout du produit : {str(e)}'}), 500
-
-def convert_color_to_hex(color_value):
-    if not color_value:
-        return None
-
-    mapping_fr_en = {
-        'bleu': 'blue',
-        'rouge': 'red',
-        'vert': 'green',
-        'jaune': 'yellow',
-        'noir': 'black',
-        'blanc': 'white',
-        'orange': 'orange',
-        'violet': 'violet',
-        'rose': 'pink',
-        'gris': 'gray'
-    }
-
-    value = color_value.strip().lower()
-    if value in mapping_fr_en:
-        value = mapping_fr_en[value]
-
-    try:
-        return webcolors.name_to_hex(value)
-    except ValueError:
-        return color_value
+                    db.session.add(nouveau_produit)
+                    db.session.commit()
+                    return jsonify({'message': 'Produit ajouté avec succès'}), 201
+                except Exception as e:
+                    db.session.rollback()
+                    return jsonify({'message': f'Erreur lors de l\'ajout du produit : {str(e)}'}), 500
 
 @main.route('/importer/produits-images', methods=['POST'])
 def import_produits_documents():
@@ -465,33 +444,77 @@ def import_produits_documents():
                 errors.append(f'Ligne {index+1}: ID produit manquant ou invalide')
                 continue
 
-            if pd.isna(row.get('titre')) or pd.isna(row.get('name')):
+            if pd.isna(row.get('style')):
                 errors.append(f'Ligne {index+1}: Champs obligatoires manquants')
                 continue
 
             try:
-                qty = float(row['qty']) if pd.notna(row.get('qty')) else None
-                position_id = int(row['position_id']) if pd.notna(row.get('position_id')) else None
-                coloris = convert_color_to_hex(row['coloris']) if pd.notna(row.get('coloris')) else None
+                # Conversion des champs standards
+                qty = float(row['quantité']) if pd.notna(row.get('quantité')) else None
+                position_id = int(row['Chaine position']) if pd.notna(row.get('Chaine position')) else None
+                coloris = row['coloris'] if pd.notna(row.get('coloris')) else None  
+                po = row['po'] if pd.notna(row.get('po')) else None  
+                brand = row['marque'] if pd.notna(row.get('marque')) else None
+                type_de_commande = row['type commande'] if pd.notna(row.get('type commande')) else None
+                etat_de_commande = row['etat commande'] if pd.notna(row.get('etat commande')) else None
+                reference = row['reference'] if pd.notna(row.get('reference')) else None
+                type_de_produit = row['type produit'] if pd.notna(row.get('type produit')) else None
+
+                # Gestion des dates améliorée
+                date_reception_bon_commande = None
+                if pd.notna(row.get('date reception bon commande')):
+                    date_reception_bon_commande = pd.to_datetime(
+                        row['date reception bon commande'],
+                        dayfirst=True,
+                        errors='coerce'
+                    )
+                    if pd.isna(date_reception_bon_commande):
+                        date_reception_bon_commande = None
+
+                date_livraison_commande = None
+                if pd.notna(row.get('date livraison commande')):
+                    date_livraison_commande = pd.to_datetime(
+                        row['date livraison commande'],
+                        dayfirst=True,
+                        errors='coerce'
+                    )
+                    if pd.isna(date_livraison_commande):
+                        date_livraison_commande = None
+
             except ValueError as e:
                 errors.append(f'Ligne {index+1}: {str(e)}')
                 continue
 
+            # Création/mise à jour du produit
             produit = Produit.query.get(product_id)
             if produit:
-                produit.titre = row.get('titre')
-                produit.name = row.get('name')
+                produit.style = row.get('style')
                 produit.qty = qty
                 produit.position_id = position_id
                 produit.coloris = coloris
+                produit.po = po
+                produit.brand = brand
+                produit.type_de_commande = type_de_commande
+                produit.etat_de_commande = etat_de_commande
+                produit.reference = reference
+                produit.type_de_produit = type_de_produit
+                produit.date_reception_bon_commande = date_reception_bon_commande
+                produit.date_livraison_commande = date_livraison_commande
             else:
                 produit = Produit(
                     id=product_id,
-                    titre=row.get('titre'),
-                    name=row.get('name'),
+                    style=row.get('style'),
                     qty=qty,
                     position_id=position_id,
-                    coloris=coloris
+                    coloris=coloris,
+                    po=po,
+                    brand=brand,
+                    type_de_commande=type_de_commande,
+                    etat_de_commande=etat_de_commande,
+                    reference=reference,
+                    type_de_produit=type_de_produit,
+                    date_reception_bon_commande=date_reception_bon_commande,
+                    date_livraison_commande=date_livraison_commande
                 )
                 db.session.add(produit)
 
@@ -540,7 +563,7 @@ def import_produits_documents():
         db.session.rollback()
         current_app.logger.error(f"Erreur d'importation: {str(e)}")
         return jsonify({'message': f'Erreur serveur: {str(e)}'}), 500
-    
+
 @main.route('/supprimer/produits/<int:id>', methods=['DELETE'])
 def delete_produit(id):
     try:

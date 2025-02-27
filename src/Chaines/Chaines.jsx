@@ -1,18 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import styled, { keyframes } from "styled-components";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  ListGroup,
-  Button,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
-import DeleteButton from "./DeleteButton"; 
+import DeleteButton from "./DeleteButton";
 
 const LoaderContainer = styled.div`
   display: flex;
@@ -39,7 +32,7 @@ const Dot = styled.div`
   height: 20px;
   margin: 0 5px;
   border-radius: 50%;
-  background-color: #007bff; 
+  background-color: #007bff;
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
 
@@ -72,9 +65,10 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   }
 `;
 const HoverCard = styled.div`
-  position: absolute;
-  left: ${({ x, chaine }) => (chaine === 1 ? x + 15 : x - 220 - 15)}px; 
-  top: ${({ y }) => y - 80}px; // Ajuster la position verticale
+  position: fixed;
+  left: ${({ x, chaine }) => (chaine === 1 ? x + 10 : x - 220 - 15)}px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 900;
   width: 220px;
 `;
@@ -91,7 +85,7 @@ const ControlButton = styled(Button)`
 const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 1rem; // Ajouter un espacement vertical entre les colonnes
+    gap: 1rem;
   }
 `;
 
@@ -100,7 +94,7 @@ export default function Chaines() {
   const [data, setData] = useState({});
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
-  const [chaine, setChaine] = useState(null); 
+  const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -143,7 +137,6 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = (e, targetPosition) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
@@ -177,6 +170,8 @@ export default function Chaines() {
       )
       .then((response) => {
         console.log(response.data);
+        // Rafraîchir la page après la réussite
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Erreur lors de l'envoi de la notification :", error);
@@ -184,8 +179,8 @@ export default function Chaines() {
   };
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
-    setHoverPosition({ x: e.clientX, y: e.clientY });
-    setChaine(item.position_id); 
+    setHoverPosition({ x: e.clientX });
+    setChaine(item.position_id);
   };
 
   const handleMouseMove = (e) => {
@@ -216,107 +211,112 @@ export default function Chaines() {
     <>
       <MyNavbar />
       <Container fluid className="p-4">
-  <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
-    {[1, 2, 3, 4, 5].map((num) => (
+        <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
+          {[1, 2, 3, 4, 5].map((num) => (
+            <Col
+              key={num}
+              xs={12}
+              sm={6}
+              md={2}
+              onDrop={(e) => handleDrop(e, num)}
+              onDragOver={handleDragOver}
+            >
+              <StyledCard>
+                <Card.Body>
+                  <Card.Title className="text-center fw-bold">
+                    Chaine {num}
+                  </Card.Title>
+                  <ListGroup variant="secondary">
+                    {data[num]?.map((item, index) => (
+                      <StyledListGroupItem
+                        key={index}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, num, item, index)}
+                        onClick={() => handleItemClick(item)}
+                        onMouseEnter={(e) => handleMouseEnter(e, item)}
+                        onMouseMove={handleMouseMove}
+                        onMouseLeave={handleMouseLeave}
+                      >
+                        {item.style}
+                      </StyledListGroupItem>
+                    ))}
+                  </ListGroup>
+                </Card.Body>
+              </StyledCard>
+            </Col>
+          ))}
+
+          <Col md="auto" className="d-flex align-items-center">
+            <ControlButton
+              variant="outline-light"
+              onClick={() => setShowPosition6(!showPosition6)}
+            >
+              {showPosition6 ? "▸" : "◂"}
+            </ControlButton>
+          </Col>
+
+          {showPosition6 && (
+            <Col
+              xs={12} // Occuper toute la largeur sur mobile
+              sm={6}
+              md={2}
+              onDrop={(e) => handleDrop(e, 6)}
+              onDragOver={handleDragOver}
+            >
+              <StyledCard className="bg-dark text-white">
+                <Card.Body>
+                  <Card.Title className="text-center fw-bold">
+                    Chaine 6
+                  </Card.Title>
+                  <ListGroup variant="flush">
+                    {data[6]?.map((item, index) => (
+                      <StyledListGroupItem
+                        key={index}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, 6, item, index)}
+                        onClick={() => handleItemClick(item)}
+                        className="bg-secondary text-white"
+                        onMouseEnter={(e) => handleMouseEnter(e, item)}
+                        onMouseMove={handleMouseMove}
+                        onMouseLeave={handleMouseLeave}
+                      >
+                        {item.style}
+                      </StyledListGroupItem>
+                    ))}
+                  </ListGroup>
+                </Card.Body>
+              </StyledCard>
+            </Col>
+          )}
+        </MobileRow>
+      </Container>
+
       <Col
-        key={num}
-        xs={12} // Occuper toute la largeur sur mobile
-        sm={6}
-        md={2}
-        onDrop={(e) => handleDrop(e, num)}
-        onDragOver={handleDragOver}
+        md="auto"
+        className="d-flex align-items-center justify-content-end p-4 m-auto"
       >
-        <StyledCard>
-          <Card.Body>
-            <Card.Title className="text-center fw-bold">
-              Chaine {num}
-            </Card.Title>
-            <ListGroup variant="secondary">
-              {data[num]?.map((item, index) => (
-                <StyledListGroupItem
-                  key={index}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, num, item, index)}
-                  onClick={() => handleItemClick(item)}
-                  onMouseEnter={(e) => handleMouseEnter(e, item)}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  {item.name}
-                </StyledListGroupItem>
-              ))}
-            </ListGroup>
-          </Card.Body>
-        </StyledCard>
-      </Col>
-    ))}
-
-    <Col md="auto" className="d-flex align-items-center">
-      <ControlButton
-        variant="outline-light"
-        onClick={() => setShowPosition6(!showPosition6)}
-      >
-        {showPosition6 ? "▸" : "◂"}
-      </ControlButton>
-    </Col>
-
-    {showPosition6 && (
-      <Col
-        xs={12} // Occuper toute la largeur sur mobile
-        sm={6}
-        md={2}
-        onDrop={(e) => handleDrop(e, 6)}
-        onDragOver={handleDragOver}
-      >
-        <StyledCard className="bg-dark text-white">
-          <Card.Body>
-            <Card.Title className="text-center fw-bold">
-              Chaine 6
-            </Card.Title>
-            <ListGroup variant="flush">
-              {data[6]?.map((item, index) => (
-                <StyledListGroupItem
-                  key={index}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, 6, item, index)}
-                  onClick={() => handleItemClick(item)}
-                  className="bg-secondary text-white"
-                  onMouseEnter={(e) => handleMouseEnter(e, item)}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  {item.name}
-                </StyledListGroupItem>
-              ))}
-            </ListGroup>
-          </Card.Body>
-        </StyledCard>
-      </Col>
-    )}
-  </MobileRow>
-</Container>
-
-      <Col md="auto" className="d-flex align-items-center justify-content-end p-4 m-auto">
         <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
       </Col>
 
       {hoveredItem && (
-        <HoverCard x={hoverPosition.x} y={hoverPosition.y} chaine={chaine}>
+        <HoverCard x={hoverPosition.x} chaine={chaine}>
           <Card className="shadow-custom">
             {hoveredItem.image ? (
-              <Card.Img 
-                variant="top" 
+              <Card.Img
+                variant="top"
                 src={
                   hoveredItem.image.startsWith("http")
                     ? hoveredItem.image
                     : `http://localhost:5000/static/uploads/${hoveredItem.image}`
                 }
-                style={{ height: '120px', objectFit: 'cover' }}
+                style={{ height: "120px", objectFit: "cover" }}
               />
             ) : null}
             <Card.Body>
-              <Card.Title>{hoveredItem.titre}</Card.Title>
-              <span>{hoveredItem.name} / Qty: {hoveredItem.qty}</span>
+              <Card.Title>{hoveredItem.style}</Card.Title>
+              <span>
+                {hoveredItem.style} / Qty: {hoveredItem.qty}
+              </span>
             </Card.Body>
           </Card>
         </HoverCard>

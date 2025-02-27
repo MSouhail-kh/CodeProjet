@@ -136,7 +136,7 @@ export const FermerButton = styled(Button)`
   }
 `;
 
-const ImporterProduitsModal = ({  show, handleClose}) => {
+const ImporterProduitsModal = ({ show, handleClose }) => {
   const [data, setData] = useState([]);
   const [file, setFile] = useState(null);
   const [productImages, setProductImages] = useState({});
@@ -152,13 +152,10 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
   const [selectedRow, setSelectedRow] = useState(null);
 
   const handleCloseModal = () => {
-    setFile(null); 
-    setData([]); 
-    handleClose(); };
-
-  const Close = () => {
-    handleClose()};
-
+    setFile(null);
+    setData([]);
+    handleClose();
+  };
 
   const handleFile = (e) => {
     const selectedFile = e.target.files[0];
@@ -172,10 +169,24 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
       const jsonData = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
-      setData(jsonData);
+
+      // Convertir les dates brutes en format lisible
+      const formattedData = jsonData.map((row, rowIndex) => {
+        if (rowIndex === 0) return row; // La première ligne est l'en-tête
+        return row.map((cell, cellIndex) => {
+          if (typeof cell === 'number' && XLSX.SSF.is_date(cell)) {
+            // Convertir les dates brutes en format "YYYY-MM-DD"
+            return XLSX.SSF.format('YYYY-MM-DD', cell);
+          }
+          return cell;
+        });
+      });
+
+      setData(formattedData);
     };
     reader.readAsBinaryString(selectedFile);
   };
+
 
   const handleRowFileButtonClick = (rowIndex, fileType) => {
     setSelectedRow(rowIndex);
@@ -285,61 +296,25 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
     }
   };
 
-  const handleDeleteFile = (rowIndex, fileType) => {
+  const handleUpdateFile = (rowIndex, fileType) => {
+    setSelectedRow(rowIndex);
     if (fileType === 'image') {
-      setProductImages((prev) => {
-        const newImages = { ...prev };
-        if (newImages[rowIndex]) {
-          URL.revokeObjectURL(newImages[rowIndex].preview);
-          delete newImages[rowIndex];
-        }
-        return newImages;
-      });
+      fileInputRef.current.click();
     } else if (fileType === 'dossierTechnique') {
-      setDossierTechnique((prev) => {
-        const newDossier = { ...prev };
-        if (newDossier[rowIndex]) {
-          URL.revokeObjectURL(newDossier[rowIndex].preview);
-          delete newDossier[rowIndex];
-        }
-        return newDossier;
-      });
+      dossierTechniqueInputRef.current.click();
     } else if (fileType === 'dossierSerigraphie') {
-      setDossierSerigraphie((prev) => {
-        const newDossier = { ...prev };
-        if (newDossier[rowIndex]) {
-          URL.revokeObjectURL(newDossier[rowIndex].preview);
-          delete newDossier[rowIndex];
-        }
-        return newDossier;
-      });
+      dossierSerigraphieInputRef.current.click();
     } else if (fileType === 'bonDeCommande') {
-      setBonDeCommande((prev) => {
-        const newDossier = { ...prev };
-        if (newDossier[rowIndex]) {
-          URL.revokeObjectURL(newDossier[rowIndex].preview);
-          delete newDossier[rowIndex];
-        }
-        return newDossier;
-      });
+      bonDeCommandeInputRef.current.click();
     } else if (fileType === 'patronage') {
-      setPatronage((prev) => {
-        const newDossier = { ...prev };
-        if (newDossier[rowIndex]) {
-          URL.revokeObjectURL(newDossier[rowIndex].preview);
-          delete newDossier[rowIndex];
-        }
-        return newDossier;
-      });
+      patronageInputRef.current.click();
     }
   };
 
   return (
-    <AnimatedModal show={show} onHide={Close} size="xl">
+    <AnimatedModal show={show} onHide={handleCloseModal} size="xl">
       <ModalHeader closeButton>
-        <Modal.Title>
-          📃*🧾 Importer un fichier Excel et les fichiers associés
-        </Modal.Title>
+        <Modal.Title>📃*🧾 Importer un fichier Excel et les fichiers associés</Modal.Title>
       </ModalHeader>
       <ModalBody>
         <StyledFileInput
@@ -373,22 +348,15 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
                       <img
                         src={productImages[rowIndex].preview}
                         alt="Produit"
-                        style={{
-                          width: '50px',
-                          height: '50px',
-                          objectFit: 'cover',
-                          cursor: 'pointer',
-                        }}
-                        onContextMenu={(e) => { e.preventDefault(); handleDeleteFile(rowIndex, 'image'); }}/>
+                        style={{ width: '50px', height: '50px', objectFit: 'cover', cursor: 'pointer' }}
+                        onClick={() => handleUpdateFile(rowIndex, 'image')}
+                      />
                     ) : (
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <FilePlus
-                        style={{
-                          cursor: 'pointer',
-                          height: '50px',
-                          color: 'gray',  
-                        }}
-                        onClick={() => handleRowFileButtonClick(rowIndex, 'image')} />
+                        <FilePlus
+                          style={{ cursor: 'pointer', height: '50px', color: 'gray' }}
+                          onClick={() => handleRowFileButtonClick(rowIndex, 'image')}
+                        />
                       </div>
                     )}
                   </td>
@@ -398,19 +366,16 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
                         href={dossierTechnique[rowIndex].preview}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onContextMenu={(e) => { e.preventDefault(); handleDeleteFile(rowIndex, 'dossierTechnique'); }} >
+                        onClick={() => handleUpdateFile(rowIndex, 'dossierTechnique')}
+                      >
                         Dossier Technique
                       </a>
                     ) : (
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <FilePlus
-                        style={{
-                          cursor: 'pointer',
-                          height: '50px',
-                          color: 'gray',  
-                        }}
-                        onClick={() => handleRowFileButtonClick(rowIndex, 'dossierTechnique')}
-                      />
+                        <FilePlus
+                          style={{ cursor: 'pointer', height: '50px', color: 'gray' }}
+                          onClick={() => handleRowFileButtonClick(rowIndex, 'dossierTechnique')}
+                        />
                       </div>
                     )}
                   </td>
@@ -420,19 +385,16 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
                         href={dossierSerigraphie[rowIndex].preview}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onContextMenu={(e) => { e.preventDefault(); handleDeleteFile(rowIndex, 'dossierSerigraphie');}} >
+                        onClick={() => handleUpdateFile(rowIndex, 'dossierSerigraphie')}
+                      >
                         Dossier Sérigraphie
                       </a>
                     ) : (
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <FilePlus
-                        style={{
-                          cursor: 'pointer',
-                          height: '50px',
-                          color: 'gray',  
-                        }}
-                        onClick={() => handleRowFileButtonClick(rowIndex, 'dossierSerigraphie')}
-                      />
+                        <FilePlus
+                          style={{ cursor: 'pointer', height: '50px', color: 'gray' }}
+                          onClick={() => handleRowFileButtonClick(rowIndex, 'dossierSerigraphie')}
+                        />
                       </div>
                     )}
                   </td>
@@ -442,23 +404,16 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
                         href={bonDeCommande[rowIndex].preview}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onContextMenu={(e) => {
-                          e.preventDefault();
-                          handleDeleteFile(rowIndex, 'bonDeCommande');
-                        }}
+                        onClick={() => handleUpdateFile(rowIndex, 'bonDeCommande')}
                       >
                         Bon de Commande
                       </a>
                     ) : (
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <FilePlus
-                        style={{
-                          cursor: 'pointer',
-                          height: '50px',
-                          color: 'gray',  
-                        }}
-                        onClick={() => handleRowFileButtonClick(rowIndex, 'bonDeCommande')}
-                      />
+                        <FilePlus
+                          style={{ cursor: 'pointer', height: '50px', color: 'gray' }}
+                          onClick={() => handleRowFileButtonClick(rowIndex, 'bonDeCommande')}
+                        />
                       </div>
                     )}
                   </td>
@@ -468,23 +423,16 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
                         href={patronage[rowIndex].preview}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onContextMenu={(e) => {
-                          e.preventDefault();
-                          handleDeleteFile(rowIndex, 'patronage');
-                        }}
+                        onClick={() => handleUpdateFile(rowIndex, 'patronage')}
                       >
                         Patronage
                       </a>
                     ) : (
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <FilePlus
-                        style={{
-                          cursor: 'pointer',
-                          height: '50px',
-                          color: 'gray',  
-                        }}
-                        onClick={() => handleRowFileButtonClick(rowIndex, 'patronage')}
-                      />
+                        <FilePlus
+                          style={{ cursor: 'pointer', height: '50px', color: 'gray' }}
+                          onClick={() => handleRowFileButtonClick(rowIndex, 'patronage')}
+                        />
                       </div>
                     )}
                   </td>
@@ -500,9 +448,8 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
         <FermerButton variant="secondary" onClick={handleCloseModal}>
           <XLg /> Fermer
         </FermerButton>
-
         <GradientButton onClick={handleFullImport} disabled={!file || !data.length}>
-          <CloudUpload />  Importer
+          <CloudUpload /> Importer
         </GradientButton>
       </Modal.Footer>
       <input
@@ -542,6 +489,6 @@ const ImporterProduitsModal = ({  show, handleClose}) => {
       />
     </AnimatedModal>
   );
-  
 };
+
 export default ImporterProduitsModal;

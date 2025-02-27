@@ -5,6 +5,7 @@ import MyNavbar from '../Navbar/Navbar';
 import { Container, Card, Form, Button, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText ,XCircle} from 'react-bootstrap-icons';
 import styled, { keyframes } from "styled-components";
+import { space } from 'postcss/lib/list';
 
 const LoaderContainer = styled.div`
   display: flex;
@@ -44,7 +45,6 @@ const Dot = styled.div`
   }
 `;
 
-
 const StyledCard = styled(Card)`
   border: 1px solid #e0e0e0;
   border-radius: 12px;
@@ -65,6 +65,12 @@ const SectionTitle = styled.h5`
   margin-bottom: 1.5rem;
 `;
 
+const FileName = styled.span`
+  font-size: 0.9rem;
+  color: #3498db;
+  margin-left: 8px;
+`;
+
 const DownloadLink = styled.a`
   display: flex;
   align-items: center;
@@ -81,11 +87,12 @@ const DownloadLink = styled.a`
     transform: translateX(5px);
   }
 `;
-
 const StyledFormControl = styled(Form.Control)`
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   transition: border-color 0.3s ease;
+  height: 40px;
+  width: 100%;
 
   &:focus {
     border-color: #3498db;
@@ -93,15 +100,26 @@ const StyledFormControl = styled(Form.Control)`
   }
 `;
 
-const ColorPreview = styled.span`
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #e0e0e0;
-  vertical-align: middle;
-  margin-left: 8px;
+const DetailItem = styled.div`
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 `;
+
+const DetailLabel = styled.span`
+  font-weight: 500;
+  color: #6c757d;
+  min-width: 50px;
+`;
+
+const DetailValue = styled.span`
+  color: #2c3e50;
+  font-weight: 200;
+`;
+
 
 const FileInputLabel = styled.label`
   display: flex;
@@ -118,12 +136,11 @@ const FileInputLabel = styled.label`
     background: #f8f9fa;
   }
 `;
+const formatDate = (dateString) => {
+  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  return new Intl.DateTimeFormat('fr-FR', options).format(new Date(dateString));
+};
 
-const FileName = styled.span`
-  font-size: 0.9rem;
-  color: #3498db;
-  margin-left: 8px;
-`;
 const ProduitDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -257,14 +274,14 @@ const ProduitDetails = () => {
   return (
     <>
       <MyNavbar />
-      <Container className="mt-4" style={{ maxWidth: '1200px' }}>
+      <Container className="mt-2" style={{ maxWidth: '1500px' }}>
         <StyledCard>
           <Row>
             <Col md={6}>
               <Card.Img
                 variant="top"
                 src={previewImage || product.image || 'https://via.placeholder.com/300'}
-                alt={product.name}
+                alt={product.style}
                 style={{ 
                   height: '100%', 
                   objectFit: 'cover',
@@ -278,15 +295,10 @@ const ProduitDetails = () => {
               <div className="d-flex justify-content-between align-items-center mb-4">
                   <Card.Title className="mb-0" style={{ fontSize: '1.75rem', fontWeight: '600' }}>
                     {isEditing ? (
-                      <StyledFormControl
-                        type="text"
-                        name="titre"
-                        value={editedData.titre || ''}
-                        onChange={handleInputChange}
-                        placeholder="Titre du produit"
-                      />
+                      <>
+                      </>
                     ) : (
-                      product.titre
+                      product.style
                     )}
                   </Card.Title>
 
@@ -326,16 +338,16 @@ const ProduitDetails = () => {
                   Détails du produit
                 </SectionTitle>
 
-                <Card.Subtitle className="mb-4 text-muted">
+                <Card.Subtitle className=" text-muted">
                   {isEditing ? (
                     <Row className="g-3">
                       <Col xs={12} md={6}>
                         <Form.Group>
-                          <Form.Label>Nom du modèle</Form.Label>
+                          <Form.Label>Style du modèle : </Form.Label>
                           <StyledFormControl
                             type="text"
-                            name="name"
-                            value={editedData.name || ''}
+                            name="style"
+                            value={editedData.style || ''}
                             onChange={handleInputChange}
                           />
                         </Form.Group>
@@ -343,7 +355,7 @@ const ProduitDetails = () => {
                       
                       <Col xs={12} md={6}>
                         <Form.Group>
-                          <Form.Label>Quantité</Form.Label>
+                          <Form.Label>Quantité :</Form.Label>
                           <StyledFormControl
                             type="number"
                             name="qty"
@@ -355,7 +367,7 @@ const ProduitDetails = () => {
                       
                       <Col xs={12} md={6}>
                         <Form.Group>
-                          <Form.Label>Référence PO</Form.Label>
+                          <Form.Label>Référence PO :</Form.Label>
                           <StyledFormControl
                             type="text"
                             name="po"
@@ -367,16 +379,14 @@ const ProduitDetails = () => {
                       
                       <Col xs={12} md={6}>
                         <Form.Group>
-                          <Form.Label>Couleur</Form.Label>
-                          <div className="d-flex align-items-center gap-2">
+                          <Form.Label>Couleur :</Form.Label>
+                          <div >
                             <StyledFormControl
-                              type="color"
+                              type="text"
                               name="coloris"
-                              value={editedData.coloris || '#cccccc'}
+                              value={editedData.coloris }
                               onChange={handleInputChange}
-                              style={{ width: '60px' }}
                             />
-                            <span>{editedData.coloris}</span>
                           </div>
                         </Form.Group>
                       </Col>
@@ -384,25 +394,24 @@ const ProduitDetails = () => {
                   ) : (
                     <div className="d-flex flex-wrap gap-3">
                       <div>
-                        <strong>Modèle:</strong> {product.name}
+                        <strong>Modèle :</strong>{product.style}
                       </div>
                       /
                       <div>
-                        <strong>Quantité:</strong> {product.qty}
+                        <strong>Quantité :</strong>{product.qty}
                       </div>
                       /
                       <div>
-                        <strong>PO:</strong> {product.po}
+                        <strong>PO :</strong>{product.po}
                       </div>
                       /
-                      <div className="d-flex align-items-center">
-                        <strong>Couleur:</strong>
-                        <ColorPreview style={{ backgroundColor: product.coloris }} />
-                      </div>
+                      <div >
+                        <strong>Couleur :</strong>{product.coloris}
+                        </div>
                     </div>
                   )}
                 </Card.Subtitle>
-
+<br />
                 <SectionTitle>
                   <Calendar className="me-1 h-2" />
                   Calendrier
@@ -420,7 +429,7 @@ const ProduitDetails = () => {
                           onChange={handleInputChange}
                         />
                       ) : (
-                        <div className="text-muted">{product.date_reception_bon_commande}</div>
+                        <div className="text-muted">{formatDate(product.date_reception_bon_commande)}</div>
                       )}
                     </Form.Group>
                   </Col>
@@ -436,29 +445,140 @@ const ProduitDetails = () => {
                           onChange={handleInputChange}
                         />
                       ) : (
-                        <div className="text-muted">{product.date_livraison_commande}</div>
+                        <div className="text-muted">{formatDate(product.date_livraison_commande)}</div>
                       )}
                     </Form.Group>
                   </Col>
                 </Row>
+                <SectionTitle className="mt-4">
+  Détails Techniques
+</SectionTitle>
 
-                <SectionTitle>
-                  <CardText className="me-1" />
-                  Description
-                </SectionTitle>
+<StyledCard className="mb-4">
+  <Card.Body>
+    <Row className="g-3">
+      {isEditing ? (
+        <>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Marque : </Form.Label>
+              <StyledFormControl
+                type="text"
+                name="brand"
+                value={editedData.brand || ''}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+          </Col>
 
-                {isEditing ? (
-                  <Form.Control
-                    as="textarea"
-                    name="descriptions"
-                    value={editedData.descriptions || ''}
-                    onChange={handleInputChange}
-                    rows={4}
-                    style={{ border: '2px solid #e0e0e0', borderRadius: '8px' }}
-                  />
-                ) : (
-                  <p>{product.descriptions}</p>
-                )}
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Type de commande : </Form.Label>
+              <StyledFormControl
+                as="select"
+                name="type_de_commande"
+                value={editedData.type_de_commande || ''}
+                onChange={handleInputChange}
+              >
+                <option value="">Sélectionner...</option>
+                <option value="Standard">Standard</option>
+                <option value="Express">Express</option>
+                <option value="Sur mesure">Sur mesure</option>
+              </StyledFormControl>
+            </Form.Group>
+          </Col>
+
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>État : </Form.Label>
+              <StyledFormControl
+                as="select"
+                name="etat_de_commande"
+                value={editedData.etat_de_commande || ''}
+                onChange={handleInputChange}
+              >
+                <option value="">Sélectionner...</option>
+                <option value="En attente">En attente</option>
+                <option value="En production">En production</option>
+                <option value="Livré">Livré</option>
+              </StyledFormControl>
+            </Form.Group>
+          </Col>
+
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Référence : </Form.Label>
+              <StyledFormControl
+                type="text"
+                name="reference"
+                value={editedData.reference || ''}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Type de produit : </Form.Label>
+              <StyledFormControl
+                as="select"
+                name="type_de_produit"
+                value={editedData.type_de_produit || ''}
+                onChange={handleInputChange}
+              >
+                <option value="">Sélectionner...</option>
+                <option value="Vêtement">Vêtement</option>
+                <option value="Accessoire">Accessoire</option>
+                <option value="Chaussure">Chaussure</option>
+              </StyledFormControl>
+            </Form.Group>
+          </Col>
+        </>
+      ) : (
+<>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px', margin: '0 auto' }}>
+    <DetailItem>
+      <DetailLabel>
+         Marque :
+      </DetailLabel>
+      <DetailValue>{product.brand || '-'}</DetailValue>
+    </DetailItem>
+
+    <DetailItem>
+      <DetailLabel>
+         État :
+      </DetailLabel>
+      <DetailValue status={product.etat_de_commande?.toLowerCase().replace(' ', '-')}>
+        {product.etat_de_commande || '-'}
+      </DetailValue>
+    </DetailItem>
+
+    <DetailItem>
+      <DetailLabel>
+         Référence :
+      </DetailLabel>
+      <DetailValue>{product.reference || '-'}</DetailValue>
+    </DetailItem>
+
+    <DetailItem>
+      <DetailLabel>
+         Type produit :
+      </DetailLabel>
+      <DetailValue>{product.type_de_produit || '-'}</DetailValue>
+    </DetailItem>
+
+    <DetailItem>
+      <DetailLabel>
+         Type commande :
+      </DetailLabel>
+      <DetailValue>{product.type_de_commande || '-'}</DetailValue>
+    </DetailItem>
+  </div>
+</>        
+      )}
+    </Row>
+  </Card.Body>
+</StyledCard>
 
             <SectionTitle>
               <FileEarmarkText className="me-1" />
@@ -469,7 +589,7 @@ const ProduitDetails = () => {
               <>
                 <FileInputLabel>
                   <Image size={20} />
-                  <span>Changer l'image du produit</span>
+                  <span>Changer l'image du produit : </span>
                   <input
                     type="file"
                     name="image"
@@ -482,7 +602,7 @@ const ProduitDetails = () => {
 
                 <FileInputLabel className="mt-3">
                   <FilePdf size={20} />
-                  <span>Changer le dossier technique (PDF)</span>
+                  <span>Changer le dossier technique (PDF) : </span>
                   <input
                     type="file"
                     name="dossier_technique"
@@ -495,7 +615,7 @@ const ProduitDetails = () => {
 
                 <FileInputLabel className="mt-3">
                   <FilePdf size={20} />
-                  <span>Changer le dossier de sérigraphie (PDF)</span>
+                  <span>Changer le dossier de sérigraphie (PDF) : </span>
                   <input
                     type="file"
                     name="dossier_serigraphie"
@@ -508,7 +628,7 @@ const ProduitDetails = () => {
 
                 <FileInputLabel className="mt-3">
                   <FilePdf size={20} />
-                  <span>Changer le bon de commande (PDF)</span>
+                  <span>Changer le bon de commande (PDF) : </span>
                   <input
                     type="file"
                     name="bon_de_commande"
@@ -521,7 +641,7 @@ const ProduitDetails = () => {
 
                 <FileInputLabel className="mt-3">
                   <FilePdf size={20} />
-                  <span>Changer le patronage (PDF)</span>
+                  <span>Changer le patronage (PDF) : </span>
                   <input
                     type="file"
                     name="patronage"

@@ -45,6 +45,7 @@ export const ModalHeader = styled(Modal.Header)`
     filter: invert(1);
   }
 `;
+
 export const StyledFormControl = styled(Form.Control)`
   width: 100%;
   height: 45px;
@@ -99,7 +100,6 @@ export const GradientButton = styled(Button)`
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
 
-
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(121, 3, 248, 0.56);
@@ -111,10 +111,10 @@ export const GradientButton = styled(Button)`
     box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
   }
 `;
+
 const AjouterProduitsModel = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({
-    titre: '',
-    name: '',
+    style: '',
     image: null,
     qty: 0,
     dossier_technique: null,
@@ -123,10 +123,14 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     patronage: null,
     date_reception_bon_commande: '',
     date_livraison_commande: '',
-    descriptions: '',
     position_id: 6,
     coloris: '',
     po: '',
+    brand: '',
+    type_de_commande: '',
+    etat_de_commande: '',
+    reference: '',
+    type_de_produit: '',
   });
 
   const handleChange = (e) => {
@@ -176,23 +180,12 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>
-              <Form.Group controlId="formTitre" className="mb-4">
-                <Form.Label>Titre</Form.Label>
+              <Form.Group controlId="formStyle" className="mb-4">
+                <Form.Label>Style</Form.Label>
                 <StyledFormControl
                   type="text"
-                  name="titre"
-                  value={formData.titre}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formName" className="mb-4">
-                <Form.Label>Nom</Form.Label>
-                <StyledFormControl
-                  type="text"
-                  name="name"
-                  value={formData.name}
+                  name="style"
+                  value={formData.style}
                   onChange={handleChange}
                   required
                 />
@@ -218,12 +211,42 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="formColoris">
+              <Form.Group controlId="formColoris" className="mb-4">
                 <Form.Label>Coloris</Form.Label>
-                <Form.Control
-                  type="color"
+                <StyledFormControl
+                  type="text"
                   name="coloris"
                   value={formData.coloris}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formBrand" className="mb-4">
+                <Form.Label>Marque</Form.Label>
+                <StyledFormControl
+                  type="text"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formTypeDeCommande" className="mb-4">
+                <Form.Label>Type de Commande</Form.Label>
+                <StyledFormControl
+                  type="text"
+                  name="type_de_commande"
+                  value={formData.type_de_commande}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formEtatDeCommande" className="mb-4">
+                <Form.Label>État de la Commande</Form.Label>
+                <StyledFormControl
+                  type="text"
+                  name="etat_de_commande"
+                  value={formData.etat_de_commande}
                   onChange={handleChange}
                 />
               </Form.Group>
@@ -240,15 +263,16 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
             </Col>
 
             <Col md={6}>
-              <Form.Group controlId="formDossierTechnique">
+              <Form.Group controlId="formImage" className="mb-4">
                 <Form.Label>Image (PNG, JPG...)</Form.Label>
-                <Form.Control
+                <StyledFileInput
                   type="file"
                   name="image"
                   accept="image/png, image/jpeg"
                   onChange={handleChange}
                 />
               </Form.Group>
+
               <Form.Group controlId="formDossierTechnique" className="mb-4">
                 <Form.Label>Dossier Technique (PDF)</Form.Label>
                 <StyledFileInput
@@ -289,6 +313,28 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 />
               </Form.Group>
 
+              <Form.Group controlId="formTypeDeProduit" className="mb-4">
+                <Form.Label>Type de Produit</Form.Label>
+                <StyledFormControl
+                  type="text"
+                  name="type_de_produit"
+                  value={formData.type_de_produit}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formReference" className="mb-4">
+                <Form.Label>Référence</Form.Label>
+                <StyledFormControl
+                  type="text"
+                  name="reference"
+                  value={formData.reference}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+
+
+
               <Form.Group controlId="formDateLivraisonComment" className="mb-4">
                 <Form.Label>Date Livraison Commande</Form.Label>
                 <StyledFormControl
@@ -301,16 +347,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
             </Col>
           </Row>
 
-          <Form.Group controlId="formDescriptions" className="mb-4">
-            <Form.Label>Descriptions</Form.Label>
-            <StyledTextArea
-              as="textarea"
-              rows={3}
-              name="descriptions"
-              value={formData.descriptions}
-              onChange={handleChange}
-            />
-          </Form.Group>
+
           <GradientButton type="submit" className="btn-sm">
             🚀 Ajouter le Produit
           </GradientButton>
