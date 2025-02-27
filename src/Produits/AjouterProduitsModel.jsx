@@ -174,7 +174,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
       <ModalHeader closeButton>
-        <Modal.Title>✨ Ajouter un Produit</Modal.Title>
+        <Modal.Title>✨ Ajouter un Modal</Modal.Title>
       </ModalHeader>
       <ModalBody>
         <Form onSubmit={handleSubmit}>
@@ -349,7 +349,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
 
 
           <GradientButton type="submit" className="btn-sm">
-            🚀 Ajouter le Produit
+            🚀 Ajouter le Modal
           </GradientButton>
         </Form>
       </ModalBody>
