@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:5000/user", {
+            const response = await axios.get("https://gestion-planning-back-end.onrender.com/user", {
                 headers: { Authorization: `Bearer ${authState.token}` },
             });
             setAuthState({ ...authState, user: response.data });

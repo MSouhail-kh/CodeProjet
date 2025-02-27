@@ -285,7 +285,7 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
 
     try {
       await axios.post(
-        'http://127.0.0.1:5000/importer/produits-images',
+        'https://gestion-planning-back-end.onrender.com/importer/produits-images',
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

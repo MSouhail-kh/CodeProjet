@@ -158,7 +158,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     });
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/ajouter/produits', formDataToSend, {
+      const response = await axios.post('https://gestion-planning-back-end.onrender.com/ajouter/produits', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

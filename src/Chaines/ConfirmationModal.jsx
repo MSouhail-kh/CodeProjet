@@ -91,7 +91,7 @@ const ConfirmationModal = ({ show, message, onCancel }) => {
   const handleConfirm = async () => {
     if (password === "12345678") {
       try {
-        await axios.delete("http://localhost:5000/supprimer/produits");
+        await axios.delete("https://gestion-planning-back-end.onrender.com/supprimer/produits");
         window.location.reload();
       } catch (error) {
         console.error("Erreur lors de la suppression :", error);

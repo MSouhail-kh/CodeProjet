@@ -27,7 +27,7 @@ export const Register = ({ onRegisterSuccess }) => {
 
         try {
             const response = await axios.post(
-                "http://localhost:5000/signup",
+                "https://gestion-planning-back-end.onrender.com/signup",
                 formData,
                 {
                     headers: { "Content-Type": "application/json" },

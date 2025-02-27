@@ -99,7 +99,7 @@ export default function Chaines() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/produits")
+      .get("https://gestion-planning-back-end.onrender.com/produits")
       .then((response) => {
         const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
         const produits = Object.values(response.data);
@@ -156,7 +156,7 @@ export default function Chaines() {
 
     axios
       .post(
-        "http://localhost:5000/drag",
+        "https://gestion-planning-back-end.onrender.com/drag",
         {
           oldPosition: transferData.from,
           newPosition: targetPosition,
@@ -307,7 +307,7 @@ export default function Chaines() {
                 src={
                   hoveredItem.image.startsWith("http")
                     ? hoveredItem.image
-                    : `http://localhost:5000/static/uploads/${hoveredItem.image}`
+                    : `https://gestion-planning-back-end.onrender.com/static/uploads/${hoveredItem.image}`
                 }
                 style={{ height: "120px", objectFit: "cover" }}
               />

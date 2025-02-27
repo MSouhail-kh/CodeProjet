@@ -158,7 +158,7 @@ const ProduitDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/produits/${id}`);
+        const response = await axios.get(`https://gestion-planning-back-end.onrender.com/produits/${id}`);
         setProduct(response.data);
         setEditedData(response.data);
         setLoading(false); 
@@ -224,7 +224,7 @@ const ProduitDetails = () => {
       });
 
       const response = await axios.put(
-        `http://localhost:5000/update/produits/${id}`,
+        `https://gestion-planning-back-end.onrender.com/update/produits/${id}`,
         formData,
         {
           headers: {

@@ -2,18 +2,14 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
 class Config:
-    # Database configuration
-    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg://openpg:12345678@localhost:5432/DataSigmatex"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # File upload configuration
-    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
-    ALLOWED_EXTENSIONS = set(os.getenv('ALLOWED_EXTENSIONS').split(','))
+    UPLOAD_FOLDER = "C:\React\reactcode\public\static\uploads"
 
-    # Flask secret key
-    SECRET_KEY = os.getenv('SECRET_KEY')
+    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "pdf", "xls", "xlsx"}
 
-    # Flask debug mode
-    FLASK_DEBUG = os.getenv('FLASK_DEBUG') == 'True'
+    SECRET_KEY = "https://jwt.io/#debugger-io?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.cThIIoDvwdueQB468K5xDc5633seEFoqwxjF_xSJyQQ"
+
+    FLASK_DEBUG = True

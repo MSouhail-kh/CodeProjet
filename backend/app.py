@@ -11,7 +11,9 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 db.init_app(app)
+
 migrate = Migrate(app, db)
+
 CORS(app, supports_credentials=True, origins="http://localhost:5173")
 
 mail = Mail(app)
@@ -19,4 +21,4 @@ mail = Mail(app)
 app.register_blueprint(main_blueprint)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8080)

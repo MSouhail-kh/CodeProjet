@@ -49,7 +49,7 @@ const DeleteButton = ({ onDeleteSuccess }) => {
         throw new Error("Données de transfert invalides");
       }
 
-      await axios.delete(`http://localhost:5000/supprimer/produits/${item.id}`);
+      await axios.delete(`https://gestion-planning-back-end.onrender.com/supprimer/produits/${item.id}`);
       onDeleteSuccess(item.id);
       window.location.reload();
     } catch (error) {

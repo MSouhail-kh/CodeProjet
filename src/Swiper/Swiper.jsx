@@ -104,7 +104,7 @@ export default function EnhancedSwiper() {
   useEffect(() => {
     const fetchProduits = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/produits/position/${produitId}`);
+        const response = await axios.get(`https://gestion-planning-back-end.onrender.com/produits/position/${produitId}`);
         setProduits(response.data);
       } catch (err) {
         setError('Erreur lors du chargement des produits');
