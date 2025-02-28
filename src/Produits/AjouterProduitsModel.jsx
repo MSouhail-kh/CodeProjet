@@ -162,7 +162,7 @@ const handleSubmit = async (e) => {
 
   try {
     const response = await axios.post(
-      'https://gestion-planning-back-end.onrender.com/ajouter/produits',
+      'https://gestion-planning-back-end-1.onrender.com/ajouter/produits',
       formDataToSend,
       { headers: { 'Content-Type': 'multipart/form-data' } }
     );
