@@ -147,30 +147,32 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
       });
     }
   };
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const formDataToSend = new FormData();
+  
+  Object.entries(formData).forEach(([key, value]) => {
+    if (value) formDataToSend.append(key, value);
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      if (formData[key]) {
-        formDataToSend.append(key, formData[key]);
-      }
-    });
+  try {
+    const postResponse = await axios.post(
+      'https://gestion-planning-back-end.onrender.com/ajouter/produits', 
+      formDataToSend,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    console.log('Nouveau produit ajouté:', postResponse.data);
 
-    try {
-      const response = await axios.post('https://gestion-planning-back-end.onrender.com/ajouter/produits', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log(response.data.message);
-      handleClose();
-      window.location.reload();
-    } catch (error) {
-      console.error('Erreur lors de l\'ajout du produit', error);
-    }
-  };
+    const getResponse = await axios.get('https://gestion-planning-back-end.onrender.com/produits');
+    setProducts(getResponse.data);    
+    handleClose();
 
+  } catch (error) {
+    console.error('Erreur:', error.response?.data || error.message);
+  }
+};
+  
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
       <ModalHeader closeButton>
