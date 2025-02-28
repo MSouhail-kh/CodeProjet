@@ -89,7 +89,7 @@ const ConfirmationModal = ({ show, message, onCancel }) => {
     if (password === "12345678") {
       try {
         await api.delete("/supprimer/produits");
-        window.location.reload();
+        navigate(0);
       } catch (error) {
         console.error("Erreur lors de la suppression :", error);
         alert("Échec de la suppression de tous les produits !");
