@@ -8,7 +8,8 @@
     "dev": "vite",
     "backend": "python c:/React/reactcode/backend/app.py",
     "electron:dev": "concurrently -k \"npm run backend\" \"vite\" \"wait-on http://localhost:5173 && electron .\"",
-    "build": "vite build --outDir build",
+    "build": "vite build",
+    "postbuild": "ls -al dist/",
     "electron:build": "vite build && electron-builder"
   },
   "dependencies": {
