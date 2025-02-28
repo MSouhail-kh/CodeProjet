@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Modal, Button, Table ,Form} from 'react-bootstrap';
 import { XLg, CloudUpload ,FilePlus} from 'react-bootstrap-icons';
 import * as XLSX from 'xlsx';
-import axios from 'axios';
+import api from '../services/axios';
 import styled from 'styled-components';
 
 export const AnimatedModal = styled(Modal)`
@@ -255,47 +255,47 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
     if (!file) {
       return;
     }
+  
     const formData = new FormData();
     formData.append('excel_file', file);
-
+  
     Object.keys(productImages).forEach((rowIndex) => {
       const imageData = productImages[rowIndex];
       formData.append(`image_${parseInt(rowIndex) + 1}`, imageData.file);
     });
-
+  
     Object.keys(dossierTechnique).forEach((rowIndex) => {
       const dossierData = dossierTechnique[rowIndex];
       formData.append(`dossier_technique_${parseInt(rowIndex) + 1}`, dossierData.file);
     });
-
+  
     Object.keys(dossierSerigraphie).forEach((rowIndex) => {
       const dossierData = dossierSerigraphie[rowIndex];
       formData.append(`dossier_serigraphie_${parseInt(rowIndex) + 1}`, dossierData.file);
     });
-
+  
     Object.keys(bonDeCommande).forEach((rowIndex) => {
       const dossierData = bonDeCommande[rowIndex];
       formData.append(`bon_de_commande_${parseInt(rowIndex) + 1}`, dossierData.file);
     });
-
+  
     Object.keys(patronage).forEach((rowIndex) => {
       const dossierData = patronage[rowIndex];
       formData.append(`patronage_${parseInt(rowIndex) + 1}`, dossierData.file);
     });
-
+  
     try {
-      await axios.post(
-        'https://gestion-planning-back-end-1.onrender.com/importer/produits-images',
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
+      await api.post('/importer/produits-images', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+  
       handleCloseModal();
       window.location.reload();
     } catch (error) {
       console.error("Erreur lors de l'importation.", error);
     }
   };
-
+  
   const handleUpdateFile = (rowIndex, fileType) => {
     setSelectedRow(rowIndex);
     if (fileType === 'image') {

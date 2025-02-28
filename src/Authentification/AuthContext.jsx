@@ -1,6 +1,6 @@
 // AuthContext.js
 import { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "../services/axios";
 
 export const AuthContext = createContext();
 
@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get("https://gestion-planning-back-end-1.onrender.com/user", {
+            const response = await api.get("/user", {
                 headers: { Authorization: `Bearer ${authState.token}` },
             });
             setAuthState({ ...authState, user: response.data });

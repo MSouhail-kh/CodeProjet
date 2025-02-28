@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/axios';
 import { useParams,useNavigate } from 'react-router-dom';
 import MyNavbar from '../Navbar/Navbar';
 import { Container, Card, Form, Button, Row, Col, Spinner, Alert } from 'react-bootstrap';
@@ -156,11 +156,10 @@ const ProduitDetails = () => {
   const [patronageFileName, setPatronageFileName] = useState('');
   const navigate = useNavigate(); 
 
-
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`https://gestion-planning-back-end-1.onrender.com/produits/${id}`);
+        const response = await api.get(`/produits/${id}`);
         setProduct(response.data);
         setEditedData(response.data);
         setLoading(false); 
@@ -214,38 +213,34 @@ const ProduitDetails = () => {
       }));
     }
   };
-
-  const handleSave = async () => {
-    try {
-      const formData = new FormData();
-
-      Object.keys(editedData).forEach((key) => {
-        if (editedData[key] !== null && editedData[key] !== undefined) {
-          formData.append(key, editedData[key]);
-        }
-      });
-
-      const response = await axios.put(
-        `https://gestion-planning-back-end-1.onrender.com/update/produits/${id}`,
-        formData,
-        {
+    
+    const handleSave = async () => {
+      try {
+        const formData = new FormData();
+    
+        Object.keys(editedData).forEach((key) => {
+          if (editedData[key] !== null && editedData[key] !== undefined) {
+            formData.append(key, editedData[key]);
+          }
+        });
+    
+        const response = await api.put(`/update/produits/${id}`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data', 
+            'Content-Type': 'multipart/form-data',
           },
-        }
-      );
-
-      setProduct(response.data);
-      setIsEditing(false);
-      setPreviewImage(null);
-      setLoading(false);
-      navigate(`/Chaines`)
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+        });
+    
+        setProduct(response.data);
+        setIsEditing(false);
+        setPreviewImage(null);
+        setLoading(false);
+        navigate(`/Chaines`);
+        window.location.reload();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    
   if (loading) {
     return (
       <LoaderContainer>
@@ -484,9 +479,8 @@ const ProduitDetails = () => {
                 onChange={handleInputChange}
               >
                 <option value="">Sélectionner...</option>
-                <option value="Standard">Standard</option>
-                <option value="Express">Express</option>
-                <option value="Sur mesure">Sur mesure</option>
+                <option value="CMT">CMT</option>
+                <option value="MAKER">MAKER</option>
               </StyledFormControl>
             </Form.Group>
           </Col>
@@ -495,15 +489,11 @@ const ProduitDetails = () => {
             <Form.Group>
               <Form.Label>État : </Form.Label>
               <StyledFormControl
-                as="select"
+                type="text"
                 name="etat_de_commande"
                 value={editedData.etat_de_commande || ''}
                 onChange={handleInputChange}
               >
-                <option value="">Sélectionner...</option>
-                <option value="En attente">En attente</option>
-                <option value="En production">En production</option>
-                <option value="Livré">Livré</option>
               </StyledFormControl>
             </Form.Group>
           </Col>
@@ -530,9 +520,9 @@ const ProduitDetails = () => {
                 onChange={handleInputChange}
               >
                 <option value="">Sélectionner...</option>
-                <option value="Vêtement">Vêtement</option>
-                <option value="Accessoire">Accessoire</option>
-                <option value="Chaussure">Chaussure</option>
+                <option value="TSHIRT">TSHIRT</option>
+                <option value="TSHIRT MC">TSHIRT MC</option>
+                <option value="TEE SHIRT ML">TEE SHIRT ML</option>
               </StyledFormControl>
             </Form.Group>
           </Col>

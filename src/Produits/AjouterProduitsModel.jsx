@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../services/axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
@@ -150,37 +150,34 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
       });
     }
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
   
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const formDataToSend = new FormData();
-
-  Object.entries(formData).forEach(([key, value]) => {
-    if (value) {
-      // Vérifie si c'est un fichier avant de l'ajouter
-      if (value instanceof File) {
-        formDataToSend.append(key, value, value.name);
-      } else {
-        formDataToSend.append(key, value);
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value) {
+        if (value instanceof File) {
+          formDataToSend.append(key, value, value.name);
+        } else {
+          formDataToSend.append(key, value);
+        }
       }
+    });
+  
+    try {
+      const response = await api.post('/ajouter/produits', formDataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+  
+      console.log('Réponse:', response.data);
+      handleClose();
+      navigate('/Chaines');
+      window.location.reload();
+    } catch (error) {
+      console.error('Erreur:', error.response?.data || error.message);
     }
-  });
-
-  try {
-    const response = await axios.post(
-      'https://gestion-planning-back-end-1.onrender.com/ajouter/produits',
-      formDataToSend,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    );
-
-    console.log('Réponse:', response.data);
-    handleClose();
-    navigate('/Chaines');
-    window.location.reload();
-  } catch (error) {
-    console.error('Erreur:', error.response?.data || error.message);
-  }
-};
+  };
   
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
@@ -243,17 +240,22 @@ const handleSubmit = async (e) => {
               </Form.Group>
 
               <Form.Group controlId="formTypeDeCommande" className="mb-4">
-                <Form.Label>Type de Commande</Form.Label>
+                <Form.Label> Type de Commande</Form.Label>
                 <StyledFormControl
-                  type="text"
+                  as="select"
                   name="type_de_commande"
                   value={formData.type_de_commande}
                   onChange={handleChange}
-                />
+                >
+                  <option value="">Sélectionner...</option>
+                  <option value="CMT">CMT</option>
+                  <option value="MAKER">MAKER</option>
+                </StyledFormControl>
               </Form.Group>
 
+
               <Form.Group controlId="formEtatDeCommande" className="mb-4">
-                <Form.Label>État de la Commande</Form.Label>
+                <Form.Label> État de la Commande</Form.Label>
                 <StyledFormControl
                   type="text"
                   name="etat_de_commande"
@@ -327,12 +329,18 @@ const handleSubmit = async (e) => {
               <Form.Group controlId="formTypeDeProduit" className="mb-4">
                 <Form.Label>Type de Produit</Form.Label>
                 <StyledFormControl
-                  type="text"
+                  as="select"
                   name="type_de_produit"
                   value={formData.type_de_produit}
                   onChange={handleChange}
-                />
+                >
+                  <option value="">Sélectionner...</option>
+                  <option value="TSHIRT">TSHIRT</option>
+                  <option value="TSHIRT MC">TSHIRT MC</option>
+                  <option value="TEE SHIRT ML">TEE SHIRT ML</option>
+                </StyledFormControl>
               </Form.Group>
+
 
               <Form.Group controlId="formReference" className="mb-4">
                 <Form.Label>Référence</Form.Label>

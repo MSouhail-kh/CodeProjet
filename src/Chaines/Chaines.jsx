@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
+import NoImage from '../assets/No+Image.png';
+import api from "../services/axios";
 
+// Styles pour le loader
 const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   width: 100%;
+  background: rgba(255, 255, 255, 0.8);
 `;
 
 const pulseAnimation = keyframes`
@@ -45,6 +48,7 @@ const Dot = styled.div`
   }
 `;
 
+// Styles pour les cartes et listes
 const StyledCard = styled(Card)`
   height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -58,19 +62,25 @@ const StyledCard = styled(Card)`
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
 
   &:hover {
     background: linear-gradient(135deg, #2575fc, #6a11cb);
+    color: white;
+    transform: scale(1.02);
   }
 `;
+
+// Styles pour la carte de survol
 const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chaine }) => (chaine === 1 ? x + 10 : x - 220 - 15)}px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: ${({ y }) => y}px;
   z-index: 900;
   width: 220px;
+  transition: opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  transform: ${({ show }) => (show ? "translateY(0)" : "translateY(-10px)")};
 `;
 
 const ControlButton = styled(Button)`
@@ -80,6 +90,14 @@ const ControlButton = styled(Button)`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 const MobileRow = styled(Row)`
@@ -98,8 +116,7 @@ export default function Chaines() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("https://gestion-planning-back-end-1.onrender.com/produits")
+    api.get("https://gestion-planning-back-end-1.onrender.com/produits")
       .then((response) => {
         const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
         const produits = Object.values(response.data);
@@ -137,6 +154,7 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
   const handleDrop = (e, targetPosition) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
@@ -154,9 +172,7 @@ export default function Chaines() {
       };
     });
 
-    axios
-      .post(
-        "https://gestion-planning-back-end-1.onrender.com/drag",
+    api.post("https://gestion-planning-back-end-1.onrender.com/drag",
         {
           oldPosition: transferData.from,
           newPosition: targetPosition,
@@ -170,16 +186,16 @@ export default function Chaines() {
       )
       .then((response) => {
         console.log(response.data);
-        // Rafraîchir la page après la réussite
         window.location.reload();
       })
       .catch((error) => {
         console.error("Erreur lors de l'envoi de la notification :", error);
       });
   };
+
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
-    setHoverPosition({ x: e.clientX });
+    setHoverPosition({ x: e.clientX, y: e.clientY });
     setChaine(item.position_id);
   };
 
@@ -257,7 +273,7 @@ export default function Chaines() {
 
           {showPosition6 && (
             <Col
-              xs={12} // Occuper toute la largeur sur mobile
+              xs={12}
               sm={6}
               md={2}
               onDrop={(e) => handleDrop(e, 6)}
@@ -298,24 +314,36 @@ export default function Chaines() {
         <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
       </Col>
 
-    {hoveredItem && hoveredItem.image && (
-      <HoverCard x={hoverPosition.x} chaine={chaine}>
-        <Card className="shadow-custom">
-          <Card.Img
-            variant="top"
-            src={hoveredItem.image}
-            style={{ height: "120px", objectFit: "cover" }}
-          />
-          <Card.Body>
-            <Card.Title>{hoveredItem.style}</Card.Title>
-            <span>
-              {hoveredItem.style} / Qty: {hoveredItem.qty}
-            </span>
-          </Card.Body>
-        </Card>
-      </HoverCard>
-    )}
-
+      {hoveredItem && (
+        <HoverCard
+          x={hoverPosition.x}
+          y={hoverPosition.y}
+          chaine={chaine}
+          show={hoveredItem !== null}
+        >
+          <Card className="shadow-custom">
+            {hoveredItem.image ? (
+              <Card.Img
+                variant="top"
+                src={hoveredItem.image}
+                style={{ height: "120px", objectFit: "cover" }}
+              />
+            ) : (
+              <Card.Img
+                variant="top"
+                src={NoImage} 
+                style={{ height: "120px", objectFit: "cover" }}
+              />
+            )}
+            <Card.Body>
+              <Card.Title>{hoveredItem.style}</Card.Title>
+              <span>
+                {hoveredItem.style} / Qty: {hoveredItem.qty}
+              </span>
+            </Card.Body>
+          </Card>
+        </HoverCard>
+      )}
     </>
   );
 }

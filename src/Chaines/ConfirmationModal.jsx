@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import axios from 'axios';
 import styled from 'styled-components';
+import api from '../services/axios';
 
-// Styles pour ModalBody et ModalHeader
 export const ModalBody = styled(Modal.Body)`
   background: rgba(255, 255, 255, 0.95);
   padding: 2rem;
@@ -24,7 +23,6 @@ export const ModalHeader = styled(Modal.Header)`
   }
 `;
 
-// Styles pour les contrôles de formulaire
 export const StyledFormControl = styled(Form.Control)`
   width: 100%;
   height: 45px;
@@ -40,7 +38,6 @@ export const StyledFormControl = styled(Form.Control)`
   }
 `;
 
-// Styles pour les boutons
 export const GradientButton = styled(Button)`
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   border: none;
@@ -91,7 +88,7 @@ const ConfirmationModal = ({ show, message, onCancel }) => {
   const handleConfirm = async () => {
     if (password === "12345678") {
       try {
-        await axios.delete("https://gestion-planning-back-end.onrender.com/supprimer/produits");
+        await api.delete("/supprimer/produits");
         window.location.reload();
       } catch (error) {
         console.error("Erreur lors de la suppression :", error);

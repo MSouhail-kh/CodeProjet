@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { ExclamationCircleFill, BoxArrowInRight, Eye, EyeSlash } from "react-bootstrap-icons";
 import { InputGroup, FormControl, Button } from "react-bootstrap";
 import "./Login.css";
+import api from "../../services/axios";
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
@@ -21,8 +21,8 @@ const Login = ({ onLoginSuccess }) => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "https://gestion-planning-back-end-1.onrender.com/login",
+      const response = await api.post(
+        "/login",
         { email, password },
         { withCredentials: true }
       );

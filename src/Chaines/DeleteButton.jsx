@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
-import axios from "axios";
 import styled from "styled-components";
 import { Trash } from "react-bootstrap-icons";
 import ConfirmationModal from "./ConfirmationModal";
+import api from "../services/axios";
 
 export const StyledDeleteButton = styled(Button)`
   background: linear-gradient(135deg, #ff416c, #ff4b2b);
@@ -49,7 +49,7 @@ const DeleteButton = ({ onDeleteSuccess }) => {
         throw new Error("Données de transfert invalides");
       }
 
-      await axios.delete(`https://gestion-planning-back-end-1.onrender.com/supprimer/produits/${item.id}`);
+      await api.delete(`/supprimer/produits/${item.id}`);
       onDeleteSuccess(item.id);
       window.location.reload();
     } catch (error) {

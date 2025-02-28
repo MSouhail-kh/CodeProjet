@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ExclamationCircleFill, CheckCircleFill, PersonPlusFill, Eye, EyeSlash } from "react-bootstrap-icons";
 import { InputGroup, FormControl, Button } from "react-bootstrap";
 import "./Register.css";
+import api from "../../services/axios";
 
 export const Register = ({ onRegisterSuccess }) => {
     const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ export const Register = ({ onRegisterSuccess }) => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false); // État pour afficher/masquer le mot de passe
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
@@ -26,8 +26,8 @@ export const Register = ({ onRegisterSuccess }) => {
         setSuccess("");
 
         try {
-            const response = await axios.post(
-                "https://gestion-planning-back-end-1.onrender.com/signup",
+            const response = await api.post(
+                "/signup",
                 formData,
                 {
                     headers: { "Content-Type": "application/json" },

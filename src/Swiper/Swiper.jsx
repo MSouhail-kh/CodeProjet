@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
@@ -8,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import api from '../services/axios';
 
 const SwiperContainer = styled.div`
   width: 100%;
@@ -104,7 +104,7 @@ export default function EnhancedSwiper() {
   useEffect(() => {
     const fetchProduits = async () => {
       try {
-        const response = await axios.get(`https://gestion-planning-back-end-1.onrender.com/produits/position/${produitId}`);
+        const response = await api.get(`/produits/position/${produitId}`);
         setProduits(response.data);
       } catch (err) {
         setError('Erreur lors du chargement des produits');
