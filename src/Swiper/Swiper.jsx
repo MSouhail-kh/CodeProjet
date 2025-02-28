@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -12,8 +12,8 @@ import api from '../services/axios';
 const SwiperContainer = styled.div`
   width: 100%;
   padding: 20px 0;
-  background: linear-gradient(135deg, #2575fc); /* Dégradé moderne */
-  height: 350px; /* Hauteur légèrement augmentée pour accommoder les images plus larges */
+  background: linear-gradient(135deg, #2575fc);
+  height: 350px;
 
   .swiper-pagination-bullet {
     background: #333;
@@ -47,7 +47,7 @@ const Card = styled.div`
   transition: all 0.3s ease;
   cursor: pointer;
   user-select: none;
-  height: 250px; /* Hauteur augmentée pour les images plus grandes */
+  height: 250px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -76,7 +76,7 @@ const Card = styled.div`
 
 const ImageContainer = styled.div`
   width: 100%;
-  height: 150px; /* Hauteur augmentée pour les images plus grandes */
+  height: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -84,7 +84,7 @@ const ImageContainer = styled.div`
   border-radius: 10px;
 
   img {
-    width: 90%; 
+    width: 90%;
     height: auto;
     object-fit: contain;
     transition: transform 0.3s ease;
@@ -97,6 +97,7 @@ const ImageContainer = styled.div`
 
 export default function EnhancedSwiper() {
   const { id: produitId } = useParams();
+  const navigate = useNavigate();
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -124,11 +125,11 @@ export default function EnhancedSwiper() {
     return <div>{error}</div>;
   }
 
-const handleCardClick = (id) => {
-    window.location.href = `/produit/${id}`;
-};
+  const handleCardClick = (id) => {
+    navigate(`/produit/${id}`);
+  };
 
-return (
+  return (
     <SwiperContainer>
         <Swiper
             slidesPerView={'auto'}
@@ -169,5 +170,5 @@ return (
             ))}
         </Swiper>
     </SwiperContainer>
-);
+  );
 }
