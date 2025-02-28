@@ -239,6 +239,7 @@ const ProduitDetails = () => {
       setIsEditing(false);
       setPreviewImage(null);
       setLoading(false);
+      navigate(`/Chaines`)
       window.location.reload();
     } catch (err) {
       console.error(err);
