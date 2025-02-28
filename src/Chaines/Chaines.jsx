@@ -303,14 +303,14 @@ export default function Chaines() {
           <Card className="shadow-custom">
             {hoveredItem.image ? (
               <Card.Img
-                variant="top"
-                src={
-                  hoveredItem.image.startsWith("http")
-                    ? hoveredItem.image
-                    : `https://gestion-planning-git-gestion-planning-msouhail-khs-projects.vercel.app/assets/${hoveredItem.image}`
-                }
-                style={{ height: "120px", objectFit: "cover" }}
-              />
+                  variant="top"
+                  src={
+                    hoveredItem.image.startsWith("http")
+                      ? hoveredItem.image
+                      : `https://gestion-planning-git-gestion-planning-msouhail-khs-projects.vercel.app/static/uploads/${hoveredItem.image}`
+                  }
+                  style={{ height: "120px", objectFit: "cover" }}
+                />
             ) : null}
             <Card.Body>
               <Card.Title>{hoveredItem.style}</Card.Title>
