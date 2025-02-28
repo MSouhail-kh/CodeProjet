@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+
 
 export const AnimatedModal = styled(Modal)`
   animation: fadeInUp 0.5s ease-out;
@@ -132,7 +134,8 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     reference: '',
     type_de_produit: '',
   });
-
+  const navigate = useNavigate(); 
+  
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
@@ -148,30 +151,30 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     }
   };
   
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const formDataToSend = new FormData();
-  
-  Object.entries(formData).forEach(([key, value]) => {
-    if (value) formDataToSend.append(key, value);
-  });
+ const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value) formDataToSend.append(key, value);
+    });
 
-  try {
-    const postResponse = await axios.post(
-      'https://gestion-planning-back-end.onrender.com/ajouter/produits', 
-      formDataToSend,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    );
-    console.log('Nouveau produit ajouté:', postResponse.data);
+    try {
+      const postResponse = await axios.post(
+        'https://gestion-planning-back-end.onrender.com/ajouter/produits', 
+        formDataToSend,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
 
-    const getResponse = await axios.get('https://gestion-planning-back-end.onrender.com/produits');
-    setProducts(getResponse.data);    
-    handleClose();
+      console.log('Nouveau produit ajouté:', postResponse.data);
+      
+      handleClose();
+      navigate('/Chaines'); 
+    } catch (error) {
+      console.error('Erreur:', error.response?.data || error.message);
+    }
+  };
 
-  } catch (error) {
-    console.error('Erreur:', error.response?.data || error.message);
-  }
-};
   
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
