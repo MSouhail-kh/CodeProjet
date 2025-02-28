@@ -172,7 +172,7 @@ export default function Chaines() {
       };
     });
 
-    api.post("https://gestion-planning-back-end-1.onrender.com/drag",
+    api.post("/drag",
         {
           oldPosition: transferData.from,
           newPosition: targetPosition,
@@ -186,7 +186,7 @@ export default function Chaines() {
       )
       .then((response) => {
         console.log(response.data);
-        window.location.reload();
+        navigate(0);
       })
       .catch((error) => {
         console.error("Erreur lors de l'envoi de la notification :", error);
