@@ -302,15 +302,15 @@ export default function Chaines() {
         <HoverCard x={hoverPosition.x} chaine={chaine}>
           <Card className="shadow-custom">
             {hoveredItem.image ? (
-              <Card.Img
-                  variant="top"
-                  src={
-                    hoveredItem.image.startsWith("http")
-                      ? hoveredItem.image
-                      : `http://gestion-planning-git-gestion-planning-msouhail-khs-projects.vercel.app/static/uploads/${hoveredItem.image}`
-                  }
-                  style={{ height: "120px", objectFit: "cover" }}
-                />
+            <Card.Img
+              variant="top"
+              src={
+                hoveredItem.image.startsWith("https")
+                  ? hoveredItem.image
+                  : `https://gestion-planning-git-gestion-planning-msouhail-khs-projects.vercel.app/assets/${hoveredItem.image}`
+              }
+              style={{ height: "120px", objectFit: "cover" }}
+            />
             ) : null}
             <Card.Body>
               <Card.Title>{hoveredItem.style}</Card.Title>
