@@ -6,18 +6,18 @@
       "use": "@vercel/python"
     },
     {
-      "src": "assets/**",
+      "src": "dist/**",
       "use": "@vercel/static"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "app.py"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
