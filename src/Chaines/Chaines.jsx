@@ -99,7 +99,7 @@ export default function Chaines() {
 
   useEffect(() => {
     axios
-      .get("https://gestion-planning-back-end.onrender.com/produits")
+      .get("https://gestion-planning-back-end-1.onrender.com/produits")
       .then((response) => {
         const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
         const produits = Object.values(response.data);
@@ -156,7 +156,7 @@ export default function Chaines() {
 
     axios
       .post(
-        "https://gestion-planning-back-end.onrender.com/drag",
+        "https://gestion-planning-back-end-1.onrender.com/drag",
         {
           oldPosition: transferData.from,
           newPosition: targetPosition,
