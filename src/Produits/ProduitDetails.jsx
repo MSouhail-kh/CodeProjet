@@ -239,7 +239,7 @@ const ProduitDetails = () => {
       setIsEditing(false);
       setPreviewImage(null);
       setLoading(false);
-      navigate('/Chaines');
+      navigate(`/produits/${id}`)
       window.location.reload();
     } catch (err) {
       console.error(err);
