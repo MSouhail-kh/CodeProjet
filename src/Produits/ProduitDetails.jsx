@@ -234,7 +234,7 @@ const ProduitDetails = () => {
         setIsEditing(false);
         setPreviewImage(null);
         setLoading(false);
-        navigate(`/Chaines`);
+        navigate(0);
       } catch (err) {
         console.error(err);
       }
