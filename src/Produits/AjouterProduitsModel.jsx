@@ -177,7 +177,6 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
 
     } catch (error) {
       console.error('Erreur:', error.response?.data || error.message);
-      alert(`Erreur: ${error.response?.data?.message || 'Échec de l'ajout'}`);
     }
   };
 
