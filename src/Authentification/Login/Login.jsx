@@ -11,9 +11,9 @@ const Login = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State for showing/hiding password
+  const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
-  const { setAuthTokens } = useContext(AuthContext);
+  const { login } = useContext(AuthContext); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,8 +26,9 @@ const Login = ({ onLoginSuccess }) => {
         { email, password },
         { withCredentials: true }
       );
-      onLoginSuccess(response.data.token);
-      setAuthTokens(response.data.token);
+      const token = response.data.token;
+      login(token); 
+      onLoginSuccess(token); 
       navigate("/Chaines");
     } catch (err) {
       console.error(err);
@@ -37,7 +38,6 @@ const Login = ({ onLoginSuccess }) => {
     }
   };
 
-  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
