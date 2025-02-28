@@ -136,20 +136,20 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
   });
   const [refreshKey, setRefreshKey] = useState(0);  
   
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (files) {
-      setFormData({
-        ...formData,
-        [name]: files[0],
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
-  };
+  // const handleChange = (e) => {
+  //   const { name, value, files } = e.target;
+  //   if (files) {
+  //     setFormData({
+  //       ...formData,
+  //       [name]: files[0],
+  //     });
+  //   } else {
+  //     setFormData({
+  //       ...formData,
+  //       [name]: value,
+  //     });
+  //   }
+  // };
   
   useEffect(() => {}, [refreshKey]);
 
