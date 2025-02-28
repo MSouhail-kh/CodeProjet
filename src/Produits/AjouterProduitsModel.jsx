@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import api from '../services/axios';
 import styled from 'styled-components';
@@ -134,31 +134,21 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     reference: '',
     type_de_produit: '',
   });
-  const [refreshKey, setRefreshKey] = useState(0);  
+  const navigate = useNavigate(); 
   
-  // const handleChange = (e) => {
-  //   const { name, value, files } = e.target;
-  //   if (files) {
-  //     setFormData({
-  //       ...formData,
-  //       [name]: files[0],
-  //     });
-  //   } else {
-  //     setFormData({
-  //       ...formData,
-  //       [name]: value,
-  //     });
-  //   }
-  // };
-  
-  useEffect(() => {}, [refreshKey]);
-
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: files ? files[0] : value,
-    }));
+    if (files) {
+      setFormData({
+        ...formData,
+        [name]: files[0],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -174,19 +164,19 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
         }
       }
     });
-
+  
     try {
-      await api.post('/ajouter/produits', formDataToSend, {
+      const response = await api.post('/ajouter/produits', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-
+  
+      console.log('Réponse:', response.data);
       handleClose();
-      setRefreshKey((prevKey) => prevKey + 1); 
+      navigate(0);
     } catch (error) {
       console.error('Erreur:', error.response?.data || error.message);
     }
   };
-  
   
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
