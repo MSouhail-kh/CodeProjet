@@ -172,7 +172,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
   
       console.log('Réponse:', response.data);
       handleClose();
-      navigate(0);
+      navigate('/refresh');
     } catch (error) {
       console.error('Erreur:', error.response?.data || error.message);
     }
