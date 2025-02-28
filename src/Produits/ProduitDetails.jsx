@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import MyNavbar from '../Navbar/Navbar';
 import { Container, Card, Form, Button, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText ,XCircle} from 'react-bootstrap-icons';
@@ -154,6 +154,8 @@ const ProduitDetails = () => {
   const [dossierSerigraphieFileName, setDossierSerigraphieFileName] = useState('');
   const [bonDeCommandeFileName, setBonDeCommandeFileName] = useState('');
   const [patronageFileName, setPatronageFileName] = useState('');
+  const navigate = useNavigate(); 
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -237,7 +239,8 @@ const ProduitDetails = () => {
       setIsEditing(false);
       setPreviewImage(null);
       setLoading(false);
-      window.location.reload(); 
+      navigate('/Chaines');
+      window.location.reload();
     } catch (err) {
       console.error(err);
     }
