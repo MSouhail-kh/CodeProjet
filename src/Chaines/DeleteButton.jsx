@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import styled from "styled-components";
 import { Trash } from "react-bootstrap-icons";
 import ConfirmationModal from "./ConfirmationModal";
+import { useNavigate } from 'react-router-dom';
 import api from "../services/axios";
 
 export const StyledDeleteButton = styled(Button)`
@@ -38,6 +39,8 @@ export const StyledDeleteButton = styled(Button)`
 
 const DeleteButton = ({ onDeleteSuccess }) => {
   const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
+
 
   const handleDrop = async (e) => {
     e.preventDefault();
@@ -51,7 +54,7 @@ const DeleteButton = ({ onDeleteSuccess }) => {
 
       await api.delete(`/supprimer/produits/${item.id}`);
       onDeleteSuccess(item.id);
-      window.location.reload();
+      navigate(0);
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
       alert("Échec de la suppression du produit !");
