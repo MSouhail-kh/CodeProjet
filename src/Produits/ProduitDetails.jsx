@@ -235,7 +235,6 @@ const ProduitDetails = () => {
         setPreviewImage(null);
         setLoading(false);
         navigate(`/Chaines`);
-        window.location.reload();
       } catch (err) {
         console.error(err);
       }
