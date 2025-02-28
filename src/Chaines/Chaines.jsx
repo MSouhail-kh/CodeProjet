@@ -307,7 +307,7 @@ export default function Chaines() {
               src={
                 hoveredItem.image.startsWith("https")
                   ? hoveredItem.image
-                  : `https://gestion-planning-back-end-1.onrender.com/assets/uploads/${hoveredItem.image}`
+                  : `https://gestion-planning-back-end-1.onrender.com/assets/${hoveredItem.image}`
               }
               style={{ height: "120px", objectFit: "cover" }}
             />
