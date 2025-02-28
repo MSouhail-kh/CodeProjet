@@ -166,14 +166,10 @@ const handleSubmit = async (e) => {
       formDataToSend,
       { headers: { 'Content-Type': 'multipart/form-data' } }
     );
-
     console.log('Réponse:', response.data);
-    
     handleClose();
-    
-    navigate('/Chaines', {
-      state: { refresh: true } 
-    });
+    navigate('/Chaines');
+    window.location.reload();
 
   } catch (error) {
     console.error('Erreur:', error.response?.data || error.message);
