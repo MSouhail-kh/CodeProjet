@@ -160,7 +160,7 @@ const ProduitDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`https://gestion-planning-back-end.onrender.com/produits/${id}`);
+        const response = await axios.get(`https://gestion-planning-back-end-1.onrender.com/produits/${id}`);
         setProduct(response.data);
         setEditedData(response.data);
         setLoading(false); 
@@ -226,7 +226,7 @@ const ProduitDetails = () => {
       });
 
       const response = await axios.put(
-        `https://gestion-planning-back-end.onrender.com/update/produits/${id}`,
+        `https://gestion-planning-back-end-1.onrender.com/update/produits/${id}`,
         formData,
         {
           headers: {
