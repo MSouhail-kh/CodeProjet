@@ -6,14 +6,14 @@
       "use": "@vercel/python"
     },
     {
-      "src": "public/static/uploads/*",
+      "src": "assets/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/static/uploads/(.*)",
-      "dest": "/public/static/uploads/$1"
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
       "src": "/(.*)",
@@ -22,7 +22,7 @@
   ],
   "headers": [
     {
-      "source": "/static/uploads/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
