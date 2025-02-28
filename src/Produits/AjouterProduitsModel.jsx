@@ -343,8 +343,6 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 />
               </Form.Group>
 
-
-
               <Form.Group controlId="formDateLivraisonComment" className="mb-4">
                 <Form.Label>Date Livraison Commande</Form.Label>
                 <StyledFormControl
