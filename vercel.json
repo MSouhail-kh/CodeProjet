@@ -6,14 +6,14 @@
       "use": "@vercel/python"
     },
     {
-      "src": "static/uploads/*",
+      "src": "public/static/uploads/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/static/uploads/(.*)",
-      "dest": "/static/uploads/$1"
+      "dest": "/public/static/uploads/$1"
     },
     {
       "src": "/(.*)",
