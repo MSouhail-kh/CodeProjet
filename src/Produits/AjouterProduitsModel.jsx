@@ -151,13 +151,19 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     }
   };
   
-
 const handleSubmit = async (e) => {
   e.preventDefault();
   const formDataToSend = new FormData();
-  
+
   Object.entries(formData).forEach(([key, value]) => {
-    if (value) formDataToSend.append(key, value);
+    if (value) {
+      // Vérifie si c'est un fichier avant de l'ajouter
+      if (value instanceof File) {
+        formDataToSend.append(key, value, value.name);
+      } else {
+        formDataToSend.append(key, value);
+      }
+    }
   });
 
   try {
@@ -166,11 +172,11 @@ const handleSubmit = async (e) => {
       formDataToSend,
       { headers: { 'Content-Type': 'multipart/form-data' } }
     );
+
     console.log('Réponse:', response.data);
     handleClose();
     navigate('/Chaines');
     window.location.reload();
-
   } catch (error) {
     console.error('Erreur:', error.response?.data || error.message);
   }
