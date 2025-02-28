@@ -151,7 +151,8 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     }
   };
   
- const handleSubmit = async (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
     
@@ -160,18 +161,23 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     });
 
     try {
-      const postResponse = await axios.post(
-        'https://gestion-planning-back-end.onrender.com/ajouter/produits', 
+      const response = await axios.post(
+        'https://gestion-planning-back-end.onrender.com/ajouter/produits',
         formDataToSend,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
-      console.log('Nouveau produit ajouté:', postResponse.data);
+      console.log('Réponse:', response.data);
       
       handleClose();
-      navigate('/Chaines'); 
+      
+      setTimeout(() => {
+        navigate('/Chaines');
+      }, 1000);
+
     } catch (error) {
       console.error('Erreur:', error.response?.data || error.message);
+      alert(`Erreur: ${error.response?.data?.message || 'Échec de l'ajout'}`);
     }
   };
 
