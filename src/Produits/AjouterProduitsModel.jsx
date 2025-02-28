@@ -152,34 +152,33 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
   };
   
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const formDataToSend = new FormData();
+  
+  Object.entries(formData).forEach(([key, value]) => {
+    if (value) formDataToSend.append(key, value);
+  });
+
+  try {
+    const response = await axios.post(
+      'https://gestion-planning-back-end.onrender.com/ajouter/produits',
+      formDataToSend,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+
+    console.log('Réponse:', response.data);
     
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value) formDataToSend.append(key, value);
+    handleClose();
+    
+    navigate('/Chaines', {
+      state: { refresh: true } 
     });
 
-    try {
-      const response = await axios.post(
-        'https://gestion-planning-back-end.onrender.com/ajouter/produits',
-        formDataToSend,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-
-      console.log('Réponse:', response.data);
-      
-      handleClose();
-      
-      setTimeout(() => {
-        navigate('/Chaines');
-      }, 1000);
-
-    } catch (error) {
-      console.error('Erreur:', error.response?.data || error.message);
-    }
-  };
-
+  } catch (error) {
+    console.error('Erreur:', error.response?.data || error.message);
+  }
+};
   
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
