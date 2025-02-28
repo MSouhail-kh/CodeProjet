@@ -4,6 +4,8 @@ import { XLg, CloudUpload ,FilePlus} from 'react-bootstrap-icons';
 import * as XLSX from 'xlsx';
 import api from '../services/axios';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+
 
 export const AnimatedModal = styled(Modal)`
   animation: fadeInUp 0.5s ease-out;
@@ -150,7 +152,8 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
   const bonDeCommandeInputRef = useRef(null);
   const patronageInputRef = useRef(null);
   const [selectedRow, setSelectedRow] = useState(null);
-
+  const navigate = useNavigate();
+  
   const handleCloseModal = () => {
     setFile(null);
     setData([]);
@@ -290,7 +293,7 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
       });
   
       handleCloseModal();
-      window.location.reload();
+      navigate(`/Chaines`);
     } catch (error) {
       console.error("Erreur lors de l'importation.", error);
     }
