@@ -298,29 +298,24 @@ export default function Chaines() {
         <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
       </Col>
 
-      {hoveredItem && (
-        <HoverCard x={hoverPosition.x} chaine={chaine}>
-          <Card className="shadow-custom">
-            {hoveredItem.image ? (
-            <Card.Img
-              variant="top"
-              src={
-                hoveredItem.image.startsWith("https")
-                  ? hoveredItem.image
-                  : `https://gestion-planning-back-end-1.onrender.com/assets/${hoveredItem.image}`
-              }
-              style={{ height: "120px", objectFit: "cover" }}
-            />
-            ) : null}
-            <Card.Body>
-              <Card.Title>{hoveredItem.style}</Card.Title>
-              <span>
-                {hoveredItem.style} / Qty: {hoveredItem.qty}
-              </span>
-            </Card.Body>
-          </Card>
-        </HoverCard>
-      )}
+    {hoveredItem && hoveredItem.image && (
+      <HoverCard x={hoverPosition.x} chaine={chaine}>
+        <Card className="shadow-custom">
+          <Card.Img
+            variant="top"
+            src={hoveredItem.image}
+            style={{ height: "120px", objectFit: "cover" }}
+          />
+          <Card.Body>
+            <Card.Title>{hoveredItem.style}</Card.Title>
+            <span>
+              {hoveredItem.style} / Qty: {hoveredItem.qty}
+            </span>
+          </Card.Body>
+        </Card>
+      </HoverCard>
+    )}
+
     </>
   );
 }
