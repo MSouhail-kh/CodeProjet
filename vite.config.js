@@ -1,4 +1,7 @@
-export default defineConfig({
+import { defineConfig } from 'vite';  
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({  
   plugins: [react()],
   base: '/',
   build: {
@@ -6,8 +9,7 @@ export default defineConfig({
     assetsDir: 'assets'
   },
   server: {
-    historyApiFallback: true,
-    middlewareMode: true
+    historyApiFallback: true
   },
-  publicDir: 'public' 
+  publicDir: 'public'
 });
