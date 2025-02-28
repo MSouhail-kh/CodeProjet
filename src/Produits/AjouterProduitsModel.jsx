@@ -172,8 +172,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
   
       console.log('Réponse:', response.data);
       handleClose();
-      navigate('/Chaines');
-      window.location.reload();
+      navigate(0);
     } catch (error) {
       console.error('Erreur:', error.response?.data || error.message);
     }
