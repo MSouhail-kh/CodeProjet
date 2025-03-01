@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/axios';
-import { useParams,useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import MyNavbar from '../Navbar/Navbar';
-import { Container, Card, Form, Button, Row, Col, Spinner, Alert } from 'react-bootstrap';
-import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText ,XCircle} from 'react-bootstrap-icons';
+import { Container, Card, Form, Button, Row, Col, Spinner, Alert, Modal } from 'react-bootstrap';
+import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText, XCircle } from 'react-bootstrap-icons';
 import styled, { keyframes } from "styled-components";
-import { space } from 'postcss/lib/list';
 
 const LoaderContainer = styled.div`
   display: flex;
@@ -87,6 +86,7 @@ const DownloadLink = styled.a`
     transform: translateX(5px);
   }
 `;
+
 const StyledFormControl = styled(Form.Control)`
   border: 2px solid #e0e0e0;
   border-radius: 8px;
@@ -120,7 +120,6 @@ const DetailValue = styled.span`
   font-weight: 200;
 `;
 
-
 const FileInputLabel = styled.label`
   display: flex;
   align-items: center;
@@ -136,6 +135,7 @@ const FileInputLabel = styled.label`
     background: #f8f9fa;
   }
 `;
+
 const formatDate = (dateString) => {
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
   return new Intl.DateTimeFormat('fr-FR', options).format(new Date(dateString));
@@ -154,7 +154,10 @@ const ProduitDetails = () => {
   const [dossierSerigraphieFileName, setDossierSerigraphieFileName] = useState('');
   const [bonDeCommandeFileName, setBonDeCommandeFileName] = useState('');
   const [patronageFileName, setPatronageFileName] = useState('');
-  const navigate = useNavigate(); 
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [showFileModal, setShowFileModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -213,33 +216,42 @@ const ProduitDetails = () => {
       }));
     }
   };
-    
-    const handleSave = async () => {
-      try {
-        const formData = new FormData();
-    
-        Object.keys(editedData).forEach((key) => {
-          if (editedData[key] !== null && editedData[key] !== undefined) {
-            formData.append(key, editedData[key]);
-          }
-        });
-    
-        const response = await api.put(`/update/produits/${id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-    
-        setProduct(response.data);
-        setIsEditing(false);
-        setPreviewImage(null);
-        setLoading(false);
-        navigate(0);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    
+
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
+
+      Object.keys(editedData).forEach((key) => {
+        if (editedData[key] !== null && editedData[key] !== undefined) {
+          formData.append(key, editedData[key]);
+        }
+      });
+
+      const response = await api.put(`/update/produits/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setProduct(response.data);
+      setIsEditing(false);
+      setPreviewImage(null);
+      setLoading(false);
+      navigate(`/Chaines`);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleFileClick = (fileUrl) => {
+    setSelectedFile(fileUrl);
+    setShowFileModal(true);
+  };
+
+  const handleImageClick = () => {
+    setShowImageModal(true);
+  };
+
   if (loading) {
     return (
       <LoaderContainer>
@@ -282,14 +294,16 @@ const ProduitDetails = () => {
                 style={{ 
                   height: '100%', 
                   objectFit: 'cover',
-                  borderRight: '1px solid #e0e0e0'
+                  borderRight: '1px solid #e0e0e0',
+                  cursor: 'pointer'
                 }}
+                onClick={handleImageClick}
               />
             </Col>
             
             <Col md={6}>
               <Card.Body className="p-4">
-              <div className="d-flex justify-content-between align-items-center mb-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
                   <Card.Title className="mb-0" style={{ fontSize: '1.75rem', fontWeight: '600' }}>
                     {isEditing ? (
                       <>
@@ -330,6 +344,7 @@ const ProduitDetails = () => {
                     )}
                   </div>
                 </div>
+
                 <SectionTitle>
                   <Palette className="me-1" />
                   Détails du produit
@@ -408,7 +423,8 @@ const ProduitDetails = () => {
                     </div>
                   )}
                 </Card.Subtitle>
-<br />
+                <br />
+
                 <SectionTitle>
                   <Calendar className="me-1 h-2" />
                   Calendrier
@@ -447,252 +463,300 @@ const ProduitDetails = () => {
                     </Form.Group>
                   </Col>
                 </Row>
+
                 <SectionTitle className="mt-4">
-  Détails Techniques
-</SectionTitle>
+                  Détails Techniques
+                </SectionTitle>
 
-<StyledCard className="mb-4">
-  <Card.Body>
-    <Row className="g-3">
-      {isEditing ? (
-        <>
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label>Marque : </Form.Label>
-              <StyledFormControl
-                type="text"
-                name="brand"
-                value={editedData.brand || ''}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-          </Col>
+                <StyledCard className="mb-4">
+                  <Card.Body>
+                    <Row className="g-3">
+                      {isEditing ? (
+                        <>
+                          <Col md={6}>
+                            <Form.Group>
+                              <Form.Label>Marque : </Form.Label>
+                              <StyledFormControl
+                                type="text"
+                                name="brand"
+                                value={editedData.brand || ''}
+                                onChange={handleInputChange}
+                              />
+                            </Form.Group>
+                          </Col>
 
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label>Type de commande : </Form.Label>
-              <StyledFormControl
-                as="select"
-                name="type_de_commande"
-                value={editedData.type_de_commande || ''}
-                onChange={handleInputChange}
-              >
-                <option value="">Sélectionner...</option>
-                <option value="CMT">CMT</option>
-                <option value="MAKER">MAKER</option>
-              </StyledFormControl>
-            </Form.Group>
-          </Col>
+                          <Col md={6}>
+                            <Form.Group>
+                              <Form.Label>Type de commande : </Form.Label>
+                              <StyledFormControl
+                                as="select"
+                                name="type_de_commande"
+                                value={editedData.type_de_commande || ''}
+                                onChange={handleInputChange}
+                              >
+                                <option value="">Sélectionner...</option>
+                                <option value="CMT">CMT</option>
+                                <option value="MAKER">MAKER</option>
+                              </StyledFormControl>
+                            </Form.Group>
+                          </Col>
 
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label>État : </Form.Label>
-              <StyledFormControl
-                type="text"
-                name="etat_de_commande"
-                value={editedData.etat_de_commande || ''}
-                onChange={handleInputChange}
-              >
-              </StyledFormControl>
-            </Form.Group>
-          </Col>
+                          <Col md={6}>
+                            <Form.Group>
+                              <Form.Label>État : </Form.Label>
+                              <StyledFormControl
+                                type="text"
+                                name="etat_de_commande"
+                                value={editedData.etat_de_commande || ''}
+                                onChange={handleInputChange}
+                              >
+                              </StyledFormControl>
+                            </Form.Group>
+                          </Col>
 
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label>Référence : </Form.Label>
-              <StyledFormControl
-                type="text"
-                name="reference"
-                value={editedData.reference || ''}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-          </Col>
+                          <Col md={6}>
+                            <Form.Group>
+                              <Form.Label>Référence : </Form.Label>
+                              <StyledFormControl
+                                type="text"
+                                name="reference"
+                                value={editedData.reference || ''}
+                                onChange={handleInputChange}
+                              />
+                            </Form.Group>
+                          </Col>
 
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label>Type de produit : </Form.Label>
-              <StyledFormControl
-                as="select"
-                name="type_de_produit"
-                value={editedData.type_de_produit || ''}
-                onChange={handleInputChange}
-              >
-                <option value="">Sélectionner...</option>
-                <option value="TSHIRT">TSHIRT</option>
-                <option value="TSHIRT MC">TSHIRT MC</option>
-                <option value="TEE SHIRT ML">TEE SHIRT ML</option>
-              </StyledFormControl>
-            </Form.Group>
-          </Col>
-        </>
-      ) : (
-<>
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px', margin: '0 auto' }}>
-    <DetailItem>
-      <DetailLabel>
-         Marque :
-      </DetailLabel>
-      <DetailValue>{product.brand || '-'}</DetailValue>
-    </DetailItem>
+                          <Col md={6}>
+                            <Form.Group>
+                              <Form.Label>Type de produit : </Form.Label>
+                              <StyledFormControl
+                                as="select"
+                                name="type_de_produit"
+                                value={editedData.type_de_produit || ''}
+                                onChange={handleInputChange}
+                              >
+                                <option value="">Sélectionner...</option>
+                                <option value="TSHIRT">TSHIRT</option>
+                                <option value="TSHIRT MC">TSHIRT MC</option>
+                                <option value="TEE SHIRT ML">TEE SHIRT ML</option>
+                              </StyledFormControl>
+                            </Form.Group>
+                          </Col>
+                        </>
+                      ) : (
+                        <>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px', margin: '0 auto' }}>
+                            <DetailItem>
+                              <DetailLabel>
+                                 Marque :
+                              </DetailLabel>
+                              <DetailValue>{product.brand || '-'}</DetailValue>
+                            </DetailItem>
 
-    <DetailItem>
-      <DetailLabel>
-         État :
-      </DetailLabel>
-      <DetailValue status={product.etat_de_commande?.toLowerCase().replace(' ', '-')}>
-        {product.etat_de_commande || '-'}
-      </DetailValue>
-    </DetailItem>
+                            <DetailItem>
+                              <DetailLabel>
+                                 État :
+                              </DetailLabel>
+                              <DetailValue status={product.etat_de_commande?.toLowerCase().replace(' ', '-')}>
+                                {product.etat_de_commande || '-'}
+                              </DetailValue>
+                            </DetailItem>
 
-    <DetailItem>
-      <DetailLabel>
-         Référence :
-      </DetailLabel>
-      <DetailValue>{product.reference || '-'}</DetailValue>
-    </DetailItem>
+                            <DetailItem>
+                              <DetailLabel>
+                                 Référence :
+                              </DetailLabel>
+                              <DetailValue>{product.reference || '-'}</DetailValue>
+                            </DetailItem>
 
-    <DetailItem>
-      <DetailLabel>
-         Type produit :
-      </DetailLabel>
-      <DetailValue>{product.type_de_produit || '-'}</DetailValue>
-    </DetailItem>
+                            <DetailItem>
+                              <DetailLabel>
+                                 Type produit :
+                              </DetailLabel>
+                              <DetailValue>{product.type_de_produit || '-'}</DetailValue>
+                            </DetailItem>
 
-    <DetailItem>
-      <DetailLabel>
-         Type commande :
-      </DetailLabel>
-      <DetailValue>{product.type_de_commande || '-'}</DetailValue>
-    </DetailItem>
-  </div>
-</>        
-      )}
-    </Row>
-  </Card.Body>
-</StyledCard>
+                            <DetailItem>
+                              <DetailLabel>
+                                 Type commande :
+                              </DetailLabel>
+                              <DetailValue>{product.type_de_commande || '-'}</DetailValue>
+                            </DetailItem>
+                          </div>
+                        </>        
+                      )}
+                    </Row>
+                  </Card.Body>
+                </StyledCard>
 
-            <SectionTitle>
-              <FileEarmarkText className="me-1" />
-              Fichiers
-            </SectionTitle>
+                <SectionTitle>
+                  <FileEarmarkText className="me-1" />
+                  Fichiers
+                </SectionTitle>
 
-            {isEditing ? (
-              <>
-                <FileInputLabel>
-                  <Image size={20} />
-                  <span>Changer l'image du produit : </span>
-                  <input
-                    type="file"
-                    name="image"
-                    onChange={handleInputChange}
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                  />
-                  {imageFileName && <FileName>{imageFileName}</FileName>}
-                </FileInputLabel>
+                {isEditing ? (
+                  <>
+                    <FileInputLabel>
+                      <Image size={20} />
+                      <span>Changer l'image du produit : </span>
+                      <input
+                        type="file"
+                        name="image"
+                        onChange={handleInputChange}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                      />
+                      {imageFileName && <FileName>{imageFileName}</FileName>}
+                    </FileInputLabel>
 
-                <FileInputLabel className="mt-3">
-                  <FilePdf size={20} />
-                  <span>Changer le dossier technique (PDF) : </span>
-                  <input
-                    type="file"
-                    name="dossier_technique"
-                    onChange={handleInputChange}
-                    accept="application/pdf"
-                    style={{ display: 'none' }}
-                  />
-                  {dossierTechniqueFileName && <FileName>{dossierTechniqueFileName}</FileName>}
-                </FileInputLabel>
+                    <FileInputLabel className="mt-3">
+                      <FilePdf size={20} />
+                      <span>Changer le dossier technique (PDF) : </span>
+                      <input
+                        type="file"
+                        name="dossier_technique"
+                        onChange={handleInputChange}
+                        accept="application/pdf"
+                        style={{ display: 'none' }}
+                      />
+                      {dossierTechniqueFileName && <FileName>{dossierTechniqueFileName}</FileName>}
+                    </FileInputLabel>
 
-                <FileInputLabel className="mt-3">
-                  <FilePdf size={20} />
-                  <span>Changer le dossier de sérigraphie (PDF) : </span>
-                  <input
-                    type="file"
-                    name="dossier_serigraphie"
-                    onChange={handleInputChange}
-                    accept="application/pdf"
-                    style={{ display: 'none' }}
-                  />
-                  {dossierSerigraphieFileName && <FileName>{dossierSerigraphieFileName}</FileName>}
-                </FileInputLabel>
+                    <FileInputLabel className="mt-3">
+                      <FilePdf size={20} />
+                      <span>Changer le dossier de sérigraphie (PDF) : </span>
+                      <input
+                        type="file"
+                        name="dossier_serigraphie"
+                        onChange={handleInputChange}
+                        accept="application/pdf"
+                        style={{ display: 'none' }}
+                      />
+                      {dossierSerigraphieFileName && <FileName>{dossierSerigraphieFileName}</FileName>}
+                    </FileInputLabel>
 
-                <FileInputLabel className="mt-3">
-                  <FilePdf size={20} />
-                  <span>Changer le bon de commande (PDF) : </span>
-                  <input
-                    type="file"
-                    name="bon_de_commande"
-                    onChange={handleInputChange}
-                    accept="application/pdf"
-                    style={{ display: 'none' }}
-                  />
-                  {bonDeCommandeFileName && <FileName>{bonDeCommandeFileName}</FileName>}
-                </FileInputLabel>
+                    <FileInputLabel className="mt-3">
+                      <FilePdf size={20} />
+                      <span>Changer le bon de commande (PDF) : </span>
+                      <input
+                        type="file"
+                        name="bon_de_commande"
+                        onChange={handleInputChange}
+                        accept="application/pdf"
+                        style={{ display: 'none' }}
+                      />
+                      {bonDeCommandeFileName && <FileName>{bonDeCommandeFileName}</FileName>}
+                    </FileInputLabel>
 
-                <FileInputLabel className="mt-3">
-                  <FilePdf size={20} />
-                  <span>Changer le patronage (PDF) : </span>
-                  <input
-                    type="file"
-                    name="patronage"
-                    onChange={handleInputChange}
-                    accept="application/pdf"
-                    style={{ display: 'none' }}
-                  />
-                  {patronageFileName && <FileName>{patronageFileName}</FileName>}
-                </FileInputLabel>
-              </>
-            ) : (
-              <>
-                {product.dossier_technique && (
-                  <DownloadLink
-                    href={product.dossier_technique}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FilePdf size={20} />
-                    Télécharger le Dossier Technique PDF
-                  </DownloadLink>
+                    <FileInputLabel className="mt-3">
+                      <FilePdf size={20} />
+                      <span>Changer le patronage (PDF) : </span>
+                      <input
+                        type="file"
+                        name="patronage"
+                        onChange={handleInputChange}
+                        accept="application/pdf"
+                        style={{ display: 'none' }}
+                      />
+                      {patronageFileName && <FileName>{patronageFileName}</FileName>}
+                    </FileInputLabel>
+                  </>
+                ) : (
+                  <>
+                    {product.dossier_technique && (
+                      <DownloadLink
+                        href={product.dossier_technique}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleFileClick(product.dossier_technique);
+                        }}
+                      >
+                        <FilePdf size={20} />
+                        Télécharger le Dossier Technique PDF
+                      </DownloadLink>
+                    )}
+                    {product.dossier_serigraphie && (
+                      <DownloadLink
+                        href={product.dossier_serigraphie}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleFileClick(product.dossier_serigraphie);
+                        }}
+                      >
+                        <FilePdf size={20} />
+                        Télécharger le Dossier de Sérigraphie
+                      </DownloadLink>
+                    )}
+                    {product.bon_de_commande && (
+                      <DownloadLink
+                        href={product.bon_de_commande}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleFileClick(product.bon_de_commande);
+                        }}
+                      >
+                        <FilePdf size={20} />
+                        Télécharger le Bon de Commande
+                      </DownloadLink>
+                    )}
+                    {product.patronage && (
+                      <DownloadLink
+                        href={product.patronage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleFileClick(product.patronage);
+                        }}
+                      >
+                        <FilePdf size={20} />
+                        Télécharger le Patronage
+                      </DownloadLink>
+                    )}
+                  </>
                 )}
-                {product.dossier_serigraphie && (
-                  <DownloadLink
-                    href={product.dossier_serigraphie}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FilePdf size={20} />
-                    Télécharger le Dossier de Sérigraphie
-                  </DownloadLink>
-                )}
-                {product.bon_de_commande && (
-                  <DownloadLink
-                    href={product.bon_de_commande}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FilePdf size={20} />
-                    Télécharger le Bon de Commande
-                  </DownloadLink>
-                )}
-                {product.patronage && (
-                  <DownloadLink
-                    href={product.patronage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FilePdf size={20} />
-                    Télécharger le Patronage
-                  </DownloadLink>
-                )}
-              </>
-            )}
               </Card.Body>
             </Col>
           </Row>
         </StyledCard>
       </Container>
+
+      <Modal show={showImageModal} onHide={() => setShowImageModal(false)} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Image du Produit</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <img
+            src={previewImage || product.image || 'https://via.placeholder.com/300'}
+            alt={product.style}
+            style={{ width: '100%', height: 'auto' }}
+          />
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={showFileModal} onHide={() => setShowFileModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Télécharger le fichier</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Voulez-vous télécharger ce fichier ?</p>
+          <Button
+            variant="primary"
+            onClick={() => {
+              window.open(selectedFile, '_blank');
+              setShowFileModal(false);
+            }}
+          >
+            Télécharger
+          </Button>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };
