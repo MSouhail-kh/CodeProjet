@@ -295,15 +295,15 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="formDossierSerigraphie" className="mb-4">
-                <Form.Label>Dossier Sérigraphie (PDF)</Form.Label>
-                <StyledFileInput
-                  type="file"
-                  name="dossier_serigraphie"
-                  accept="application/pdf"
-                  onChange={handleChange}
-                />
-              </Form.Group>
+            <Form.Group controlId="formDossierSerigraphie" className="mb-4">
+              <Form.Label>Dossier Sérigraphie (PDF, ZIP, RAR)</Form.Label>
+              <StyledFileInput
+                type="file"
+                name="dossier_serigraphie"
+                accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
+                onChange={handleChange}
+              />
+            </Form.Group>
 
               <Form.Group controlId="formBonDeCommande" className="mb-4">
                 <Form.Label>Bon de Commande (PDF)</Form.Label>
@@ -316,11 +316,11 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
               </Form.Group>
 
               <Form.Group controlId="formPatronage" className="mb-4">
-                <Form.Label>Patronage (PDF)</Form.Label>
+                <Form.Label>Patronage (PDF, ZIP, RAR)</Form.Label>
                 <StyledFileInput
                   type="file"
                   name="patronage"
-                  accept="application/pdf"
+                  accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
                   onChange={handleChange}
                 />
               </Form.Group>
