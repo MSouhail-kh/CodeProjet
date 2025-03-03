@@ -624,12 +624,12 @@ const ProduitDetails = () => {
 
                     <FileInputLabel className="mt-3">
                       <FilePdf size={20} />
-                      <span>Changer le dossier de sérigraphie (PDF) : </span>
+                      <span>Changer le dossier de sérigraphie (PDF / ZIP / RAR) : </span>
                       <input
                         type="file"
                         name="dossier_serigraphie"
                         onChange={handleInputChange}
-                        accept="application/pdf"
+                        accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
                         style={{ display: 'none' }}
                       />
                       {dossierSerigraphieFileName && <FileName>{dossierSerigraphieFileName}</FileName>}
@@ -650,12 +650,12 @@ const ProduitDetails = () => {
 
                     <FileInputLabel className="mt-3">
                       <FilePdf size={20} />
-                      <span>Changer le patronage (PDF) : </span>
+                      <span>Changer le patronage (PDF / ZIP / RAR) : </span>
                       <input
                         type="file"
                         name="patronage"
                         onChange={handleInputChange}
-                        accept="application/pdf"
+                        accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
                         style={{ display: 'none' }}
                       />
                       {patronageFileName && <FileName>{patronageFileName}</FileName>}
