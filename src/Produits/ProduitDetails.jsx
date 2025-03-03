@@ -729,7 +729,7 @@ const ProduitDetails = () => {
 
       <Modal show={showImageModal} onHide={() => setShowImageModal(false)} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Image du Produit</Modal.Title>
+          <Modal.Title></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <img
