@@ -279,13 +279,6 @@ const ProduitDetails = () => {
       </Container>
     );
   }
-  const getDirectDriveUrl = (url) => {
-    const match = url.match(/\/d\/([^/]+)\//);
-    if (match && match[1]) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    return url;
-  };
 
   return (
     <>
@@ -296,7 +289,7 @@ const ProduitDetails = () => {
             <Col md={6}>
               <Card.Img
                 variant="top"
-                src={previewImage || (product.image ? getDirectDriveUrl(product.image) : 'https://via.placeholder.com/300')}
+                src={previewImage || product.image || 'https://via.placeholder.com/300'}
                 alt={product.style}
                 style={{ 
                   height: '100%', 

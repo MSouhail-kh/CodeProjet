@@ -228,14 +228,6 @@ export default function Chaines() {
     );
   }
 
-  const getDirectDriveUrl = (url) => {
-    const match = url.match(/\/d\/([^/]+)\//);
-    if (match && match[1]) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    return url;
-  };
-
   return (
     <>
       <MyNavbar />
@@ -345,11 +337,7 @@ export default function Chaines() {
         backgroundColor: '#f5f5f5'
       }}>
         <img
-          src={
-            hoveredItem.image 
-              ? getDirectDriveUrl(hoveredItem.image)
-              : NoImage
-          }
+          src={hoveredItem.image || NoImage}
           alt={hoveredItem.style}
           style={{
             width: '100%',
