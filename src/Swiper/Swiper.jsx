@@ -95,7 +95,7 @@ const ImageContainer = styled.div`
   }
 `;
 
-export default function EnhancedSwiper() {
+export default function MySwiper() {
   const { id: produitId } = useParams();
   const navigate = useNavigate();
   const [produits, setProduits] = useState([]);

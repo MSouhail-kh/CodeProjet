@@ -4,7 +4,7 @@ import PrivateRoute from "./Authentification/PrivateRoute";
 import LoginSignup from "./Authentification/LoginSignup";
 import Chaines from "./Chaines/Chaines";
 import ProduitDetails from "./Produits/ProduitDetails";
-import EnhancedSwiper from "./Swiper/Swiper";
+import MySwiper from "./Swiper/Swiper";
 import './App.css';
 function App() {
     return (
@@ -20,7 +20,7 @@ function App() {
                                 element={
                                     <>
                                         <ProduitDetails />
-                                        <EnhancedSwiper />
+                                        <MySwiper />
                                     </>
                                 }
                             />
