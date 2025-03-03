@@ -103,10 +103,16 @@ export default function MySwiper() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchProduits = async () => {
+    const fetchProduitsByPosition = async () => {
       try {
-        const response = await api.get(`/produits/position/${produitId}`);
-        setProduits(response.data);
+        // 1. Récupérer les détails du produit actuel
+        const produitResponse = await api.get(`/produits/${produitId}`);
+        const produit = produitResponse.data;
+        const positionId = produit.position_id;
+
+        // 2. Récupérer les produits ayant le même position_id
+        const relatedProduitsResponse = await api.get(`/produits/position/${positionId}`);
+        setProduits(relatedProduitsResponse.data);
       } catch (err) {
         setError('Erreur lors du chargement des produits');
       } finally {
@@ -114,7 +120,7 @@ export default function MySwiper() {
       }
     };
 
-    fetchProduits();
+    fetchProduitsByPosition();
   }, [produitId]);
 
   if (loading) {
@@ -131,44 +137,34 @@ export default function MySwiper() {
 
   return (
     <SwiperContainer>
-        <Swiper
-            slidesPerView={'auto'}
-            centeredSlides={true}
-            spaceBetween={20}
-            grabCursor={true}
-            pagination={{
-                clickable: true,
-                dynamicBullets: true,
-            }}
-            navigation={true}
-            modules={[Pagination, Navigation]}
-            breakpoints={{
-                320: {
-                    slidesPerView: 1,
-                },
-                768: {
-                    slidesPerView: 2,
-                },
-                1024: {
-                    slidesPerView: 3,
-                },
-            }}
-        >
-            {produits.map((produit) => (
-                <SwiperSlide key={produit.id}>
-                    <Card onClick={() => handleCardClick(produit.id)}>
-                        <ImageContainer>
-                            <img 
-                                src={produit.image} 
-                                alt={produit.name} 
-                            />
-                        </ImageContainer>
-                        <h3>{produit.name}</h3>
-                        <p>{produit.description}</p>
-                    </Card>
-                </SwiperSlide>
-            ))}
-        </Swiper>
+      <Swiper
+        slidesPerView={'auto'}
+        centeredSlides={true}
+        spaceBetween={20}
+        grabCursor={true}
+        pagination={{
+          clickable: true,
+          dynamicBullets: true,
+        }}
+        navigation={true}
+        modules={[Pagination, Navigation]}
+        breakpoints={{
+          320: { slidesPerView: 1 },
+          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+        }}
+      >
+        {produits.map((produit) => (
+          <SwiperSlide key={produit.id}>
+            <Card onClick={() => handleCardClick(produit.id)}>
+              <ImageContainer>
+                <img src={produit.image} alt={produit.style} />
+              </ImageContainer>
+              <h3>{produit.style}</h3>
+            </Card>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </SwiperContainer>
   );
 }
