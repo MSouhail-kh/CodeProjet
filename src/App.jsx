@@ -6,34 +6,26 @@ import Chaines from "./Chaines/Chaines";
 import ProduitDetails from "./Produits/ProduitDetails";
 import MySwiper from "./Swiper/Swiper";
 import './App.css';
-
 function App() {
-  return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<LoginSignup />} />
-          <Route 
-            path="/chaines" 
-            element={
-              <PrivateRoute>
-                <Chaines />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/produit/:id" 
-            element={
-              <PrivateRoute>
-                <ProduitDetails />
-                <MySwiper />
-              </PrivateRoute>
-            } 
-          />
-        </Routes>
-      </Router>
-    </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<LoginSignup />} />
+                    <Route path="/Chaines" element={<PrivateRoute element={<Chaines />} />} />
+                    <Route
+                        path="/produit/:id"
+                        element={<PrivateRoute
+                                element={
+                                    <>
+                                        <ProduitDetails />
+                                        <MySwiper />
+                                    </>}
+                            />}/>
+                </Routes>
+            </Router>
+        </AuthProvider>
+    );
 }
 
 export default App;
