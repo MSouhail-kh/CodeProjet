@@ -472,7 +472,7 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
       <input
         ref={dossierSerigraphieInputRef}
         type="file"
-        accept=".pdf"
+        accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
         className="d-none"
         onChange={(e) => handleRowFileChange(e, 'dossierSerigraphie')}
       />
@@ -486,7 +486,7 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
       <input
         ref={patronageInputRef}
         type="file"
-        accept=".pdf"
+        accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
         className="d-none"
         onChange={(e) => handleRowFileChange(e, 'patronage')}
       />
