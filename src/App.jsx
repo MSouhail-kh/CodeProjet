@@ -16,14 +16,10 @@ function App() {
                     <Route
                         path="/produit/:id"
                         element={
-                            <PrivateRoute
-                                element={
                                     <>
                                         <ProduitDetails />
                                         <MySwiper />
                                     </>
-                                }
-                            />
                         }
                     />
                 </Routes>
