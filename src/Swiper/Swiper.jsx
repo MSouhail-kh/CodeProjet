@@ -129,6 +129,14 @@ export default function EnhancedSwiper() {
     navigate(`/produit/${id}`);
   };
 
+  const getDirectDriveUrl = (url) => {
+    const match = url.match(/\/d\/([^/]+)\//);
+    if (match && match[1]) {
+      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
+    return url;
+  };
+
   return (
     <SwiperContainer>
         <Swiper
@@ -157,12 +165,12 @@ export default function EnhancedSwiper() {
             {produits.map((produit) => (
                 <SwiperSlide key={produit.id}>
                     <Card onClick={() => handleCardClick(produit.id)}>
-                        <ImageContainer>
-                            <img 
-                                src={produit.image} 
-                                alt={produit.name} 
-                            />
-                        </ImageContainer>
+                    <ImageContainer>
+                      <img 
+                        src={produit.image ? getDirectDriveUrl(produit.image) : 'https://via.placeholder.com/300'} 
+                        alt={produit.name} 
+                      />
+                    </ImageContainer>
                         <h3>{produit.name}</h3>
                         <p>{produit.description}</p>
                     </Card>
