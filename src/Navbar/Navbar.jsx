@@ -24,7 +24,7 @@ const MyNavbar = ({ darkMode }) => {
     <>
       <Navbar expand="lg" variant="dark" className="custom-navbar shadow">
         <Container>
-          <Navbar.Brand href="/Chaines"></Navbar.Brand>
+          <Navbar.Brand href="/Chaines">Sigmatex</Navbar.Brand>
           
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
