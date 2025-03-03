@@ -347,7 +347,7 @@ const ProduitDetails = () => {
 
                 <SectionTitle>
                   <Palette className="me-1" />
-                  Détails du produit
+                  Détails 
                 </SectionTitle>
 
                 <Card.Subtitle className=" text-muted">
