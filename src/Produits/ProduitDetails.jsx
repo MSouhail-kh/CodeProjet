@@ -136,10 +136,17 @@ const FileInputLabel = styled.label`
   }
 `;
 
-const formatDate = (dateString) => {
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-  return new Intl.DateTimeFormat('fr-FR', options).format(new Date(dateString));
+const formatDate = (dateStr) => {
+  if (!dateStr || isNaN(Date.parse(dateStr))) {
+    return '- / - / -';
+  }
+  const date = new Date(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day} / ${month} / ${year}`;
 };
+
 
 const ProduitDetails = () => {
   const { id } = useParams();
@@ -432,21 +439,22 @@ const ProduitDetails = () => {
 
                 <Row className="mb-4 g-3">
                   <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Date de Réception : </Form.Label>
-                      {isEditing ? (
-                        <StyledFormControl
-                          type="date"
-                          name="date_reception_bon_commande"
-                          value={editedData.date_reception_bon_commande || ''}
-                          onChange={handleInputChange}
-                        />
-                      ) : (
-                        <div className="text-muted">{formatDate(product.date_reception_bon_commande)}</div>
-                      )}
-                    </Form.Group>
+                       <Form.Group>
+                          <Form.Label>Date de Réception : </Form.Label>
+                          {isEditing ? (
+                            <StyledFormControl
+                              type="date"
+                              name="date_reception_bon_commande"
+                              value={editedData.date_reception_bon_commande || ''}
+                              onChange={handleInputChange}
+                            />
+                          ) : (
+                            <div className="text-muted">
+                              {formatDate(product.date_reception_bon_commande)}
+                            </div>
+                          )}
+                        </Form.Group>
                   </Col>
-                  
                   <Col md={6}>
                     <Form.Group>
                       <Form.Label>Date de Livraison : </Form.Label>
