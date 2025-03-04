@@ -362,7 +362,7 @@ const ProduitDetails = () => {
                     <Row className="g-3">
                       <Col xs={12} md={6}>
                         <Form.Group>
-                          <Form.Label>Style du modèle : </Form.Label>
+                          <Form.Label>Style : </Form.Label>
                           <StyledFormControl
                             type="text"
                             name="style"
@@ -413,7 +413,7 @@ const ProduitDetails = () => {
                   ) : (
                     <div className="d-flex flex-wrap gap-3">
                       <div>
-                        <strong>Modèle :</strong>{product.style}
+                        <strong>Style :</strong>{product.style}
                       </div>
                       /
                       <div>
@@ -421,7 +421,7 @@ const ProduitDetails = () => {
                       </div>
                       /
                       <div>
-                        <strong>PO :</strong>{product.po}
+                        <strong>Référence PO :</strong>{product.po}
                       </div>
                       /
                       <div >
