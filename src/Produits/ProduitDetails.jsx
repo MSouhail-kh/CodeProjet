@@ -437,7 +437,7 @@ const ProduitDetails = () => {
                   Calendrier
                 </SectionTitle>
 
-                <Row className="mb-4 g-3">
+                <Row className="mb-8">
                   <Col md={6}>
                        <Form.Group>
                           <Form.Label>Date de Réception : </Form.Label>
