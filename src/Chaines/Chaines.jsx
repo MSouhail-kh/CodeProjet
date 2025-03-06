@@ -120,14 +120,19 @@ export default function Chaines() {
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
+
   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
-    withCredentials: true,            
+    withCredentials: true,
     headers: {"Content-Type": "application/json"},
     withXSRFToken: true,
     transports: ["websocket"], 
     reconnectionAttempts: Infinity,  
-    timeout: 0  
-  });
+    timeout: 0,  
+    pingInterval: 120000, 
+    pingTimeout: 120000,  
+    autoConnect: true,  
+    reconnectionDelayMax: 5000  
+});
   
   useEffect(() => {
     socket.on('update_produits', (data) => {
