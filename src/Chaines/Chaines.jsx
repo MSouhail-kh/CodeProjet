@@ -141,7 +141,7 @@ export default function Chaines() {
       socket.off('update_produits');
       socket.disconnect();
     };
-  }, [socket]);
+  }, []);
 
 
   const handleDeleteSuccess = (deletedItem) => {
