@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
 import NoImage from '../assets/No+Image.png';
 import api from "../services/axios";
+import { io } from 'socket.io-client';
 
 // Styles pour le loader
 const LoaderContainer = styled.div`
