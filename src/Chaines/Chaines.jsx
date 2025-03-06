@@ -121,7 +121,12 @@ export default function Chaines() {
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
 
-  const [socket] = useState(() => io('https://gestion-planning-back-end-1.onrender.com'));
+  const socket = io("https://gestion-planning-back-end-1.onrender.com", {
+    withCredentials: true,
+    transports: ["websocket"], 
+    reconnectionAttempts: 5,
+    timeout: 10000
+  });
 
   useEffect(() => {
     socket.on('update_produits', (data) => {
