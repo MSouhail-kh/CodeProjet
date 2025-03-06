@@ -122,17 +122,18 @@ export default function Chaines() {
   const navigate = useNavigate();
 
   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
-      withCredentials: true,
-      headers: {"Content-Type": "application/json"},
-      withXSRFToken: true,
-      transports: ["websocket"], 
-      reconnectionAttempts: Infinity,  
-      timeout: 30000,  
-      pingInterval: 45000,  
-      pingTimeout: 30000,  
-      autoConnect: true,  
-      reconnectionDelayMax: 5000  
+    withCredentials: true,
+    transports: ["websocket","polling"], 
+    reconnectionAttempts: Infinity,  
+    timeout: 30000,  
+    pingInterval: 45000,  
+    pingTimeout: 30000,  
+    autoConnect: true,  
+    reconnectionDelayMax: 5000,
+    forceNew: true 
   });
+
+
   useEffect(() => {
     socket.on('update_produits', (data) => {
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
