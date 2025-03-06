@@ -120,14 +120,12 @@ export default function Chaines() {
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
-
   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
     withCredentials: true,
     transports: ["websocket"], 
     reconnectionAttempts: 5,
     timeout: 10000
   });
-
   useEffect(() => {
     socket.on('update_produits', (data) => {
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
