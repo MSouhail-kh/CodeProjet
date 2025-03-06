@@ -122,15 +122,12 @@ export default function Chaines() {
   const navigate = useNavigate();
   useEffect(() => {
     const eventSource = new EventSource("https://gestion-planning-back-end-1.onrender.com/sse");
-      
     eventSource.onopen = () => {
       console.log("✅ Connecté au serveur SSE !");
     };
-
     eventSource.onerror = (err) => {
       console.error("❌ Erreur de connexion SSE :", err);
     };
-
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log("📦 Produits reçus via SSE :", data);
