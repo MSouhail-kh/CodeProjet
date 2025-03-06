@@ -120,22 +120,25 @@ export default function Chaines() {
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
 
+  const [socket] = useState(() => io('https://gestion-planning-back-end-1.onrender.com'));
+
   useEffect(() => {
-    api.get("https://gestion-planning-back-end-1.onrender.com/produits")
-      .then((response) => {
-        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-        const produits = Object.values(response.data);
-        produits.forEach((produit) => {
-          if (groupedData[produit.position_id]) {
-            groupedData[produit.position_id].push(produit);
-          }
-        });
-        setData(groupedData);
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la récupération des produits :", error);
+    socket.on('update_produits', (data) => {
+      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      data.data.forEach((produit) => {
+        if (groupedData[produit.position_id]) {
+          groupedData[produit.position_id].push(produit);
+        }
       });
-  }, []);
+      setData(groupedData);
+    });
+
+    return () => {
+      socket.off('update_produits');
+      socket.disconnect();
+    };
+  }, [socket]);
+
 
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
