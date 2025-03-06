@@ -120,20 +120,21 @@ export default function Chaines() {
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
-
-  const socket = io("https://gestion-planning-back-end-1.onrender.com", {
-    withCredentials: true,
-    transports: ["websocket","polling"], 
-    reconnection: true,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    reconnectionAttempts: 3,
-    transports: ['websocket']
-  });
-
-
   useEffect(() => {
-    socket.on('update_produits', (data) => {
+    const eventSource = new EventSource("https://gestion-planning-back-end-1.onrender.com/sse");
+      
+    eventSource.onopen = () => {
+      console.log("✅ Connecté au serveur SSE !");
+    };
+
+    eventSource.onerror = (err) => {
+      console.error("❌ Erreur de connexion SSE :", err);
+    };
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("📦 Produits reçus via SSE :", data);
+
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
       data.data.forEach((produit) => {
         if (groupedData[produit.position_id]) {
@@ -141,13 +142,13 @@ export default function Chaines() {
         }
       });
       setData(groupedData);
-    });
+    };
 
     return () => {
-      socket.off('update_produits');
-      socket.disconnect();
+      eventSource.close();
     };
   }, []);
+
 
 
   const handleDeleteSuccess = (deletedItem) => {
