@@ -124,13 +124,11 @@ export default function Chaines() {
   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
     withCredentials: true,
     transports: ["websocket","polling"], 
-    reconnectionAttempts: Infinity,  
-    timeout: 30000,  
-    pingInterval: 45000,  
-    pingTimeout: 30000,  
-    autoConnect: true,  
+    reconnection: true,
+    reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
-    forceNew: true 
+    reconnectionAttempts: 3,
+    transports: ['websocket']
   });
 
 
