@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
 import NoImage from '../assets/No+Image.png';
 import api from "../services/axios";
-import { io } from "socket.io-client";
 
 // Styles pour le loader
 const LoaderContainer = styled.div`
@@ -120,34 +119,53 @@ export default function Chaines() {
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    const eventSource = new EventSource("https://gestion-planning-back-end-1.onrender.com/sse");
-    eventSource.onopen = () => {
-      console.log("✅ Connecté au serveur SSE !");
-    };
-    eventSource.onerror = (err) => {
-      console.error("❌ Erreur de connexion SSE :", err);
-    };
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("📦 Produits reçus via SSE :", data);
+  const WS_URL = "wss://gestion-planning-back-end-1.onrender.com/ws"; 
 
-      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-      data.data.forEach((produit) => {
-        if (groupedData[produit.position_id]) {
-          groupedData[produit.position_id].push(produit);
+    useEffect(() => {
+      let socket = new WebSocket(WS_URL);
+
+      socket.onopen = () => {
+        console.log("✅ Connecté au serveur WebSocket !");
+      };
+
+      // Réception des messages WebSocket
+      socket.onmessage = (event) => {
+        try {
+          const receivedData = JSON.parse(event.data);
+          console.log("📦 Produits reçus :", receivedData);
+
+          const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+          receivedData.data.forEach((produit) => {
+            if (groupedData[produit.position_id]) {
+              groupedData[produit.position_id].push(produit);
+            }
+          });
+
+          setData(groupedData);
+        } catch (error) {
+          console.error("❌ Erreur de parsing WebSocket :", error);
         }
-      });
-      setData(groupedData);
-    };
+      };
 
-    return () => {
-      eventSource.close();
-    };
-  }, []);
+      // Gestion des erreurs
+      socket.onerror = (error) => {
+        console.error("❌ Erreur WebSocket :", error);
+      };
 
+      // Gestion de la fermeture de la connexion
+      socket.onclose = (event) => {
+        console.warn("⚠️ WebSocket fermé :", event.reason);
+        setTimeout(() => {
+          console.log("🔄 Tentative de reconnexion...");
+          socket = new WebSocket(WS_URL);
+        }, 3000); // Reconnexion après 3 secondes
+      };
 
-
+      // Nettoyage à la suppression du composant
+      return () => {
+        socket.close();
+      };
+    }, []);
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
       const newData = { ...prevData };
