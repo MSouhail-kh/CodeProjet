@@ -121,7 +121,9 @@ export default function Chaines() {
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
-    withCredentials: true,
+    withCredentials: true,          
+    headers: {"Content-Type": "application/json",},
+    withXSRFToken:true,
     transports: ["websocket"], 
     reconnectionAttempts: 5,
     timeout: 10000
@@ -193,7 +195,7 @@ export default function Chaines() {
         {
           headers: {
             "Content-Type": "application/json",
-          },
+          }
         }
       )
       .then((response) => {
