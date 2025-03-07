@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useRef} from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -121,51 +121,55 @@ export default function Chaines() {
   const navigate = useNavigate();
   const WS_URL = "wss://gestion-planning-back-end-1.onrender.com/ws"; 
 
-    useEffect(() => {
-      let socket = new WebSocket(WS_URL);
+  const socketRef = useRef(null);
+  const connectWebSocket = () => {
+    socketRef.current = new WebSocket(WS_URL);
 
-      socket.onopen = () => {
-        console.log("✅ Connecté au serveur WebSocket !");
-      };
+    socketRef.current.onopen = () => {
+      console.log("✅ Connecté au serveur WebSocket !");
+    };
 
-      // Réception des messages WebSocket
-      socket.onmessage = (event) => {
-        try {
-          const receivedData = JSON.parse(event.data);
-          console.log("📦 Produits reçus :", receivedData);
+    socketRef.current.onmessage = (event) => {
+      try {
+        const receivedData = JSON.parse(event.data);
+        console.log("📦 Produits reçus :", receivedData);
 
-          const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        if (receivedData.data && Array.isArray(receivedData.data)) {
           receivedData.data.forEach((produit) => {
             if (groupedData[produit.position_id]) {
               groupedData[produit.position_id].push(produit);
             }
           });
-
-          setData(groupedData);
-        } catch (error) {
-          console.error("❌ Erreur de parsing WebSocket :", error);
         }
-      };
+        setData(groupedData);
+      } catch (error) {
+        console.error("❌ Erreur de parsing WebSocket :", error);
+      }
+    };
 
-      // Gestion des erreurs
-      socket.onerror = (error) => {
-        console.error("❌ Erreur WebSocket :", error);
-      };
+    socketRef.current.onerror = (error) => {
+      console.error("❌ Erreur WebSocket :", error);
+    };
 
-      // Gestion de la fermeture de la connexion
-      socket.onclose = (event) => {
-        console.warn("⚠️ WebSocket fermé :", event.reason);
-        setTimeout(() => {
-          console.log("🔄 Tentative de reconnexion...");
-          socket = new WebSocket(WS_URL);
-        }, 3000); // Reconnexion après 3 secondes
-      };
+    socketRef.current.onclose = (event) => {
+      console.warn("⚠️ WebSocket fermé :", event.reason);
+      setTimeout(() => {
+        console.log("🔄 Tentative de reconnexion...");
+        connectWebSocket();
+      }, 3000);
+    };
+  };
 
-      // Nettoyage à la suppression du composant
-      return () => {
-        socket.close();
-      };
-    }, []);
+  useEffect(() => {
+    connectWebSocket();
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, []);
+
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
       const newData = { ...prevData };
