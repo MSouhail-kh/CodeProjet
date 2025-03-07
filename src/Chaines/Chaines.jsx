@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
 import NoImage from '../assets/No+Image.png';
 import api from "../services/axios";
+import { io } from 'socket.io-client';
+
 
 // Styles pour le loader
 const LoaderContainer = styled.div`
@@ -119,57 +121,42 @@ export default function Chaines() {
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
-  const WS_URL = "wss://gestion-planning-back-end-1.onrender.com/ws"; 
-
-  const socketRef = useRef(null);
-  const connectWebSocket = () => {
-    socketRef.current = new WebSocket(WS_URL);
-
-    socketRef.current.onopen = () => {
-      console.log("✅ Connecté au serveur WebSocket !");
-    };
-
-    socketRef.current.onmessage = (event) => {
-      try {
-        const receivedData = JSON.parse(event.data);
-        console.log("📦 Produits reçus :", receivedData);
-
-        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-        if (receivedData.data && Array.isArray(receivedData.data)) {
-          receivedData.data.forEach((produit) => {
-            if (groupedData[produit.position_id]) {
-              groupedData[produit.position_id].push(produit);
-            }
-          });
-        }
-        setData(groupedData);
-      } catch (error) {
-        console.error("❌ Erreur de parsing WebSocket :", error);
-      }
-    };
-
-    socketRef.current.onerror = (error) => {
-      console.error("❌ Erreur WebSocket :", error);
-    };
-
-    socketRef.current.onclose = (event) => {
-      console.warn("⚠️ WebSocket fermé :", event.reason);
-      setTimeout(() => {
-        console.log("🔄 Tentative de reconnexion...");
-        connectWebSocket();
-      }, 3000);
-    };
-  };
+  const SOCKET_URL = "https://gestion-planning-back-end-1.onrender.com"; 
 
   useEffect(() => {
-    connectWebSocket();
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
+    const socket = io(SOCKET_URL, {
+      transports: ["websocket"] 
+    });
+
+    socket.on('connect', () => {
+      console.log("✅ Connecté au serveur SocketIO !");
+    });
+
+    socket.on('message', (msg) => {
+      console.log("📩 Message reçu :", msg);
+    });
+
+    socket.on('update', (updateData) => {
+      console.log("📦 Produits reçus :", updateData);
+      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      if (updateData.data && Array.isArray(updateData.data)) {
+        updateData.data.forEach((produit) => {
+          if (groupedData[produit.position_id]) {
+            groupedData[produit.position_id].push(produit);
+          }
+        });
       }
+      setData(groupedData);
+    });
+
+    socket.on('disconnect', () => {
+      console.warn("⚠️ Déconnecté du serveur SocketIO !");
+    });
+
+    return () => {
+      socket.disconnect();
     };
   }, []);
-
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
       const newData = { ...prevData };
