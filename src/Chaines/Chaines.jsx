@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useRef} from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -112,6 +112,7 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
+
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -124,51 +125,55 @@ export default function Chaines() {
   const isMounted = useRef(true);
   const navigate = useNavigate();
 
+  // Connexion WebSocket et chargement initial
   useEffect(() => {
     isMounted.current = true;
+    
+    const initWebSocket = () => {
+      socketRef.current = io("https://gestion-planning-back-end-1.onrender.com", {
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 3000,
+      });
 
-    socketRef.current = io("https://gestion-planning-back-end-1.onrender.com", {
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 3000,
-    });
+      socketRef.current.on("connect_error", (err) => {
+        if (!isMounted.current) return;
+        console.error("Erreur de connexion Socket.IO :", err);
+        setError("Impossible de se connecter au serveur en temps réel.");
+      });
 
-    socketRef.current.on("connect_error", (err) => {
-      console.error("Erreur de connexion Socket.IO :", err);
-      setError("Impossible de se connecter au serveur en temps réel.");
-    });
+      socketRef.current.on("update_produits", handleSocketUpdate);
+    };
 
-    socketRef.current.on("update_produits", (newData) => {
-      if (!isMounted.current) return; 
+    const handleSocketUpdate = (newData) => {
+      if (!isMounted.current) return;
 
       try {
-        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-        newData.data.forEach((produit) => {
-          if (groupedData[produit.position_id]) {
-            groupedData[produit.position_id].push(produit);
-          }
-        });
-        setData(groupedData);
+        const groupedData = groupDataByPosition(newData.data);
+        if (isMounted.current) setData(groupedData);
       } catch (err) {
-        console.error("Erreur lors du traitement des données :", err);
-        setError("Format de données incorrect.");
+        console.error("Erreur de traitement :", err);
+        if (isMounted.current) setError("Format de données incorrect.");
       }
-    });
+    };
 
-    const fetchData = async () => {
+    const groupDataByPosition = (produits) => {
+      return produits.reduce((acc, produit) => {
+        const position = produit.position_id;
+        if (acc[position]) acc[position].push(produit);
+        return acc;
+      }, { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] });
+    };
+
+    const fetchInitialData = async () => {
+      if (!isMounted.current) return;
       setIsLoading(true);
+      
       try {
         await api.post("/trigger-update");
         const response = await api.get("/produits");
-        const produits = Object.values(response.data);
-
-        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-        produits.forEach((produit) => {
-          if (groupedData[produit.position_id]) {
-            groupedData[produit.position_id].push(produit);
-          }
-        });
-
+        const groupedData = groupDataByPosition(Object.values(response.data));
+        
         if (isMounted.current) {
           setData(groupedData);
           setError(null);
@@ -181,17 +186,14 @@ export default function Chaines() {
       }
     };
 
-    fetchData();
+    initWebSocket();
+    fetchInitialData();
 
     return () => {
       isMounted.current = false;
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
+      socketRef.current?.disconnect();
     };
   }, []);
-
 
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
@@ -272,7 +274,7 @@ export default function Chaines() {
     navigate(`/produit/${item.id}`, { state: { produit: item } });
   };
 
-  if (Object.keys(data).length === 0) {
+  if (isLoading || Object.keys(data).length === 0) {
     return (
       <LoaderContainer>
         <BouncingLoader>
