@@ -128,6 +128,7 @@ export default function Chaines() {
       setIsLoading(true);
       try {
         await api.post("/trigger-update");
+        await new Promise((resolve) => setTimeout(resolve, 10000));
         const response = await api.get("/produits");
         const produits = Object.values(response.data);
 
