@@ -118,29 +118,48 @@ export default function Chaines() {
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chaine, setChaine] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const socketRef = useRef(null);
+  const isMounted = useRef(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io("https://gestion-planning-back-end-1.onrender.com");
+    isMounted.current = true;
 
-    socket.on("update_produits", (newData) => {
-      console.log("Nouvelles données reçues :", newData);
+    socketRef.current = io("https://gestion-planning-back-end-1.onrender.com", {
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 3000,
+    });
 
-      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-      newData.data.forEach((produit) => {
-        if (groupedData[produit.position_id]) {
-          groupedData[produit.position_id].push(produit);
-        }
-      });
-      setData(groupedData);
+    socketRef.current.on("connect_error", (err) => {
+      console.error("Erreur de connexion Socket.IO :", err);
+      setError("Impossible de se connecter au serveur en temps réel.");
+    });
+
+    socketRef.current.on("update_produits", (newData) => {
+      if (!isMounted.current) return; 
+
+      try {
+        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        newData.data.forEach((produit) => {
+          if (groupedData[produit.position_id]) {
+            groupedData[produit.position_id].push(produit);
+          }
+        });
+        setData(groupedData);
+      } catch (err) {
+        console.error("Erreur lors du traitement des données :", err);
+        setError("Format de données incorrect.");
+      }
     });
 
     const fetchData = async () => {
+      setIsLoading(true);
       try {
-        await api.post("https://gestion-planning-back-end-1.onrender.com/trigger-update");
-        console.log("Mise à jour déclenchée avec succès.");
-
-        const response = await api.get("https://gestion-planning-back-end-1.onrender.com/produits");
+        await api.post("/trigger-update");
+        const response = await api.get("/produits");
         const produits = Object.values(response.data);
 
         const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
@@ -150,18 +169,29 @@ export default function Chaines() {
           }
         });
 
-        setData(groupedData);
-      } catch (error) {
-        console.error("Erreur lors de la récupération ou de la mise à jour des produits :", error);
+        if (isMounted.current) {
+          setData(groupedData);
+          setError(null);
+        }
+      } catch (err) {
+        console.error("Erreur :", err);
+        if (isMounted.current) setError("Échec de la récupération des données.");
+      } finally {
+        if (isMounted.current) setIsLoading(false);
       }
     };
 
     fetchData();
 
     return () => {
-      socket.disconnect();
+      isMounted.current = false;
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
   }, []);
+
 
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
