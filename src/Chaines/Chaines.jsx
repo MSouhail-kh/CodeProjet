@@ -1,4 +1,4 @@
-import { useState, useEffect ,useRef} from "react";
+import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -112,7 +112,6 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
-
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -125,75 +124,90 @@ export default function Chaines() {
   const isMounted = useRef(true);
   const navigate = useNavigate();
 
-  // Connexion WebSocket et chargement initial
   useEffect(() => {
     isMounted.current = true;
     
-    const initWebSocket = () => {
+    const initializeSocket = () => {
       socketRef.current = io("https://gestion-planning-back-end-1.onrender.com", {
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 3000,
+        reconnection: false,
+        autoConnect: true
       });
 
       socketRef.current.on("connect_error", (err) => {
-        if (!isMounted.current) return;
-        console.error("Erreur de connexion Socket.IO :", err);
-        setError("Impossible de se connecter au serveur en temps réel.");
+        console.error("Socket connection error:", err);
+        if (isMounted.current) {
+          setError("Real-time server connection failed");
+          setTimeout(() => navigate(0), 2000); 
+        }
       });
 
-      socketRef.current.on("update_produits", handleSocketUpdate);
+      socketRef.current.on("update_produits", handleProduitsUpdate);
     };
 
-    const handleSocketUpdate = (newData) => {
+    const handleProduitsUpdate = (newData) => {
       if (!isMounted.current) return;
 
       try {
-        const groupedData = groupDataByPosition(newData.data);
-        if (isMounted.current) setData(groupedData);
+        const groupedData = Array.from({ length: 6 }, (_, i) => i + 1)
+          .reduce((acc, pos) => ({ ...acc, [pos]: [] }), {});
+        
+        newData.data.forEach(produit => {
+          if (groupedData[produit.position_id]) {
+            groupedData[produit.position_id].push(produit);
+          }
+        });
+        
+        setData(groupedData);
       } catch (err) {
-        console.error("Erreur de traitement :", err);
-        if (isMounted.current) setError("Format de données incorrect.");
+        console.error("Data processing error:", err);
+        setError("Invalid data format");
       }
     };
 
-    const groupDataByPosition = (produits) => {
-      return produits.reduce((acc, produit) => {
-        const position = produit.position_id;
-        if (acc[position]) acc[position].push(produit);
-        return acc;
-      }, { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] });
-    };
-
-    const fetchInitialData = async () => {
-      if (!isMounted.current) return;
+    const fetchData = async () => {
       setIsLoading(true);
-      
       try {
         await api.post("/trigger-update");
         const response = await api.get("/produits");
-        const groupedData = groupDataByPosition(Object.values(response.data));
-        
-        if (isMounted.current) {
-          setData(groupedData);
-          setError(null);
-        }
+        processApiResponse(response.data);
       } catch (err) {
-        console.error("Erreur :", err);
-        if (isMounted.current) setError("Échec de la récupération des données.");
+        console.error("Data fetch error:", err);
+        if (isMounted.current) setError("Data loading failed");
       } finally {
         if (isMounted.current) setIsLoading(false);
       }
     };
 
-    initWebSocket();
-    fetchInitialData();
+    const processApiResponse = (responseData) => {
+      const produits = Object.values(responseData);
+      const groupedData = Array.from({ length: 6 }, (_, i) => i + 1)
+        .reduce((acc, pos) => ({ ...acc, [pos]: [] }), {});
+
+      produits.forEach(produit => {
+        if (groupedData[produit.position_id]) {
+          groupedData[produit.position_id].push(produit);
+        }
+      });
+
+      if (isMounted.current) {
+        setData(groupedData);
+        setError(null);
+      }
+    };
+
+    initializeSocket();
+    fetchData();
 
     return () => {
       isMounted.current = false;
-      socketRef.current?.disconnect();
+      if (socketRef.current) {
+        socketRef.current.off("update_produits", handleProduitsUpdate);
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
-  }, []);
+  }, [navigate]); 
+
 
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
@@ -274,7 +288,7 @@ export default function Chaines() {
     navigate(`/produit/${item.id}`, { state: { produit: item } });
   };
 
-  if (isLoading || Object.keys(data).length === 0) {
+  if (Object.keys(data).length === 0) {
     return (
       <LoaderContainer>
         <BouncingLoader>
