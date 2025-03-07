@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
 import NoImage from '../assets/No+Image.png';
 import api from "../services/axios";
-import { io } from "socket.io-client"; 
 
 // Styles pour le loader
 const LoaderContainer = styled.div`
@@ -120,94 +119,43 @@ export default function Chaines() {
   const [chaine, setChaine] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const socketRef = useRef(null);
   const isMounted = useRef(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     isMounted.current = true;
-    
-    const initializeSocket = () => {
-      socketRef.current = io("https://gestion-planning-back-end-1.onrender.com", {
-        reconnection: false,
-        autoConnect: true
-      });
-
-      socketRef.current.on("connect_error", (err) => {
-        console.error("Socket connection error:", err);
-        if (isMounted.current) {
-          setError("Real-time server connection failed");
-          setTimeout(() => navigate(0), 2000); 
-        }
-      });
-
-      socketRef.current.on("update_produits", handleProduitsUpdate);
-    };
-
-    const handleProduitsUpdate = (newData) => {
-      if (!isMounted.current) return;
-
-      try {
-        const groupedData = Array.from({ length: 6 }, (_, i) => i + 1)
-          .reduce((acc, pos) => ({ ...acc, [pos]: [] }), {});
-        
-        newData.data.forEach(produit => {
-          if (groupedData[produit.position_id]) {
-            groupedData[produit.position_id].push(produit);
-          }
-        });
-        
-        setData(groupedData);
-      } catch (err) {
-        console.error("Data processing error:", err);
-        setError("Invalid data format");
-      }
-    };
-
     const fetchData = async () => {
       setIsLoading(true);
       try {
         await api.post("/trigger-update");
         const response = await api.get("/produits");
-        processApiResponse(response.data);
+        const produits = Object.values(response.data);
+
+        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        produits.forEach((produit) => {
+          if (groupedData[produit.position_id]) {
+            groupedData[produit.position_id].push(produit);
+          }
+        });
+
+        if (isMounted.current) {
+          setData(groupedData);
+          setError(null);
+        }
       } catch (err) {
-        console.error("Data fetch error:", err);
-        if (isMounted.current) setError("Data loading failed");
+        console.error("Erreur :", err);
+        if (isMounted.current) setError("Échec de la récupération des données.");
       } finally {
         if (isMounted.current) setIsLoading(false);
       }
     };
 
-    const processApiResponse = (responseData) => {
-      const produits = Object.values(responseData);
-      const groupedData = Array.from({ length: 6 }, (_, i) => i + 1)
-        .reduce((acc, pos) => ({ ...acc, [pos]: [] }), {});
-
-      produits.forEach(produit => {
-        if (groupedData[produit.position_id]) {
-          groupedData[produit.position_id].push(produit);
-        }
-      });
-
-      if (isMounted.current) {
-        setData(groupedData);
-        setError(null);
-      }
-    };
-
-    initializeSocket();
     fetchData();
 
     return () => {
       isMounted.current = false;
-      if (socketRef.current) {
-        socketRef.current.off("update_produits", handleProduitsUpdate);
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
     };
-  }, [navigate]); 
-
+  }, []);
 
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
