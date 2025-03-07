@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
 import NoImage from '../assets/No+Image.png';
 import api from "../services/axios";
+import { io } from "socket.io-client"; 
 
 // Styles pour le loader
 const LoaderContainer = styled.div`
@@ -111,8 +112,6 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
-const fetcher = url => fetch(url).then(res => res.json());
-
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -122,20 +121,46 @@ export default function Chaines() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("https://gestion-planning-back-end-1.onrender.com/produits")
-      .then((response) => {
-        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+    const socket = io("https://gestion-planning-back-end-1.onrender.com");
+
+    socket.on("update_produits", (newData) => {
+      console.log("Nouvelles données reçues :", newData);
+
+      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      newData.data.forEach((produit) => {
+        if (groupedData[produit.position_id]) {
+          groupedData[produit.position_id].push(produit);
+        }
+      });
+      setData(groupedData);
+    });
+
+    const fetchData = async () => {
+      try {
+        await api.post("https://gestion-planning-back-end-1.onrender.com/trigger-update");
+        console.log("Mise à jour déclenchée avec succès.");
+
+        const response = await api.get("https://gestion-planning-back-end-1.onrender.com/produits");
         const produits = Object.values(response.data);
+
+        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
         produits.forEach((produit) => {
           if (groupedData[produit.position_id]) {
             groupedData[produit.position_id].push(produit);
           }
         });
+
         setData(groupedData);
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la récupération des produits :", error);
-      });
+      } catch (error) {
+        console.error("Erreur lors de la récupération ou de la mise à jour des produits :", error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const handleDeleteSuccess = (deletedItem) => {
