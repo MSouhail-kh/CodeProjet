@@ -122,7 +122,7 @@ export default function Chaines() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("https://gestion-planning-back-end-1.onrender.com/web/produits")
+    api.get("https://gestion-planning-back-end-1.onrender.com/produits")
       .then((response) => {
         const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
         const produits = Object.values(response.data);
