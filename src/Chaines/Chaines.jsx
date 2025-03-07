@@ -1,4 +1,4 @@
-import { useState, useEffect ,useRef} from "react";
+import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -7,8 +7,6 @@ import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
 import NoImage from '../assets/No+Image.png';
 import api from "../services/axios";
-import { io } from 'socket.io-client';
-
 
 // Styles pour le loader
 const LoaderContainer = styled.div`
@@ -113,6 +111,7 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
+const fetcher = url => fetch(url).then(res => res.json());
 
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
@@ -121,42 +120,24 @@ export default function Chaines() {
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chaine, setChaine] = useState(null);
   const navigate = useNavigate();
-  const SOCKET_URL = "https://gestion-planning-back-end-1.onrender.com"; 
 
   useEffect(() => {
-    const socket = io(SOCKET_URL, {
-      transports: ["websocket"] 
-    });
-
-    socket.on('connect', () => {
-      console.log("✅ Connecté au serveur SocketIO !");
-    });
-
-    socket.on('message', (msg) => {
-      console.log("📩 Message reçu :", msg);
-    });
-
-    socket.on('update', (updateData) => {
-      console.log("📦 Produits reçus :", updateData);
-      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-      if (updateData.data && Array.isArray(updateData.data)) {
-        updateData.data.forEach((produit) => {
+    api.get("https://gestion-planning-back-end-1.onrender.com/web/produits")
+      .then((response) => {
+        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        const produits = Object.values(response.data);
+        produits.forEach((produit) => {
           if (groupedData[produit.position_id]) {
             groupedData[produit.position_id].push(produit);
           }
         });
-      }
-      setData(groupedData);
-    });
-
-    socket.on('disconnect', () => {
-      console.warn("⚠️ Déconnecté du serveur SocketIO !");
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+        setData(groupedData);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des produits :", error);
+      });
   }, []);
+
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
       const newData = { ...prevData };
@@ -206,7 +187,7 @@ export default function Chaines() {
         {
           headers: {
             "Content-Type": "application/json",
-          }
+          },
         }
       )
       .then((response) => {

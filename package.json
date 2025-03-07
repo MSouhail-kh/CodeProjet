@@ -24,6 +24,7 @@
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.15",
     "swiper": "^11.2.4",
+    "swr": "^2.3.3",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
