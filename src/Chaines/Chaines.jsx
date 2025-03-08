@@ -142,7 +142,6 @@ export default function Chaines() {
         Object.keys(groupedData).forEach((position) => {
           groupedData[position].sort((a, b) => a.order.localeCompare(b.order));
         });
-
         if (isMounted.current) {
           setData(groupedData);
           setError(null);
