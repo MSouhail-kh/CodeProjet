@@ -119,7 +119,6 @@ const MobileRow = styled(Row)`
   }
 `;
 
-
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -188,44 +187,49 @@ export default function Chaines() {
     try {
       setIsSyncing(true);
 
-      // Mise à jour optimiste
+      // Mise à jour optimiste de l'état
       setData((prev) => {
         const newData = { ...prev };
         if (transferData.from === targetPosition) {
           const newList = [...newData[targetPosition]];
-          newList.splice(transferData.index, 1);
-          newList.splice(dropIndex, 0, transferData.item);
+          const [movedItem] = newList.splice(transferData.index, 1);
+          newList.splice(dropIndex, 0, movedItem);
           newData[targetPosition] = newList;
         } else {
           const sourceList = [...newData[transferData.from]];
           const targetList = [...newData[targetPosition]];
-          sourceList.splice(transferData.index, 1);
-          targetList.push(transferData.item);
+          const [movedItem] = sourceList.splice(transferData.index, 1);
+          if (
+            dropIndex !== undefined &&
+            dropIndex >= 0 &&
+            dropIndex <= targetList.length
+          ) {
+            targetList.splice(dropIndex, 0, movedItem);
+          } else {
+            targetList.push(movedItem);
+          }
           newData[transferData.from] = sourceList;
           newData[targetPosition] = targetList;
         }
         return newData;
       });
 
-      // Envoi au backend
-      await api.post(
-        "/drag",
-        transferData.from === targetPosition
-          ? {
-              oldPosition: targetPosition,
-              newPosition: targetPosition,
-              produit: transferData.item,
-              newIndex: dropIndex,
-            }
-          : {
-              oldPosition: transferData.from,
-              newPosition: targetPosition,
-              produit: transferData.item,
-            },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      // Construction d'une payload unifiée pour /drag
+      const dragPayload = {
+        oldPosition: transferData.from,
+        newPosition: targetPosition,
+        produit: transferData.item,
+      };
+      if (transferData.from === targetPosition) {
+        dragPayload.newIndex = dropIndex;
+        dragPayload.oldPosition = targetPosition;
+        dragPayload.newPosition = targetPosition;
+      }
 
-      // Synchronisation différée
+      await api.post("/drag", dragPayload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
       setTimeout(async () => {
         try {
           await api.post("/trigger-update");
@@ -238,13 +242,13 @@ export default function Chaines() {
         }
       }, 2000);
 
-    } catch (error) {
-      console.error("Erreur lors du déplacement :", error);
+    } catch (err) {
+      console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
       setIsSyncing(false);
     }
   };
-
+  
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
