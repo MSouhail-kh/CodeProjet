@@ -1,6 +1,7 @@
+
 import { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
-import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, ListGroup, Button, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +9,7 @@ import DeleteButton from "./DeleteButton";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 
+// Styles
 const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -37,17 +39,8 @@ const Dot = styled.div`
   background-color: #007bff;
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
-
-  &:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  &:nth-child(3) {
-    animation-delay: 0.4s;
-  }
 `;
 
-// Styles pour les cartes et listes
 const StyledCard = styled(Card)`
   height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -68,6 +61,19 @@ const StyledListGroupItem = styled(ListGroup.Item)`
     color: white;
     transform: scale(1.02);
   }
+`;
+
+const SyncStatus = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;
 
 const HoverCard = styled.div`
@@ -104,12 +110,15 @@ const ControlButton = styled(Button)`
   }
 `;
 
+
+
 const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 1rem;
   }
 `;
+
 
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
@@ -119,49 +128,47 @@ export default function Chaines() {
   const [chaine, setChaine] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
   const isMounted = useRef(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     isMounted.current = true;
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        await api.post("/trigger-update");
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        const response = await api.get("/produits");
-        const produits = Object.values(response.data);
-
-        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-        produits.forEach((produit) => {
-          if (groupedData[produit.position_id]) {
-            groupedData[produit.position_id].push(produit);
-          }
-        });
-
-        Object.keys(groupedData).forEach((position) => {
-          groupedData[position].sort((a, b) => a.order - b.order);
-        });
-
-        if (isMounted.current) {
-          setData(groupedData);
-          setError(null);
-        }
-      } catch (err) {
-        console.error("Erreur :", err);
-        if (isMounted.current)
-          setError("Échec de la récupération des données.");
-      } finally {
-        if (isMounted.current) setIsLoading(false);
-      }
-    };
-
     fetchData();
-
     return () => {
       isMounted.current = false;
     };
   }, []);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      await api.post("/trigger-update");
+      const response = await api.get("/produits");
+      const produits = Object.values(response.data);
+
+      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      produits.forEach((produit) => {
+        if (groupedData[produit.position_id]) {
+          groupedData[produit.position_id].push(produit);
+        }
+      });
+
+      Object.keys(groupedData).forEach((position) => {
+        groupedData[position].sort((a, b) => a.order - b.order);
+      });
+
+      if (isMounted.current) {
+        setData(groupedData);
+        setError(null);
+      }
+    } catch (err) {
+      console.error("Erreur :", err);
+      if (isMounted.current) setError("Échec de la récupération des données.");
+    } finally {
+      if (isMounted.current) setIsLoading(false);
+    }
+  };
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -174,66 +181,67 @@ export default function Chaines() {
     e.preventDefault();
   };
 
-
-  const handleDrop = (e, targetPosition, dropIndex) => {
+  const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
 
-    if (transferData.from === targetPosition) {
-      setData((prevData) => {
-        const newList = [...prevData[targetPosition]];
-        const currentIndex = transferData.index;
-        newList.splice(currentIndex, 1);
-        newList.splice(dropIndex, 0, transferData.item);
-        return { ...prevData, [targetPosition]: newList };
+    try {
+      setIsSyncing(true);
+
+      // Mise à jour optimiste
+      setData((prev) => {
+        const newData = { ...prev };
+        if (transferData.from === targetPosition) {
+          const newList = [...newData[targetPosition]];
+          newList.splice(transferData.index, 1);
+          newList.splice(dropIndex, 0, transferData.item);
+          newData[targetPosition] = newList;
+        } else {
+          const sourceList = [...newData[transferData.from]];
+          const targetList = [...newData[targetPosition]];
+          sourceList.splice(transferData.index, 1);
+          targetList.push(transferData.item);
+          newData[transferData.from] = sourceList;
+          newData[targetPosition] = targetList;
+        }
+        return newData;
       });
-      api
-        .post(
-          "/drag",
-          {
-            oldPosition: targetPosition,
-            newPosition: targetPosition,
-            produit: transferData.item,
-            newIndex: dropIndex,
-          },
-          { headers: { "Content-Type": "application/json" } }
-        )
-        .then((response) => {
-          console.log(response.data);
-          navigate(0);
-        })
-        .catch((error) => {
-          console.error("Erreur lors de l'envoi de la notification :", error);
-        });
-    } else {
-      setData((prevData) => {
-        const sourceList = [...prevData[transferData.from]];
-        const targetList = [...prevData[targetPosition]];
-        sourceList.splice(transferData.index, 1);
-        targetList.push(transferData.item);
-        return {
-          ...prevData,
-          [transferData.from]: sourceList,
-          [targetPosition]: targetList,
-        };
-      });
-      api
-        .post(
-          "/drag",
-          {
-            oldPosition: transferData.from,
-            newPosition: targetPosition,
-            produit: transferData.item,
-          },
-          { headers: { "Content-Type": "application/json" } }
-        )
-        .then((response) => {
-          console.log(response.data);
-          navigate(0);
-        })
-        .catch((error) => {
-          console.error("Erreur lors de l'envoi de la notification :", error);
-        });
+
+      // Envoi au backend
+      await api.post(
+        "/drag",
+        transferData.from === targetPosition
+          ? {
+              oldPosition: targetPosition,
+              newPosition: targetPosition,
+              produit: transferData.item,
+              newIndex: dropIndex,
+            }
+          : {
+              oldPosition: transferData.from,
+              newPosition: targetPosition,
+              produit: transferData.item,
+            },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      // Synchronisation différée
+      setTimeout(async () => {
+        try {
+          await api.post("/trigger-update");
+          await fetchData();
+        } catch (syncError) {
+          console.error("Erreur de synchronisation :", syncError);
+          setError("Problème de synchronisation avec Google Sheets");
+        } finally {
+          setIsSyncing(false);
+        }
+      }, 2000);
+
+    } catch (error) {
+      console.error("Erreur lors du déplacement :", error);
+      setError("Erreur lors du déplacement - Veuillez réessayer");
+      setIsSyncing(false);
     }
   };
 
@@ -253,11 +261,6 @@ export default function Chaines() {
 
   const handleItemClick = (item) => {
     navigate(`/produit/${item.id}`, { state: { produit: item } });
-  };
-
-  const handleContainerDrop = (e, targetPosition) => {
-    e.preventDefault();
-    handleDrop(e, targetPosition, 0);
   };
 
   const handleDeleteSuccess = (deletedItem) => {
@@ -299,17 +302,13 @@ export default function Chaines() {
                   <ListGroup
                     variant="secondary"
                     onDragOver={handleDragOver}
-                    onDrop={(e) =>
-                      data[num].length === 0 && handleContainerDrop(e, num)
-                    }
+                    onDrop={(e) => handleDrop(e, num, 0)}
                   >
                     {data[num]?.map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
                         draggable
-                        onDragStart={(e) =>
-                          handleDragStart(e, num, item, index)
-                        }
+                        onDragStart={(e) => handleDragStart(e, num, item, index)}
                         onDrop={(e) => handleDrop(e, num, index)}
                         onDragOver={handleDragOver}
                         onClick={() => handleItemClick(item)}
@@ -345,9 +344,7 @@ export default function Chaines() {
                   <ListGroup
                     variant="flush"
                     onDragOver={handleDragOver}
-                    onDrop={(e) =>
-                      data[6].length === 0 && handleContainerDrop(e, 6)
-                    }
+                    onDrop={(e) => handleDrop(e, 6, 0)}
                   >
                     {data[6]?.map((item, index) => (
                       <StyledListGroupItem
@@ -372,6 +369,13 @@ export default function Chaines() {
           )}
         </MobileRow>
       </Container>
+
+      {isSyncing && (
+        <SyncStatus>
+          <Spinner animation="border" size="sm" />
+          Synchronisation avec Google Sheets...
+        </SyncStatus>
+      )}
 
       <Col
         md="auto"
