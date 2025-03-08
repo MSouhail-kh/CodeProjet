@@ -5,10 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
-import NoImage from '../assets/No+Image.png';
+import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 
-// Styles pour le loader
 const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -111,6 +110,7 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
+
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -128,7 +128,7 @@ export default function Chaines() {
       setIsLoading(true);
       try {
         await api.post("/trigger-update");
-        await new Promise((resolve) => setTimeout(resolve, 10000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         const response = await api.get("/produits");
         const produits = Object.values(response.data);
 
@@ -139,13 +139,18 @@ export default function Chaines() {
           }
         });
 
+        Object.keys(groupedData).forEach((position) => {
+          groupedData[position].sort((a, b) => a.order.localeCompare(b.order));
+        });
+
         if (isMounted.current) {
           setData(groupedData);
           setError(null);
         }
       } catch (err) {
         console.error("Erreur :", err);
-        if (isMounted.current) setError("Échec de la récupération des données.");
+        if (isMounted.current)
+          setError("Échec de la récupération des données.");
       } finally {
         if (isMounted.current) setIsLoading(false);
       }
@@ -158,18 +163,6 @@ export default function Chaines() {
     };
   }, []);
 
-  const handleDeleteSuccess = (deletedItem) => {
-    setData((prevData) => {
-      const newData = { ...prevData };
-      for (const key in newData) {
-        newData[key] = newData[key].filter(
-          (produit) => produit.id !== deletedItem.id
-        );
-      }
-      return newData;
-    });
-  };
-
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
       "text/plain",
@@ -181,42 +174,67 @@ export default function Chaines() {
     e.preventDefault();
   };
 
-  const handleDrop = (e, targetPosition) => {
+
+  const handleDrop = (e, targetPosition, dropIndex) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    if (transferData.from === targetPosition) return;
 
-    setData((prevData) => {
-      const newSource = [...prevData[transferData.from]];
-      const newTarget = [...prevData[targetPosition]];
-      newSource.splice(transferData.index, 1);
-      newTarget.push(transferData.item);
-      return {
-        ...prevData,
-        [transferData.from]: newSource,
-        [targetPosition]: newTarget,
-      };
-    });
-
-    api.post("/drag",
-        {
-          oldPosition: transferData.from,
-          newPosition: targetPosition,
-          produit: transferData.item,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data);
-        navigate(0);
-      })
-      .catch((error) => {
-        console.error("Erreur lors de l'envoi de la notification :", error);
+    if (transferData.from === targetPosition) {
+      setData((prevData) => {
+        const newList = [...prevData[targetPosition]];
+        const currentIndex = transferData.index;
+        newList.splice(currentIndex, 1);
+        newList.splice(dropIndex, 0, transferData.item);
+        return { ...prevData, [targetPosition]: newList };
       });
+      api
+        .post(
+          "/drag",
+          {
+            oldPosition: targetPosition,
+            newPosition: targetPosition,
+            produit: transferData.item,
+            newIndex: dropIndex,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then((response) => {
+          console.log(response.data);
+          navigate(0);
+        })
+        .catch((error) => {
+          console.error("Erreur lors de l'envoi de la notification :", error);
+        });
+    } else {
+      setData((prevData) => {
+        const sourceList = [...prevData[transferData.from]];
+        const targetList = [...prevData[targetPosition]];
+        sourceList.splice(transferData.index, 1);
+        targetList.push(transferData.item);
+        return {
+          ...prevData,
+          [transferData.from]: sourceList,
+          [targetPosition]: targetList,
+        };
+      });
+      api
+        .post(
+          "/drag",
+          {
+            oldPosition: transferData.from,
+            newPosition: targetPosition,
+            produit: transferData.item,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then((response) => {
+          console.log(response.data);
+          navigate(0);
+        })
+        .catch((error) => {
+          console.error("Erreur lors de l'envoi de la notification :", error);
+        });
+    }
   };
 
   const handleMouseEnter = (e, item) => {
@@ -237,7 +255,24 @@ export default function Chaines() {
     navigate(`/produit/${item.id}`, { state: { produit: item } });
   };
 
-  if (Object.keys(data).length === 0) {
+  const handleContainerDrop = (e, targetPosition) => {
+    e.preventDefault();
+    handleDrop(e, targetPosition, 0);
+  };
+
+  const handleDeleteSuccess = (deletedItem) => {
+    setData((prevData) => {
+      const newData = { ...prevData };
+      for (const key in newData) {
+        newData[key] = newData[key].filter(
+          (produit) => produit.id !== deletedItem.id
+        );
+      }
+      return newData;
+    });
+  };
+
+  if (isLoading) {
     return (
       <LoaderContainer>
         <BouncingLoader>
@@ -255,25 +290,28 @@ export default function Chaines() {
       <Container fluid className="p-4">
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
-            <Col
-              key={num}
-              xs={12}
-              sm={6}
-              md={2}
-              onDrop={(e) => handleDrop(e, num)}
-              onDragOver={handleDragOver}
-            >
+            <Col key={num} xs={12} sm={6} md={2}>
               <StyledCard>
                 <Card.Body>
                   <Card.Title className="text-center fw-bold">
                     Chaine {num}
                   </Card.Title>
-                  <ListGroup variant="secondary">
+                  <ListGroup
+                    variant="secondary"
+                    onDragOver={handleDragOver}
+                    onDrop={(e) =>
+                      data[num].length === 0 && handleContainerDrop(e, num)
+                    }
+                  >
                     {data[num]?.map((item, index) => (
                       <StyledListGroupItem
-                        key={index}
+                        key={item.id}
                         draggable
-                        onDragStart={(e) => handleDragStart(e, num, item, index)}
+                        onDragStart={(e) =>
+                          handleDragStart(e, num, item, index)
+                        }
+                        onDrop={(e) => handleDrop(e, num, index)}
+                        onDragOver={handleDragOver}
                         onClick={() => handleItemClick(item)}
                         onMouseEnter={(e) => handleMouseEnter(e, item)}
                         onMouseMove={handleMouseMove}
@@ -298,29 +336,31 @@ export default function Chaines() {
           </Col>
 
           {showPosition6 && (
-            <Col
-              xs={12}
-              sm={6}
-              md={2}
-              onDrop={(e) => handleDrop(e, 6)}
-              onDragOver={handleDragOver}
-            >
+            <Col xs={12} sm={6} md={2}>
               <StyledCard className="bg-dark text-white">
                 <Card.Body>
                   <Card.Title className="text-center fw-bold">
                     Chaine 6
                   </Card.Title>
-                  <ListGroup variant="flush">
+                  <ListGroup
+                    variant="flush"
+                    onDragOver={handleDragOver}
+                    onDrop={(e) =>
+                      data[6].length === 0 && handleContainerDrop(e, 6)
+                    }
+                  >
                     {data[6]?.map((item, index) => (
                       <StyledListGroupItem
-                        key={index}
+                        key={item.id}
                         draggable
                         onDragStart={(e) => handleDragStart(e, 6, item, index)}
+                        onDrop={(e) => handleDrop(e, 6, index)}
+                        onDragOver={handleDragOver}
                         onClick={() => handleItemClick(item)}
-                        className="bg-secondary text-white"
                         onMouseEnter={(e) => handleMouseEnter(e, item)}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
+                        className="bg-secondary text-white"
                       >
                         {item.style}
                       </StyledListGroupItem>
@@ -339,81 +379,86 @@ export default function Chaines() {
       >
         <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
       </Col>
-{hoveredItem && (
-  <HoverCard
-    x={hoverPosition.x}
-    y={hoverPosition.y}
-    chaine={chaine}
-    show={hoveredItem !== null}
-    cardHeight={240} // Ajuster selon la hauteur réelle
-  >
-    <Card className="shadow-custom" style={{ 
-      borderRadius: '12px',
-      overflow: 'hidden',
-      border: 'none'
-    }}>
-      <div style={{
-        position: 'relative',
-        height: '160px',
-        backgroundColor: '#f5f5f5'
-      }}>
-        <img
-          src={hoveredItem.image || NoImage}
-          alt={hoveredItem.style}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: hoveredItem.image ? 'cover' : 'contain',
-            objectPosition: 'center',
-            padding: hoveredItem.image ? 0 : '20px'
-          }}
-        />
-      </div>
-      
-      <Card.Body style={{ 
-        padding: '16px',
-        position: 'relative'
-      }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'baseline',
-          marginBottom: '8px'
-        }}>
-          <h3 style={{
-            margin: 0,
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: '#2d3436'
-          }}>
-            {hoveredItem.style}
-          </h3>
-          <span style={{
-            fontSize: '0.9rem',
-            color: '#636e72',
-            backgroundColor: '#f5f5f5',
-            padding: '4px 8px',
-            borderRadius: '4px'
-          }}>
-            Qty: {hoveredItem.qty}
-          </span>
-        </div>
 
-        {hoveredItem.details && (
-          <div style={{
-            fontSize: '0.875rem',
-            color: '#636e72',
-            lineHeight: 1.4,
-            maxHeight: '100px',
-            overflowY: 'auto'
-          }}>
-            {hoveredItem.details}
-          </div>
-        )}
-      </Card.Body>
-    </Card>
-  </HoverCard>
-)}
+      {hoveredItem && (
+        <HoverCard
+          x={hoverPosition.x}
+          y={hoverPosition.y}
+          chaine={chaine}
+          show={hoveredItem !== null}
+          cardHeight={240}
+        >
+          <Card
+            className="shadow-custom"
+            style={{ borderRadius: "12px", overflow: "hidden", border: "none" }}
+          >
+            <div
+              style={{
+                position: "relative",
+                height: "160px",
+                backgroundColor: "#f5f5f5",
+              }}
+            >
+              <img
+                src={hoveredItem.image || NoImage}
+                alt={hoveredItem.style}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: hoveredItem.image ? "cover" : "contain",
+                  objectPosition: "center",
+                  padding: hoveredItem.image ? 0 : "20px",
+                }}
+              />
+            </div>
+            <Card.Body style={{ padding: "16px", position: "relative" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                  marginBottom: "8px",
+                }}
+              >
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: "1.1rem",
+                    fontWeight: 600,
+                    color: "#2d3436",
+                  }}
+                >
+                  {hoveredItem.style}
+                </h3>
+                <span
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "#636e72",
+                    backgroundColor: "#f5f5f5",
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  Qty: {hoveredItem.qty}
+                </span>
+              </div>
+              {hoveredItem.details && (
+                <div
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "#636e72",
+                    lineHeight: 1.4,
+                    maxHeight: "100px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {hoveredItem.details}
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </HoverCard>
+      )}
     </>
   );
 }
