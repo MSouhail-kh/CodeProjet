@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef ,useCallback} from "react";
+import { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -137,33 +137,39 @@ export default function Chaines() {
       .filter((product) => product.order !== undefined && product.order !== null)
       .sort((a, b) => a.order - b.order);
   };
+  useEffect(() => {
+    isMounted.current = true;
+    fetchData();
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
-    const fetchData = useCallback(async () => {
-      try {
-        const response = await api.get("/produits");
-        const produits = Object.values(response.data);
-        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-        produits.forEach((produit) => {
-          if (groupedData[produit.position_id]) {
-            groupedData[produit.position_id].push(produit);
-          }
-        });
-        if (isMounted.current) {
-          setData(groupedData);
-          setError(null);
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      await api.post("/trigger-update");
+      const response = await api.get("/produits");
+      const produits = Object.values(response.data);
+
+      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      produits.forEach((produit) => {
+        if (groupedData[produit.position_id]) {
+          groupedData[produit.position_id].push(produit);
         }
-      } catch (err) {
-        console.error("Erreur lors de la récupération :", err);
-        if (isMounted.current) setError("Échec de la récupération des données.");
+      });
+
+      if (isMounted.current) {
+        setData(groupedData);
+        setError(null);
       }
-    }, []);
-    useEffect(() => {
-      isMounted.current = true;
-      fetchData();
-      return () => {
-        isMounted.current = false;
-      };
-    }, [fetchData]);
+    } catch (err) {
+      console.error("Erreur :", err);
+      if (isMounted.current) setError("Échec de la récupération des données.");
+    } finally {
+      if (isMounted.current) setIsLoading(false);
+    }
+  };
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -173,7 +179,8 @@ export default function Chaines() {
   };
   const handleDragOver = (e) => {
     e.preventDefault();
-  }; const handleDrop = useCallback(
+  };
+  const handleDrop = useCallback(
     async (e, targetPosition, dropIndex) => {
       e.preventDefault();
       const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
@@ -261,6 +268,7 @@ export default function Chaines() {
     },
     [data, fetchData]
   );
+
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
