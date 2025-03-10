@@ -187,6 +187,7 @@ export default function Chaines() {
     try {
       setIsSyncing(true);
 
+      // Mise à jour optimiste de l'état
       setData((prev) => {
         const newData = { ...prev };
         if (transferData.from === targetPosition) {
@@ -213,6 +214,7 @@ export default function Chaines() {
         return newData;
       });
 
+      // Construction d'une payload unifiée pour /drag
       const dragPayload = {
         oldPosition: transferData.from,
         newPosition: targetPosition,
@@ -238,7 +240,7 @@ export default function Chaines() {
         } finally {
           setIsSyncing(false);
         }
-      }, 10000);
+      }, 2000);
 
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
