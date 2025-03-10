@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef ,useCallback} from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -137,39 +137,33 @@ export default function Chaines() {
       .filter((product) => product.order !== undefined && product.order !== null)
       .sort((a, b) => a.order - b.order);
   };
-  useEffect(() => {
-    isMounted.current = true;
-    fetchData();
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      await api.post("/trigger-update");
-      const response = await api.get("/produits");
-      const produits = Object.values(response.data);
-
-      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-      produits.forEach((produit) => {
-        if (groupedData[produit.position_id]) {
-          groupedData[produit.position_id].push(produit);
+    const fetchData = useCallback(async () => {
+      try {
+        const response = await api.get("/produits");
+        const produits = Object.values(response.data);
+        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        produits.forEach((produit) => {
+          if (groupedData[produit.position_id]) {
+            groupedData[produit.position_id].push(produit);
+          }
+        });
+        if (isMounted.current) {
+          setData(groupedData);
+          setError(null);
         }
-      });
-
-      if (isMounted.current) {
-        setData(groupedData);
-        setError(null);
+      } catch (err) {
+        console.error("Erreur lors de la récupération :", err);
+        if (isMounted.current) setError("Échec de la récupération des données.");
       }
-    } catch (err) {
-      console.error("Erreur :", err);
-      if (isMounted.current) setError("Échec de la récupération des données.");
-    } finally {
-      if (isMounted.current) setIsLoading(false);
-    }
-  };
+    }, []);
+    useEffect(() => {
+      isMounted.current = true;
+      fetchData();
+      return () => {
+        isMounted.current = false;
+      };
+    }, [fetchData]);
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -179,71 +173,94 @@ export default function Chaines() {
   };
   const handleDragOver = (e) => {
     e.preventDefault();
-  };
-  const handleDrop = async (e, targetPosition, dropIndex) => {
-    e.preventDefault();
-    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-
-    try {
-      setIsSyncing(true);
-      setData((prev) => {
-        const newData = { ...prev };
-        if (transferData.from === targetPosition) {
-          const newList = [...newData[targetPosition]];
-          const [movedItem] = newList.splice(transferData.index, 1);
-          newList.splice(dropIndex, 0, movedItem);
-          newData[targetPosition] = newList;
-        } else {
-          const sourceList = [...newData[transferData.from]];
-          const targetList = [...newData[targetPosition]];
-          const [movedItem] = sourceList.splice(transferData.index, 1);
-          if (
-            dropIndex !== undefined &&
-            dropIndex >= 0 &&
-            dropIndex <= targetList.length
-          ) {
-            targetList.splice(dropIndex, 0, movedItem);
+  }; const handleDrop = useCallback(
+    async (e, targetPosition, dropIndex) => {
+      e.preventDefault();
+      const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+  
+      try {
+        setIsSyncing(true);
+  
+        // Mise à jour optimiste de l'état local
+        setData((prev) => {
+          const newData = { ...prev };
+          if (transferData.from === targetPosition) {
+            // Réordonnancement dans la même liste
+            const newList = [...newData[targetPosition]];
+            const [movedItem] = newList.splice(transferData.index, 1);
+            newList.splice(dropIndex, 0, movedItem);
+            newData[targetPosition] = newList;
           } else {
-            targetList.push(movedItem);
+            // Déplacement d'une liste à une autre
+            const sourceList = [...newData[transferData.from]];
+            const targetList = [...newData[targetPosition]];
+            const [movedItem] = sourceList.splice(transferData.index, 1);
+            if (
+              dropIndex !== undefined &&
+              dropIndex >= 0 &&
+              dropIndex <= targetList.length
+            ) {
+              targetList.splice(dropIndex, 0, movedItem);
+            } else {
+              targetList.push(movedItem);
+            }
+            newData[transferData.from] = sourceList;
+            newData[targetPosition] = targetList;
           }
-          newData[transferData.from] = sourceList;
-          newData[targetPosition] = targetList;
+          return newData;
+        });
+  
+        // Calculer les ordres
+        const oldOrder = transferData.item.order; // Ordre actuel du produit déplacé
+        // Pour newOrder, on tente de récupérer l'ordre du produit à la position dropIndex dans la liste cible.
+        // Si aucune donnée n'est trouvée (liste vide ou dropIndex hors bornes), on peut définir une valeur par défaut (ici 0).
+        const newOrder =
+          (data[targetPosition] &&
+            data[targetPosition][dropIndex] &&
+            data[targetPosition][dropIndex].order) ||
+          0;
+  
+        // Construire le payload à envoyer
+        const dragPayload = {
+          oldPosition: transferData.from,
+          newPosition: targetPosition,
+          produit: transferData.item,
+          oldOrder: oldOrder,
+          newOrder: newOrder,
+        };
+  
+        // Si le déplacement se fait dans la même liste, ajouter l'index pour préciser le réordonnancement
+        if (transferData.from === targetPosition) {
+          dragPayload.newIndex = dropIndex;
+          dragPayload.oldPosition = targetPosition;
+          dragPayload.newPosition = targetPosition;
         }
-        return newData;
-      });
-
-      const dragPayload = {
-        oldPosition: transferData.from,
-        newPosition: targetPosition,
-        produit: transferData.item,
-      };
-      if (transferData.from === targetPosition) {
-        dragPayload.newIndex = dropIndex;
-        dragPayload.oldPosition = targetPosition;
-        dragPayload.newPosition = targetPosition;
+  
+        // Envoi du payload à l'API
+        await api.post("/drag", dragPayload, {
+          headers: { "Content-Type": "application/json" },
+        });
+  
+        // Synchronisation après un délai de 5 secondes
+        setTimeout(async () => {
+          try {
+            await api.post("/trigger-update");
+            await fetchData();
+          } catch (syncError) {
+            console.error("Erreur de synchronisation :", syncError);
+            setError("Problème de synchronisation avec Google Sheets");
+          } finally {
+            setIsSyncing(false);
+          }
+        }, 5000);
+      } catch (err) {
+        console.error("Erreur lors du déplacement :", err);
+        setError("Erreur lors du déplacement - Veuillez réessayer");
+        setIsSyncing(false);
       }
-
-      await api.post("/drag", dragPayload, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      setTimeout(async () => {
-        try {
-          await api.post("/trigger-update");
-          await fetchData();
-        } catch (syncError) {
-          console.error("Erreur de synchronisation :", syncError);
-          setError("Problème de synchronisation avec Google Sheets");
-        } finally {
-          setIsSyncing(false);
-        }
-      }, 2000);
-    } catch (err) {
-      console.error("Erreur lors du déplacement :", err);
-      setError("Erreur lors du déplacement - Veuillez réessayer");
-      setIsSyncing(false);
-    }
-  };
+    },
+    [data, fetchData]
+  );
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
