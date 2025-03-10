@@ -119,6 +119,7 @@ const MobileRow = styled(Row)`
   }
 `;
 
+
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -214,7 +215,6 @@ export default function Chaines() {
         return newData;
       });
 
-      // Construction d'une payload unifiée pour /drag
       const dragPayload = {
         oldPosition: transferData.from,
         newPosition: targetPosition,
@@ -241,14 +241,13 @@ export default function Chaines() {
           setIsSyncing(false);
         }
       }, 2000);
-
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
       setIsSyncing(false);
     }
   };
-  
+
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
