@@ -118,7 +118,6 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
-
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -137,6 +136,7 @@ export default function Chaines() {
       .filter((product) => product.order !== undefined && product.order !== null)
       .sort((a, b) => a.order - b.order);
   };
+
   useEffect(() => {
     isMounted.current = true;
     fetchData();
@@ -180,9 +180,11 @@ export default function Chaines() {
       JSON.stringify({ from: sourcePosition, item, index })
     );
   };
+
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
@@ -219,12 +221,8 @@ export default function Chaines() {
         oldPosition: transferData.from,
         newPosition: targetPosition,
         produit: transferData.item,
+        newIndex: dropIndex,
       };
-      if (transferData.from === targetPosition) {
-        dragPayload.newIndex = dropIndex;
-        dragPayload.oldPosition = targetPosition;
-        dragPayload.newPosition = targetPosition;
-      }
 
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
@@ -232,6 +230,7 @@ export default function Chaines() {
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
+    } finally {
       setIsSyncing(false);
     }
   };
@@ -265,7 +264,6 @@ export default function Chaines() {
       return newData;
     });
   };
-
   if (isLoading) {
     return (
       <LoaderContainer>
