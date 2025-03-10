@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef ,useCallback} from "react";
+import { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -180,98 +180,70 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-  const handleDrop = useCallback(
-    async (e, targetPosition, dropIndex) => {
-      e.preventDefault();
-      const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-  
-      try {
-        setIsSyncing(true);
-  
-        // Mise à jour optimiste de l'état local
-        setData((prev) => {
-          const newData = { ...prev };
-          if (transferData.from === targetPosition) {
-            // Réordonnancement dans la même liste
-            const newList = [...newData[targetPosition]];
-            const [movedItem] = newList.splice(transferData.index, 1);
-            newList.splice(dropIndex, 0, movedItem);
-            newData[targetPosition] = newList;
-          } else {
-            // Déplacement d'une liste à une autre
-            const sourceList = [...newData[transferData.from]];
-            const targetList = [...newData[targetPosition]];
-            const [movedItem] = sourceList.splice(transferData.index, 1);
-            if (
-              dropIndex !== undefined &&
-              dropIndex >= 0 &&
-              dropIndex <= targetList.length
-            ) {
-              targetList.splice(dropIndex, 0, movedItem);
-            } else {
-              targetList.push(movedItem);
-            }
-            newData[transferData.from] = sourceList;
-            newData[targetPosition] = targetList;
-          }
-          return newData;
-        });
-  
-        // Calculer les ordres correctement
-        const targetList = data[targetPosition] || [];
-        let newOrder;
-        if (targetList.length === 0) {
-          newOrder = 1; // Début d'une nouvelle position
-        } else if (dropIndex >= targetList.length) {
-          newOrder = targetList[targetList.length - 1].order + 1; // Fin de liste
-        } else {
-          newOrder = targetList[dropIndex]?.order; // Entre deux éléments
-        }
-        newOrder = newOrder || 1; // Valeur par défaut si indéfini
-  
-        const oldOrder = transferData.item.order;
-  
-        // Construire le payload
-        const dragPayload = {
-          oldPosition: transferData.from,
-          newPosition: targetPosition,
-          produit: transferData.item,
-          oldOrder: oldOrder,
-          newOrder: newOrder,
-        };
-  
-        if (transferData.from === targetPosition) {
-          dragPayload.newIndex = dropIndex;
-          dragPayload.oldPosition = targetPosition;
-          dragPayload.newPosition = targetPosition;
-        }
-  
-        // Envoi à l'API
-        await api.post("/drag", dragPayload, {
-          headers: { "Content-Type": "application/json" },
-        });
-  
-        // Synchronisation après un délai de 5 secondes
-        setTimeout(async () => {
-          try {
-            await api.post("/trigger-update");
-            await fetchData();
-          } catch (syncError) {
-            console.error("Erreur de synchronisation :", syncError);
-            setError("Problème de synchronisation avec Google Sheets");
-          } finally {
-            setIsSyncing(false);
-          }
-        }, 5000);
-      } catch (err) {
-        console.error("Erreur lors du déplacement :", err);
-        setError("Erreur lors du déplacement - Veuillez réessayer");
-        setIsSyncing(false);
-      }
-    },
-    [data, fetchData]
-  );
+  const handleDrop = async (e, targetPosition, dropIndex) => {
+    e.preventDefault();
+    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
 
+    try {
+      setIsSyncing(true);
+      setData((prev) => {
+        const newData = { ...prev };
+        if (transferData.from === targetPosition) {
+          const newList = [...newData[targetPosition]];
+          const [movedItem] = newList.splice(transferData.index, 1);
+          newList.splice(dropIndex, 0, movedItem);
+          newData[targetPosition] = newList;
+        } else {
+          const sourceList = [...newData[transferData.from]];
+          const targetList = [...newData[targetPosition]];
+          const [movedItem] = sourceList.splice(transferData.index, 1);
+          if (
+            dropIndex !== undefined &&
+            dropIndex >= 0 &&
+            dropIndex <= targetList.length
+          ) {
+            targetList.splice(dropIndex, 0, movedItem);
+          } else {
+            targetList.push(movedItem);
+          }
+          newData[transferData.from] = sourceList;
+          newData[targetPosition] = targetList;
+        }
+        return newData;
+      });
+
+      const dragPayload = {
+        oldPosition: transferData.from,
+        newPosition: targetPosition,
+        produit: transferData.item,
+      };
+      if (transferData.from === targetPosition) {
+        dragPayload.newIndex = dropIndex;
+        dragPayload.oldPosition = targetPosition;
+        dragPayload.newPosition = targetPosition;
+      }
+
+      await api.post("/drag", dragPayload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      setTimeout(async () => {
+        try {
+          await api.post("/trigger-update");
+          await fetchData();
+        } catch (syncError) {
+          console.error("Erreur de synchronisation :", syncError);
+          setError("Problème de synchronisation avec Google Sheets");
+        } finally {
+          setIsSyncing(false);
+        }
+      }, 2000);
+    } catch (err) {
+      console.error("Erreur lors du déplacement :", err);
+      setError("Erreur lors du déplacement - Veuillez réessayer");
+      setIsSyncing(false);
+    }
+  };
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
