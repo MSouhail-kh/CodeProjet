@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef ,useCallback} from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -217,17 +217,21 @@ export default function Chaines() {
           return newData;
         });
   
-        // Calculer les ordres
-        const oldOrder = transferData.item.order; // Ordre actuel du produit déplacé
-        // Pour newOrder, on tente de récupérer l'ordre du produit à la position dropIndex dans la liste cible.
-        // Si aucune donnée n'est trouvée (liste vide ou dropIndex hors bornes), on peut définir une valeur par défaut (ici 0).
-        const newOrder =
-          (data[targetPosition] &&
-            data[targetPosition][dropIndex] &&
-            data[targetPosition][dropIndex].order) ||
-          0;
+        // Calculer les ordres correctement
+        const targetList = data[targetPosition] || [];
+        let newOrder;
+        if (targetList.length === 0) {
+          newOrder = 1; // Début d'une nouvelle position
+        } else if (dropIndex >= targetList.length) {
+          newOrder = targetList[targetList.length - 1].order + 1; // Fin de liste
+        } else {
+          newOrder = targetList[dropIndex]?.order; // Entre deux éléments
+        }
+        newOrder = newOrder || 1; // Valeur par défaut si indéfini
   
-        // Construire le payload à envoyer
+        const oldOrder = transferData.item.order;
+  
+        // Construire le payload
         const dragPayload = {
           oldPosition: transferData.from,
           newPosition: targetPosition,
@@ -236,14 +240,13 @@ export default function Chaines() {
           newOrder: newOrder,
         };
   
-        // Si le déplacement se fait dans la même liste, ajouter l'index pour préciser le réordonnancement
         if (transferData.from === targetPosition) {
           dragPayload.newIndex = dropIndex;
           dragPayload.oldPosition = targetPosition;
           dragPayload.newPosition = targetPosition;
         }
   
-        // Envoi du payload à l'API
+        // Envoi à l'API
         await api.post("/drag", dragPayload, {
           headers: { "Content-Type": "application/json" },
         });
