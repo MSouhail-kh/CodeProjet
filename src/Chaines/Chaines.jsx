@@ -118,6 +118,7 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
+
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -136,7 +137,6 @@ export default function Chaines() {
       .filter((product) => product.order !== undefined && product.order !== null)
       .sort((a, b) => a.order - b.order);
   };
-
   useEffect(() => {
     isMounted.current = true;
     fetchData();
@@ -144,10 +144,11 @@ export default function Chaines() {
       isMounted.current = false;
     };
   }, []);
-  
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
+      await api.post("/trigger-update");
       const response = await api.get("/produits");
       const produits = Object.values(response.data);
 
@@ -162,10 +163,6 @@ export default function Chaines() {
         setData(groupedData);
         setError(null);
       }
-
-      setTimeout(async () => {
-        await api.post("/trigger-update");
-      }, 2000);
     } catch (err) {
       console.error("Erreur :", err);
       if (isMounted.current) setError("Échec de la récupération des données.");
@@ -180,11 +177,9 @@ export default function Chaines() {
       JSON.stringify({ from: sourcePosition, item, index })
     );
   };
-
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
@@ -221,16 +216,31 @@ export default function Chaines() {
         oldPosition: transferData.from,
         newPosition: targetPosition,
         produit: transferData.item,
-        newIndex: dropIndex,
       };
+      if (transferData.from === targetPosition) {
+        dragPayload.newIndex = dropIndex;
+        dragPayload.oldPosition = targetPosition;
+        dragPayload.newPosition = targetPosition;
+      }
 
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
       });
+
+      setTimeout(async () => {
+        try {
+          await api.post("/trigger-update");
+          await fetchData();
+        } catch (syncError) {
+          console.error("Erreur de synchronisation :", syncError);
+          setError("Problème de synchronisation avec Google Sheets");
+        } finally {
+          setIsSyncing(false);
+        }
+      }, 2000);
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
-    } finally {
       setIsSyncing(false);
     }
   };
@@ -264,6 +274,7 @@ export default function Chaines() {
       return newData;
     });
   };
+
   if (isLoading) {
     return (
       <LoaderContainer>
