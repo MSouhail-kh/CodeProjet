@@ -118,8 +118,6 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
-
-
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -131,6 +129,14 @@ export default function Chaines() {
   const [isSyncing, setIsSyncing] = useState(false);
   const isMounted = useRef(true);
   const navigate = useNavigate();
+
+  // Fonction utilitaire pour filtrer et trier les produits par leur propriété "order"
+  const filterAndSortProducts = (products) => {
+    if (!products) return [];
+    return products
+      .filter((product) => product.order !== undefined && product.order !== null)
+      .sort((a, b) => a.order - b.order);
+  };
 
   useEffect(() => {
     isMounted.current = true;
@@ -154,6 +160,7 @@ export default function Chaines() {
         }
       });
 
+      // Tri initial par "order" pour chaque chaîne
       Object.keys(groupedData).forEach((position) => {
         groupedData[position].sort((a, b) => a.order - b.order);
       });
@@ -307,7 +314,7 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, num, 0)}
                   >
-                    {data[num]?.map((item, index) => (
+                    {filterAndSortProducts(data[num]).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
                         draggable
@@ -349,7 +356,7 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, 6, 0)}
                   >
-                    {data[6]?.map((item, index) => (
+                    {filterAndSortProducts(data[6]).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
                         draggable
