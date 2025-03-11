@@ -88,13 +88,15 @@
 
 /* Barre de recherche améliorée */
 .search-group {
-  height: 30px;
+  height: 40px; /* Set a consistent height */
   background: rgba(255, 255, 255, 0.1);
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
   max-width: 600px;
   width: 100%;
+  display: flex;
+  align-items: center; /* Ensure vertical alignment */
 }
 
 .search-group:focus-within {
@@ -106,14 +108,19 @@
 .search-icon {
   background: transparent !important;
   color: rgba(255, 255, 255, 0.8) !important;
+  height: 100%; /* Match the height of the InputGroup */
+  display: flex;
+  align-items: center; /* Center the icon vertically */
 }
 
 .search-input {
   background: transparent !important;
   color: white !important;
-  height: 90%;
+  height: 100%; /* Match the height of the InputGroup */
   padding-left: 0 !important;
   font-size: 0.95rem;
+  border: none !important; /* Remove any default border */
+  outline: none !important; /* Remove focus outline */
 }
 
 .search-input::placeholder {
@@ -125,7 +132,6 @@
   box-shadow: none !important;
   background: transparent !important;
 }
-
 /* Icônes des boutons */
 .icon-btn {
   margin-right: 8px;
