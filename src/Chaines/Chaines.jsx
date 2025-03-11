@@ -51,10 +51,11 @@ const StyledCard = styled(Card)`
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
+
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  border-radius: 5px;
+  border-radius: 10px;
   margin-bottom: 10px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -76,11 +77,16 @@ const ProductContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+  text-align: center; 
 `;
 
 const ProductStyle = styled.span`
-  font-size: 16px;
+  font-size: ${({ styleLength }) => (styleLength > 20 ? '14px' : '16px')};
   font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap; 
+  text-overflow: ellipsis;
+  max-width: 70%; 
 `;
 
 const SyncStatus = styled.div`
