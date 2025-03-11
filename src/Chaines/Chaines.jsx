@@ -238,24 +238,12 @@ export default function Chaines() {
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
       });
-
-      setTimeout(async () => {
-        try {
-          await api.post("/trigger-update" , { newPosition: targetPosition } , {
-            headers: { "Content-Type": "application/json" },
-          });
-          await fetchData();
-          navigate(0)
-        } catch (syncError) {
-          console.error("Erreur de synchronisation :", syncError);
-          setError("Problème de synchronisation avec Google Sheets");
-        }
-      }, 5000);
+      navigate(0)
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
     } finally {
-      isProcessing.current = false; // ✅ Réinitialise isProcessing après exécution
+      isProcessing.current = false; 
     }
   };
 
