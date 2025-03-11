@@ -171,7 +171,7 @@ export default function Chaines() {
           console.error("Erreur de synchronisation :", syncError);
           setError("Problème de synchronisation avec Google Sheets");
         }
-      }, 5000);
+      }, 2000);
 
     } catch (err) {
       console.error("Erreur :", err);
@@ -196,7 +196,12 @@ export default function Chaines() {
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-
+    const isProcessing = useRef(false);
+    const navigate = useNavigate();
+  
+    if (isProcessing.current) return; 
+    isProcessing.current = true;
+  
     try {
       setData((prev) => {
         const newData = { ...prev };
@@ -223,7 +228,7 @@ export default function Chaines() {
         }
         return newData;
       });
-
+  
       const dragPayload = {
         oldPosition: transferData.from,
         newPosition: targetPosition,
@@ -234,17 +239,18 @@ export default function Chaines() {
         dragPayload.oldPosition = targetPosition;
         dragPayload.newPosition = targetPosition;
       }
-
+  
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
       });
-
+  
       setTimeout(async () => {
         try {
           await api.post("/trigger-update", { newPosition: targetPosition }, {
             headers: { "Content-Type": "application/json" },
           });
           await fetchData();
+          navigate(0);
         } catch (syncError) {
           console.error("Erreur de synchronisation :", syncError);
           setError("Problème de synchronisation avec Google Sheets");
@@ -253,9 +259,10 @@ export default function Chaines() {
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
+    } finally {
+      isProcessing.current = false;
     }
   };
-
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
