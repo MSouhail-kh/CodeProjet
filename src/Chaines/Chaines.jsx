@@ -194,59 +194,59 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+  
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
-    if (isProcessing.current) return; 
+    if (isProcessing.current) return;
     isProcessing.current = true;
 
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
 
     try {
-      setData((prev) => {
-        const newData = { ...prev };
-        if (transferData.from === targetPosition) {
-          const newList = [...newData[targetPosition]];
-          const [movedItem] = newList.splice(transferData.index, 1);
-          newList.splice(dropIndex, 0, movedItem);
-          newData[targetPosition] = newList;
-        } else {
-          const sourceList = [...newData[transferData.from]];
-          const targetList = [...newData[targetPosition]];
-          const [movedItem] = sourceList.splice(transferData.index, 1);
-          if (dropIndex !== undefined && dropIndex >= 0 && dropIndex <= targetList.length) {
-            targetList.splice(dropIndex, 0, movedItem);
-          } else {
-            targetList.push(movedItem);
-          }
-          newData[transferData.from] = sourceList;
-          newData[targetPosition] = targetList;
-        }
-        return newData;
-      });
+        setData((prev) => {
+            const newData = { ...prev };
+            const sourceList = [...newData[transferData.from]];
+            const targetList = [...newData[targetPosition]];
+            const [movedItem] = sourceList.splice(transferData.index, 1);
+            const oldOrder = movedItem.order; 
 
-      const dragPayload = {
-        oldPosition: transferData.from,
-        newPosition: targetPosition,
-        produit: transferData.item,
-      };
-      if (transferData.from === targetPosition) {
-        dragPayload.newIndex = dropIndex;
-        dragPayload.oldPosition = targetPosition;
-        dragPayload.newPosition = targetPosition;
-      }
+            if (transferData.from === targetPosition) {
+                const targetItem = targetList[dropIndex]; 
+                if (targetItem) {
+                    [movedItem.order, targetItem.order] = [targetItem.order, movedItem.order];
+                }
+                targetList.splice(dropIndex, 0, movedItem);
+            } else {
+                movedItem.order = targetList.length + 1;
+                targetList.splice(dropIndex, 0, movedItem);
+            }
 
-      await api.post("/drag", dragPayload, {
-        headers: { "Content-Type": "application/json" },
-      });
+            newData[transferData.from] = sourceList;
+            newData[targetPosition] = targetList;
+            return newData;
+        });
 
-      navigate(0)
+        const dragPayload = {
+            oldPosition: transferData.from,
+            newPosition: targetPosition,
+            produit: transferData.item,
+            oldOrder: transferData.item.order,
+            newIndex: dropIndex,
+        };
+
+        await api.post("/drag", dragPayload, {
+            headers: { "Content-Type": "application/json" },
+        });
+
+        navigate(0);
     } catch (err) {
-      console.error("Erreur lors du déplacement :", err);
-      setError("Erreur lors du déplacement - Veuillez réessayer");
+        console.error("Erreur lors du déplacement :", err);
+        setError("Erreur lors du déplacement - Veuillez réessayer");
     } finally {
-      isProcessing.current = false; 
+        isProcessing.current = false;
     }
-  };
+};
+
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
