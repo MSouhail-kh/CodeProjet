@@ -88,20 +88,6 @@ const ProductStyle = styled.span`
   display: inline-block;
 `;
 
-
-const SyncStatus = styled.div`
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  background: #007bff;
-  color: white;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
 const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chaine }) => (chaine === 1 ? x + 15 : x - 240 - 15)}px;
@@ -120,21 +106,20 @@ const HoverCard = styled.div`
 `;
 
 const ControlButton = styled(Button)`
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #007bff;
-  color: white;
+  width: 80px;
+  height: 80px;
+  background: none;
   border: none;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #0056b3;
+  opacity: 0;
+  position: relative;
+  cursor: pointer;
+  
+  &:focus {
+    outline: none;
   }
 `;
+
+
 
 
 
@@ -163,7 +148,6 @@ export default function Chaines() {
       .filter((product) => product.order !== undefined && product.order !== null)
       .sort((a, b) => a.order - b.order);
 
-    // Réassigner l'ordre pour que le premier produit ait toujours order = 1
     return sortedProducts.map((product, index) => ({
       ...product,
       order: index + 1,
@@ -191,7 +175,6 @@ export default function Chaines() {
         }
       });
 
-      // Réassigner l'ordre pour que le premier produit ait toujours order = 1
       for (const key in groupedData) {
         groupedData[key] = filterAndSortProducts(groupedData[key]);
       }
@@ -246,14 +229,11 @@ export default function Chaines() {
         const [movedItem] = sourceList.splice(transferData.index, 1);
 
         if (transferData.from === targetPosition) {
-          // Si le déplacement est dans la même liste, ajustez l'ordre
           targetList.splice(dropIndex, 0, movedItem);
         } else {
-          // Si le déplacement est vers une autre liste, ajustez l'ordre
           targetList.splice(dropIndex, 0, movedItem);
         }
 
-        // Réassigner l'ordre pour que le premier produit ait toujours order = 1
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -373,12 +353,12 @@ export default function Chaines() {
           ))}
 
           <Col md="auto" className="d-flex align-items-center">
-            <ControlButton
+           <ControlButton
               variant="outline-light"
-              onClick={() => setShowPosition6(!showPosition6)}
-            >
-              {showPosition6 ? "▸" : "◂"}
-            </ControlButton>
+              onClick={() => {
+                setShowPosition6(!showPosition6);
+              }}
+            />
           </Col>
 
           {showPosition6 && (
