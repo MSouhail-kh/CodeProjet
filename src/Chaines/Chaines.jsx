@@ -128,14 +128,20 @@ export default function Chaines() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const isMounted = useRef(true);
-  const isProcessing = useRef(false); 
+  const isProcessing = useRef(false);
   const navigate = useNavigate();
 
   const filterAndSortProducts = (products) => {
     if (!products) return [];
-    return products
+    const sortedProducts = products
       .filter((product) => product.order !== undefined && product.order !== null)
       .sort((a, b) => a.order - b.order);
+
+    // Réassigner l'ordre pour que le premier produit ait toujours order = 1
+    return sortedProducts.map((product, index) => ({
+      ...product,
+      order: index + 1,
+    }));
   };
 
   useEffect(() => {
@@ -145,6 +151,7 @@ export default function Chaines() {
       isMounted.current = false;
     };
   }, []);
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -157,6 +164,11 @@ export default function Chaines() {
           groupedData[produit.position_id].push(produit);
         }
       });
+
+      // Réassigner l'ordre pour que le premier produit ait toujours order = 1
+      for (const key in groupedData) {
+        groupedData[key] = filterAndSortProducts(groupedData[key]);
+      }
 
       if (isMounted.current) {
         setData(groupedData);
@@ -182,8 +194,6 @@ export default function Chaines() {
     }
   };
 
-
-
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
       "text/plain",
@@ -194,7 +204,7 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-  
+
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
@@ -203,50 +213,53 @@ export default function Chaines() {
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
 
     try {
-        setData((prev) => {
-            const newData = { ...prev };
-            const sourceList = [...newData[transferData.from]];
-            const targetList = [...newData[targetPosition]];
-            const [movedItem] = sourceList.splice(transferData.index, 1);
-            const oldOrder = movedItem.order; 
+      setData((prev) => {
+        const newData = { ...prev };
+        const sourceList = [...newData[transferData.from]];
+        const targetList = [...newData[targetPosition]];
+        const [movedItem] = sourceList.splice(transferData.index, 1);
 
-            if (transferData.from === targetPosition) {
-                const targetItem = targetList[dropIndex]; 
-                if (targetItem) {
-                    [movedItem.order, targetItem.order] = [targetItem.order, movedItem.order];
-                }
-                targetList.splice(dropIndex, 0, movedItem);
-            } else {
-                movedItem.order = targetList.length + 1;
-                targetList.splice(dropIndex, 0, movedItem);
-            }
+        if (transferData.from === targetPosition) {
+          // Si le déplacement est dans la même liste, ajustez l'ordre
+          targetList.splice(dropIndex, 0, movedItem);
+        } else {
+          // Si le déplacement est vers une autre liste, ajustez l'ordre
+          targetList.splice(dropIndex, 0, movedItem);
+        }
 
-            newData[transferData.from] = sourceList;
-            newData[targetPosition] = targetList;
-            return newData;
-        });
+        // Réassigner l'ordre pour que le premier produit ait toujours order = 1
+        newData[transferData.from] = sourceList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+        newData[targetPosition] = targetList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
 
-        const dragPayload = {
-            oldPosition: transferData.from,
-            newPosition: targetPosition,
-            produit: transferData.item,
-            oldOrder: transferData.item.order,
-            newIndex: dropIndex,
-        };
+        return newData;
+      });
 
-        await api.post("/drag", dragPayload, {
-            headers: { "Content-Type": "application/json" },
-        });
+      const dragPayload = {
+        oldPosition: transferData.from,
+        newPosition: targetPosition,
+        produit: transferData.item,
+        oldOrder: transferData.item.order,
+        newIndex: dropIndex,
+      };
 
-        navigate(0);
+      await api.post("/drag", dragPayload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      navigate(0);
     } catch (err) {
-        console.error("Erreur lors du déplacement :", err);
-        setError("Erreur lors du déplacement - Veuillez réessayer");
+      console.error("Erreur lors du déplacement :", err);
+      setError("Erreur lors du déplacement - Veuillez réessayer");
     } finally {
-        isProcessing.current = false;
+      isProcessing.current = false;
     }
-};
-
+  };
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
@@ -270,9 +283,12 @@ export default function Chaines() {
     setData((prevData) => {
       const newData = { ...prevData };
       for (const key in newData) {
-        newData[key] = newData[key].filter(
-          (produit) => produit.id !== deletedItem.id
-        );
+        newData[key] = newData[key]
+          .filter((produit) => produit.id !== deletedItem.id)
+          .map((item, index) => ({
+            ...item,
+            order: index + 1,
+          }));
       }
       return newData;
     });
