@@ -343,7 +343,6 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, num, 0)}
                   >
-
                     {filterAndSortProducts(data[num]).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
@@ -388,17 +387,18 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, 6, 0)}
                   >
-                    {filterAndSortProducts(data[num]).map((item, index) => (
+                    {filterAndSortProducts(data[6]).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
                         draggable
-                        onDragStart={(e) => handleDragStart(e, num, item, index)}
-                        onDrop={(e) => handleDrop(e, num, index)}
+                        onDragStart={(e) => handleDragStart(e, 6, item, index)}
+                        onDrop={(e) => handleDrop(e, 6, index)}
                         onDragOver={handleDragOver}
                         onClick={() => handleItemClick(item)}
                         onMouseEnter={(e) => handleMouseEnter(e, item)}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
+                        className="bg-secondary text-white"
                       >
                         <ProductContainer>
                           <ProductStyle>{item.style}</ProductStyle>
