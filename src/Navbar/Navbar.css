@@ -86,32 +86,45 @@
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Style de la recherche */
+/* Barre de recherche améliorée */
 .search-group {
-  max-width: 500px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
+  max-width: 600px;
+  width: 100%;
+}
+
+.search-group:focus-within {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 .search-icon {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  border-right: none !important;
+  background: transparent !important;
+  height: 100%;
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .search-input {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: transparent !important;
   color: white !important;
-  min-width: 250px;
+  height: 100%;
+  padding-left: 0 !important;
+  font-size: 0.95rem;
 }
 
 .search-input::placeholder {
   color: rgba(255, 255, 255, 0.6) !important;
+  opacity: 1;
 }
 
 .search-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
 /* Icônes des boutons */

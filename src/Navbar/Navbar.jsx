@@ -29,19 +29,19 @@ import './Navbar.css';
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <div className="d-flex flex-grow-1 justify-content-between align-items-center">
-              <Form className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center">
-                <InputGroup className="search-group">
-                  <InputGroup.Text className="search-icon">
-                    <Search />
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="search"
-                    placeholder="Rechercher..."
-                    className="search-input"
-                    aria-label="Search"
-                  />
-                </InputGroup>
-              </Form>
+            <Form className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center">
+              <InputGroup className="search-group align-items-center">
+                <InputGroup.Text className="search-icon p-0 border-0">
+                  <Search className="mx-3" />
+                </InputGroup.Text>
+                <Form.Control
+                  type="search"
+                  placeholder="Rechercher..."
+                  className="search-input border-0 py-3"
+                  aria-label="Search"
+                />
+              </InputGroup>
+            </Form>
 
               <Nav className="align-items-center">
                 <Nav.Link className="btn gradient-btn me-2" onClick={handleShowProduit}>
