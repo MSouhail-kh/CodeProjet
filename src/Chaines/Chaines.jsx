@@ -54,7 +54,7 @@ const StyledCard = styled(Card)`
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  border-radius: 10px;
+  border-radius: 5px;
   margin-bottom: 10px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
