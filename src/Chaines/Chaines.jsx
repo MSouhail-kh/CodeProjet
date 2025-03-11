@@ -148,7 +148,6 @@ export default function Chaines() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      await api.post("/trigger-update");
       const response = await api.get("/produits");
       const produits = Object.values(response.data);
 
@@ -229,7 +228,9 @@ export default function Chaines() {
 
       setTimeout(async () => {
         try {
-          await api.post("/trigger-update");
+          await api.post("/trigger-update", { newPosition: targetPosition }, {
+            headers: { "Content-Type": "application/json" },
+          });
           await fetchData();
         } catch (syncError) {
           console.error("Erreur de synchronisation :", syncError);
@@ -237,7 +238,7 @@ export default function Chaines() {
         } finally {
           setIsSyncing(false);
         }
-      }, 2000);
+      }, 5000);
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
