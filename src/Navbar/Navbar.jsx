@@ -28,16 +28,17 @@ import './Navbar.css';
           
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <div className="d-flex flex-grow-1 justify-content-between align-items-center">
-            <Form className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center">
+            <div className="d-flex  flex-row justify-content-between align-items-center ">
+            
+            <Form className="d-flex mx-4 my-2 my-lg-0  flex-row justify-content-center">
               <InputGroup className="search-group align-items-center">
-                <InputGroup.Text className="search-icon p-0 border-0 bg-transparent">
+                <InputGroup.Text className="search-icon p-2 border-0 bg-transparent">
                   <Search className="mx-4" />
                 </InputGroup.Text>
                 <Form.Control
                   type="search"
                   placeholder="Rechercher..."
-                  className="search-input border-0 py-2"
+                  className="search-input border-0 p-2 py-2"
                   aria-label="Search"
                 />
               </InputGroup>
