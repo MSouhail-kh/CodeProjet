@@ -81,12 +81,12 @@ const ProductContainer = styled.div`
 `;
 
 const ProductStyle = styled.span`
-  font-size: ${({ styleLength }) => (styleLength > 50 ? '14px' : '16px')};
+  font-size: ${({ styleLength }) => (styleLength > 20 ? '16px' : '18px')};
   font-weight: 500;
-  overflow: hidden;
+  overflow: hidden; 
   white-space: nowrap; 
-  text-overflow: ellipsis;
-  max-width: 70%; 
+  text-overflow: ellipsis; 
+  max-width: 70%;
 `;
 
 const SyncStatus = styled.div`
