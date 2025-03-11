@@ -70,3 +70,56 @@
     transform: translateY(0);
     background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%) !important;
   }
+
+  /* Amélioration du logo */
+.logo-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700 !important;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.logo-text:hover {
+  transform: scale(1.02);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Style de la recherche */
+.search-group {
+  max-width: 500px;
+  transition: all 0.3s ease;
+}
+
+.search-icon {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-right: none !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.search-input {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  min-width: 250px;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+/* Icônes des boutons */
+.icon-btn {
+  margin-right: 8px;
+  transition: transform 0.2s ease;
+}
+
+.btn-gradient:hover .icon-btn {
+  transform: translateY(-1px);
+}

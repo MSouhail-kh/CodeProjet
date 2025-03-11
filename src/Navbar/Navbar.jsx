@@ -1,7 +1,5 @@
-// src/components/Navbar/MyNavbar.js
-import React, { useState } from 'react';
-import { Navbar, Nav, Container, Form, FormControl, InputGroup } from 'react-bootstrap';
-import { Gem, Search } from 'react-bootstrap-icons';
+import React, { useState } from 'react'; 
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
@@ -25,32 +23,37 @@ const MyNavbar = ({ darkMode }) => {
     <>
       <Navbar expand="lg" variant="dark" className="custom-navbar shadow">
         <Container>
-          <Navbar.Brand href="/Chaines">
-            <Gem className="logo-icon" /> Sigmatex
-          </Navbar.Brand>
+          <Navbar.Brand href="/Chaines" className="logo-text">Sigmatex</Navbar.Brand>
+          
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {/* Input de recherche centré */}
-            <Form className="mx-auto d-none d-lg-block">
-              <InputGroup>
-                <InputGroup.Text className="input-group-prepend">
-                  <Search />
-                </InputGroup.Text>
-                <FormControl placeholder="Search" />
-              </InputGroup>
-            </Form>
-            <Nav className="ms-auto align-items-center">
-              <Nav.Link className="btn gradient-btn" onClick={handleShowProduit}>
-                Créer un Modal
-              </Nav.Link>
-              <Nav.Link className="btn gradient-btn ms-2" onClick={handleShowExcel}>
-                Importer Excel
-              </Nav.Link>
-              <br />
-              <Nav.Item className="me-3">
-                <UserProfile />
-              </Nav.Item>
-            </Nav>
+            <div className="d-flex flex-grow-1 justify-content-between align-items-center">
+              <Form className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center">
+                <InputGroup className="search-group">
+                  <InputGroup.Text className="search-icon">
+                    <Search />
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="search"
+                    placeholder="Rechercher..."
+                    className="search-input"
+                    aria-label="Search"
+                  />
+                </InputGroup>
+              </Form>
+
+              <Nav className="align-items-center">
+                <Nav.Link className="btn gradient-btn me-2" onClick={handleShowProduit}>
+                  <PlusCircle className="icon-btn" /> Créer un Modal
+                </Nav.Link>
+                <Nav.Link className="btn gradient-btn" onClick={handleShowExcel}>
+                  <FileEarmarkExcel className="icon-btn" /> Importer Excel
+                </Nav.Link>
+                <Nav.Item className="ms-3">
+                  <UserProfile />
+                </Nav.Item>
+              </Nav>
+            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>
@@ -64,5 +67,3 @@ const MyNavbar = ({ darkMode }) => {
     </>
   );
 };
-
-export default MyNavbar;
