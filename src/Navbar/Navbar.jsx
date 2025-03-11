@@ -5,7 +5,7 @@ import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
 import './Navbar.css';
 
-const MyNavbar = ({ darkMode }) => {
+ const MyNavbar = ({ darkMode }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showExcelModal, setShowExcelModal] = useState(false);
   const [file, setFile] = useState(null);
@@ -67,3 +67,5 @@ const MyNavbar = ({ darkMode }) => {
     </>
   );
 };
+
+export default MyNavbar;
