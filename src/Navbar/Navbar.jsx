@@ -99,30 +99,31 @@ const MyNavbar = ({ darkMode }) => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <div className="d-flex flex-grow-1 justify-content-between align-items-center flex-row">
-              <Form
-                className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center flex-row"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSearch();
-                }}
-              >
-                <InputGroup className="search-group align-items-center p-2">
-                  <InputGroup.Text className="search-icon p-0 border-0 bg-transparent">
-                    🔍
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="search"
-                    placeholder="Rechercher (ex: style=1&brand=nike)"
-                    className="search-input border-0 py-2 p-2"
-                    aria-label="Search"
-                    value={searchQuery}
-                    onChange={handleSearchInputChange}
-                  />
-                  <Button variant="outline-light" type="submit">
-                    Rechercher
-                  </Button>
-                </InputGroup>
-              </Form>
+            <Form
+                  className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center form-inline-row"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSearch();
+                  }}
+                >
+                  <InputGroup className="search-group align-items-center p-2">
+                    <InputGroup.Text className="search-icon border-0 py-2 p-2 bg-transparent">
+                      🔍
+                    </InputGroup.Text>
+                    <Form.Control
+                      type="search"
+                      placeholder="Rechercher (ex: style=1&brand=nike)"
+                      className="search-input border-0 py-2 p-2"
+                      aria-label="Search"
+                      value={searchQuery}
+                      onChange={handleSearchInputChange}
+                    />
+                    <Button variant="outline-light" type="submit">
+                      Rechercher
+                    </Button>
+                  </InputGroup>
+                </Form>
+
 
               <Nav className="align-items-center">
                 <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowProduit}>

@@ -84,89 +84,29 @@
   transform: scale(1.02);
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
+.form-inline-row {
+  display: flex;
+  flex-direction: row; /* Already implied with flex-row, but explicit here */
+  flex-wrap: nowrap; /* 👈 Important to keep them on the same line */
+  align-items: center;
+  justify-content: center; /* Or space-between/space-around based on need */
+  width: 100%;
+}
 
 .search-group {
-  height: 40px; 
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-  max-width: 600px;
-  width: 100%;
+  flex-grow: 1;
   display: flex;
   align-items: center;
-}
-
-.search-group:focus-within {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-}
-
-.search-icon {
-  background: transparent !important;
-  color: rgba(255, 255, 255, 0.8) !important;
-  height: 100%;
-  display: flex;
-  align-items: center; 
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 600px;
 }
 
 .search-input {
-  background: transparent !important;
-  color: white !important;
-  height: 100%; 
-  padding-left: 0 !important;
-  font-size: 0.95rem;
-  border: none !important; 
-  outline: none !important; 
+  flex-grow: 1; /* 👈 Allows the input to stretch */
+  min-width: 0;  /* 👈 Important to prevent overflow in flex container */
 }
 
-.search-input::placeholder {
-  color: rgba(255, 255, 255, 0.6) !important;
-  opacity: 1;
-}
-
-.search-input:focus {
-  box-shadow: none !important;
-  background: transparent !important;
-}
-
-.icon-btn {
-  margin-right: 8px;
-  transition: transform 0.2s ease;
-}
-
-.btn-gradient:hover .icon-btn {
-  transform: translateY(-1px);
-}
-
-.search-group {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 25px;
-  padding: 5px;
-}
-
-.search-input {
-  background: transparent;
-  color: white;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.search-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.search-item {
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.search-item:hover {
-  background-color: #f8f9fa;
-  transform: translateX(5px);
-}
-
-.alert-danger {
-  border-radius: 8px;
+button[type="submit"] {
+  white-space: nowrap; /* 👈 Prevent the button text from breaking */
 }
