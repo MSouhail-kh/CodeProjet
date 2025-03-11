@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Container, Form, InputGroup } from 'react-bootstrap';
-import { PlusCircle, FileEarmarkExcel, Search } from 'react-bootstrap-icons';
+import { PlusCircle,  FileEarmarkPlus } from 'react-bootstrap-icons';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
@@ -33,7 +33,6 @@ import './Navbar.css';
             <Form className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center  flex-row">
               <InputGroup className="search-group align-items-center p-2">
                 <InputGroup.Text className="search-icon p-0 border-0 bg-transparent">
-                  <Search className="mx-4" />
                 </InputGroup.Text>
                 <Form.Control
                   type="search"
@@ -45,11 +44,11 @@ import './Navbar.css';
             </Form>
 
               <Nav className="align-items-center">
-                <Nav.Link className="btn gradient-btn me-2" onClick={handleShowProduit}>
-                  <PlusCircle className="icon-btn" /> 
+                <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowProduit}>
+                  <PlusCircle className="icon-btn " /> 
                 </Nav.Link>
-                <Nav.Link className="btn gradient-btn" onClick={handleShowExcel}>
-                  <FileEarmarkExcel className="icon-btn" /> 
+                <Nav.Link className="btn gradient-btn  btn-lg " onClick={handleShowExcel}>
+                  <FileEarmarkPlus className="icon-btn" /> 
                 </Nav.Link>
                 <Nav.Item className="ms-3">
                   <UserProfile />
