@@ -46,10 +46,10 @@ import './Navbar.css';
 
               <Nav className="align-items-center">
                 <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowProduit}>
-                  <PlusCircle className="icon-btn " size={28}  /> 
+                  <PlusCircle className="icon-btn " size={20}  /> 
                 </Nav.Link>
                 <Nav.Link className="btn gradient-btn  btn-lg " onClick={handleShowExcel}>
-                  <FileEarmarkPlus className="icon-btn" size={28} /> 
+                  <FileEarmarkPlus className="icon-btn" size={20} /> 
                 </Nav.Link>
                 <Nav.Item className="ms-3">
                   <UserProfile />
