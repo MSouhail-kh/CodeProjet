@@ -144,7 +144,6 @@ export default function Chaines() {
       isMounted.current = false;
     };
   }, []);
-
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -162,6 +161,18 @@ export default function Chaines() {
         setData(groupedData);
         setError(null);
       }
+
+      setTimeout(async () => {
+        try {
+          await api.post("/trigger-update", { newPosition: produits.map(p => p.position_id) }, {
+            headers: { "Content-Type": "application/json" },
+          });
+        } catch (syncError) {
+          console.error("Erreur de synchronisation :", syncError);
+          setError("Problème de synchronisation avec Google Sheets");
+        }
+      }, 5000);
+
     } catch (err) {
       console.error("Erreur :", err);
       if (isMounted.current) setError("Échec de la récupération des données.");
@@ -169,6 +180,8 @@ export default function Chaines() {
       if (isMounted.current) setIsLoading(false);
     }
   };
+
+
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -180,7 +193,6 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
