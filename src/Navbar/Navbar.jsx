@@ -1,6 +1,7 @@
 // src/components/Navbar/MyNavbar.js
-import React, { useState } from 'react'; 
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Navbar, Nav, Container, Form, FormControl, InputGroup } from 'react-bootstrap';
+import { Gem, Search } from 'react-bootstrap-icons';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
@@ -24,10 +25,20 @@ const MyNavbar = ({ darkMode }) => {
     <>
       <Navbar expand="lg" variant="dark" className="custom-navbar shadow">
         <Container>
-          <Navbar.Brand href="/Chaines">Sigmatex</Navbar.Brand>
-          
+          <Navbar.Brand href="/Chaines">
+            <Gem className="logo-icon" /> Sigmatex
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            {/* Input de recherche centré */}
+            <Form className="mx-auto d-none d-lg-block">
+              <InputGroup>
+                <InputGroup.Text className="input-group-prepend">
+                  <Search />
+                </InputGroup.Text>
+                <FormControl placeholder="Search" />
+              </InputGroup>
+            </Form>
             <Nav className="ms-auto align-items-center">
               <Nav.Link className="btn gradient-btn" onClick={handleShowProduit}>
                 Créer un Modal
