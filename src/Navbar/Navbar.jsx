@@ -31,8 +31,8 @@ import './Navbar.css';
             <div className="d-flex flex-grow-1 justify-content-between align-items-center">
             <Form className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center">
               <InputGroup className="search-group align-items-center">
-                <InputGroup.Text className="search-icon p-0 border-0">
-                  <Search className="mx-3" />
+                <InputGroup.Text className="search-icon ">
+                  <Search className="mx-1" />
                 </InputGroup.Text>
                 <Form.Control
                   type="search"
