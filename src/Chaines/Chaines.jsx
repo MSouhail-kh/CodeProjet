@@ -150,18 +150,30 @@ export default function Chaines() {
     try {
       const response = await api.get("/produits");
       const produits = Object.values(response.data);
-
+  
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
       produits.forEach((produit) => {
         if (groupedData[produit.position_id]) {
           groupedData[produit.position_id].push(produit);
         }
       });
-
+  
       if (isMounted.current) {
         setData(groupedData);
         setError(null);
       }
+  
+      setTimeout(async () => {
+        try {
+          await api.post("/trigger-update", {}, {
+            headers: { "Content-Type": "application/json" },
+          });
+          console.log("Mise à jour déclenchée avec succès après 2 secondes.");
+        } catch (syncError) {
+          console.error("Erreur de synchronisation :", syncError);
+          setError("Problème de synchronisation avec Google Sheets");
+        }
+      }, 2000);
     } catch (err) {
       console.error("Erreur :", err);
       if (isMounted.current) setError("Échec de la récupération des données.");
