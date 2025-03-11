@@ -127,7 +127,6 @@ export default function Chaines() {
   const [chaine, setChaine] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSyncing, setIsSyncing] = useState(false);
   const isMounted = useRef(true);
   const navigate = useNavigate();
 
@@ -137,6 +136,7 @@ export default function Chaines() {
       .filter((product) => product.order !== undefined && product.order !== null)
       .sort((a, b) => a.order - b.order);
   };
+
   useEffect(() => {
     isMounted.current = true;
     fetchData();
@@ -176,15 +176,16 @@ export default function Chaines() {
       JSON.stringify({ from: sourcePosition, item, index })
     );
   };
+
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
 
     try {
-      setIsSyncing(true);
       setData((prev) => {
         const newData = { ...prev };
         if (transferData.from === targetPosition) {
@@ -235,14 +236,11 @@ export default function Chaines() {
         } catch (syncError) {
           console.error("Erreur de synchronisation :", syncError);
           setError("Problème de synchronisation avec Google Sheets");
-        } finally {
-          setIsSyncing(false);
         }
       }, 5000);
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
-      setIsSyncing(false);
     }
   };
 
@@ -293,7 +291,7 @@ export default function Chaines() {
       <MyNavbar />
       <Container fluid className="p-4">
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
-        {[1, 2, 3, 4, 5].map((num) => (
+          {[1, 2, 3, 4, 5].map((num) => (
             <Col key={num} xs={12} sm={6} md={2}>
               <StyledCard>
                 <Card.Body>
@@ -339,50 +337,43 @@ export default function Chaines() {
           </Col>
 
           {showPosition6 && (
-              <Col xs={12} sm={6} md={2}>
-                <StyledCard className="bg-dark text-white">
-                  <Card.Body>
-                    <Card.Title className="text-center fw-bold">
-                      Chaine 6
-                    </Card.Title>
-                    <ListGroup
-                      variant="flush"
-                      onDragOver={handleDragOver}
-                      onDrop={(e) => handleDrop(e, 6, 0)}
-                    >
-                      {filterAndSortProducts(data[6]).map((item, index) => (
-                        <StyledListGroupItem
-                          key={item.id}
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, 6, item, index)}
-                          onDrop={(e) => handleDrop(e, 6, index)}
-                          onDragOver={handleDragOver}
-                          onClick={() => handleItemClick(item)}
-                          onMouseEnter={(e) => handleMouseEnter(e, item)}
-                          onMouseMove={handleMouseMove}
-                          onMouseLeave={handleMouseLeave}
-                          className="bg-secondary text-white"
-                        >
-                          <div style={{ display: "flex", justifyContent: "space-between" }}>
-                            <span>{item.style}</span>
-                            <span style={{ color: "#fff", fontWeight: "bold" }}>Order: {item.order}</span>
-                          </div>
-                        </StyledListGroupItem>
-                      ))}
-                    </ListGroup>
-                  </Card.Body>
-                </StyledCard>
-              </Col>
-            )}
+            <Col xs={12} sm={6} md={2}>
+              <StyledCard className="bg-dark text-white">
+                <Card.Body>
+                  <Card.Title className="text-center fw-bold">
+                    Chaine 6
+                  </Card.Title>
+                  <ListGroup
+                    variant="flush"
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, 6, 0)}
+                  >
+                    {filterAndSortProducts(data[6]).map((item, index) => (
+                      <StyledListGroupItem
+                        key={item.id}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, 6, item, index)}
+                        onDrop={(e) => handleDrop(e, 6, index)}
+                        onDragOver={handleDragOver}
+                        onClick={() => handleItemClick(item)}
+                        onMouseEnter={(e) => handleMouseEnter(e, item)}
+                        onMouseMove={handleMouseMove}
+                        onMouseLeave={handleMouseLeave}
+                        className="bg-secondary text-white"
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                          <span>{item.style}</span>
+                          <span style={{ color: "#fff", fontWeight: "bold" }}>Order: {item.order}</span>
+                        </div>
+                      </StyledListGroupItem>
+                    ))}
+                  </ListGroup>
+                </Card.Body>
+              </StyledCard>
+            </Col>
+          )}
         </MobileRow>
       </Container>
-
-      {isSyncing && (
-        <SyncStatus>
-          <Spinner animation="border" size="sm" />
-          Synchronisation avec Google Sheets...
-        </SyncStatus>
-      )}
 
       <Col
         md="auto"
