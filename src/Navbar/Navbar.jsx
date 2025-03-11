@@ -33,6 +33,7 @@ import './Navbar.css';
             <Form className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center  flex-row">
               <InputGroup className="search-group align-items-center p-2">
                 <InputGroup.Text className="search-icon p-0 border-0 bg-transparent">
+                <br />
                 </InputGroup.Text>
                 <Form.Control
                   type="search"
