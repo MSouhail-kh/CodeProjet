@@ -110,8 +110,6 @@ const ControlButton = styled(Button)`
   }
 `;
 
-
-
 const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
@@ -128,14 +126,8 @@ export default function Chaines() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const isMounted = useRef(true);
-  const navigate = useNavigate();
-
-  const filterAndSortProducts = (products) => {
-    if (!products) return [];
-    return products
-      .filter((product) => product.order !== undefined && product.order !== null)
-      .sort((a, b) => a.order - b.order);
-  };
+  const isProcessing = useRef(false);  
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     isMounted.current = true;
@@ -144,6 +136,7 @@ export default function Chaines() {
       isMounted.current = false;
     };
   }, []);
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -164,7 +157,7 @@ export default function Chaines() {
 
       setTimeout(async () => {
         try {
-          await api.post("/trigger-update", { newPosition: produits.map(p => p.position_id) }, {
+          await api.post("/trigger-update", {}, {
             headers: { "Content-Type": "application/json" },
           });
         } catch (syncError) {
@@ -181,27 +174,13 @@ export default function Chaines() {
     }
   };
 
-
-
-  const handleDragStart = (e, sourcePosition, item, index) => {
-    e.dataTransfer.setData(
-      "text/plain",
-      JSON.stringify({ from: sourcePosition, item, index })
-    );
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
-    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    const isProcessing = useRef(false);
-    const navigate = useNavigate();
-  
     if (isProcessing.current) return; 
     isProcessing.current = true;
-  
+
+    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+
     try {
       setData((prev) => {
         const newData = { ...prev };
@@ -214,11 +193,7 @@ export default function Chaines() {
           const sourceList = [...newData[transferData.from]];
           const targetList = [...newData[targetPosition]];
           const [movedItem] = sourceList.splice(transferData.index, 1);
-          if (
-            dropIndex !== undefined &&
-            dropIndex >= 0 &&
-            dropIndex <= targetList.length
-          ) {
+          if (dropIndex !== undefined && dropIndex >= 0 && dropIndex <= targetList.length) {
             targetList.splice(dropIndex, 0, movedItem);
           } else {
             targetList.push(movedItem);
@@ -228,7 +203,7 @@ export default function Chaines() {
         }
         return newData;
       });
-  
+
       const dragPayload = {
         oldPosition: transferData.from,
         newPosition: targetPosition,
@@ -239,18 +214,18 @@ export default function Chaines() {
         dragPayload.oldPosition = targetPosition;
         dragPayload.newPosition = targetPosition;
       }
-  
+
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
       });
-  
+
       setTimeout(async () => {
         try {
-          await api.post("/trigger-update", { newPosition: targetPosition }, {
+          await api.post("/trigger-update", {}, {
             headers: { "Content-Type": "application/json" },
           });
           await fetchData();
-          navigate(0);
+          window.location.reload(); 
         } catch (syncError) {
           console.error("Erreur de synchronisation :", syncError);
           setError("Problème de synchronisation avec Google Sheets");
@@ -260,9 +235,10 @@ export default function Chaines() {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
     } finally {
-      isProcessing.current = false;
+      isProcessing.current = false; 
     }
   };
+
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
