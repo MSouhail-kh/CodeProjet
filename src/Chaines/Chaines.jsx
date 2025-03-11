@@ -51,16 +51,36 @@ const StyledCard = styled(Card)`
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
-
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   &:hover {
     background: linear-gradient(135deg, #2575fc, #6a11cb);
     color: white;
     transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
+const ProductContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+`;
+
+const ProductStyle = styled.span`
+  font-size: 16px;
+  font-weight: 500;
 `;
 
 const SyncStatus = styled.div`
@@ -323,6 +343,7 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, num, 0)}
                   >
+
                     {filterAndSortProducts(data[num]).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
@@ -335,10 +356,9 @@ export default function Chaines() {
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
                       >
-                        <div style={{ display: "flex", justifyContent: "space-between" }}>
-                          <span>{item.style}</span>
-                          <span style={{ color: "#636e72", fontWeight: "bold" }}>Order: {item.order}</span>
-                        </div>
+                        <ProductContainer>
+                          <ProductStyle>{item.style}</ProductStyle>
+                        </ProductContainer>
                       </StyledListGroupItem>
                     ))}
                   </ListGroup>
@@ -368,23 +388,21 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, 6, 0)}
                   >
-                    {filterAndSortProducts(data[6]).map((item, index) => (
+                    {filterAndSortProducts(data[num]).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
                         draggable
-                        onDragStart={(e) => handleDragStart(e, 6, item, index)}
-                        onDrop={(e) => handleDrop(e, 6, index)}
+                        onDragStart={(e) => handleDragStart(e, num, item, index)}
+                        onDrop={(e) => handleDrop(e, num, index)}
                         onDragOver={handleDragOver}
                         onClick={() => handleItemClick(item)}
                         onMouseEnter={(e) => handleMouseEnter(e, item)}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
-                        className="bg-secondary text-white"
                       >
-                        <div style={{ display: "flex", justifyContent: "space-between" }}>
-                          <span>{item.style}</span>
-                          <span style={{ color: "#fff", fontWeight: "bold" }}>Order: {item.order}</span>
-                        </div>
+                        <ProductContainer>
+                          <ProductStyle>{item.style}</ProductStyle>
+                        </ProductContainer>
                       </StyledListGroupItem>
                     ))}
                   </ListGroup>
