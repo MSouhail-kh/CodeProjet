@@ -81,7 +81,7 @@ const ProductContainer = styled.div`
 `;
 
 const ProductStyle = styled.span`
-  font-size: ${({ styleLength }) => (styleLength > 20 ? '14px' : '16px')};
+  font-size: ${({ styleLength }) => (styleLength > 50 ? '14px' : '16px')};
   font-weight: 500;
   overflow: hidden;
   white-space: nowrap; 
