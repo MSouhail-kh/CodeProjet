@@ -1,5 +1,6 @@
-import React, { useState } from 'react'; 
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Navbar, Nav, Container, Form, InputGroup } from 'react-bootstrap';
+import { PlusCircle, FileEarmarkExcel, Search } from 'react-bootstrap-icons';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
