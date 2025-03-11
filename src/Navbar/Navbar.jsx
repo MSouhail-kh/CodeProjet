@@ -100,29 +100,44 @@ const MyNavbar = ({ darkMode }) => {
           <Navbar.Collapse id="basic-navbar-nav">
             <div className="d-flex flex-grow-1 justify-content-between align-items-center flex-row">
             <Form
-                  className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center form-inline-row"
+                  className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center align-items-center"
+                  style={{ maxWidth: '600px', width: '100%' }}
                   onSubmit={(e) => {
                     e.preventDefault();
                     handleSearch();
                   }}
                 >
-                  <InputGroup className="search-group align-items-center p-2">
-                    <InputGroup.Text className="search-icon border-0 py-2 p-2 bg-transparent">
+                  <InputGroup className="w-100" style={{ maxWidth: '600px' }}>
+                    <InputGroup.Text
+                      className="border-0 bg-white d-flex align-items-center justify-content-center"
+                      style={{ padding: '0.5rem 0.75rem' }}
+                    >
                       🔍
                     </InputGroup.Text>
+
                     <Form.Control
                       type="search"
                       placeholder="Rechercher (ex: style=1&brand=nike)"
-                      className="search-input border-0 py-2 p-2"
-                      aria-label="Search"
+                      className="border-0 py-2"
+                      style={{ flexGrow: 1 }}
                       value={searchQuery}
                       onChange={handleSearchInputChange}
                     />
-                    <Button variant="outline-light" type="submit">
+
+                    <Button
+                      variant="outline-light"
+                      type="submit"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '0 5px 5px 0',
+                      }}
+                    >
                       Rechercher
                     </Button>
                   </InputGroup>
                 </Form>
+
 
 
               <Nav className="align-items-center">
