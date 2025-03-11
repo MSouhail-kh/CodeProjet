@@ -118,6 +118,7 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
+
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -181,6 +182,8 @@ export default function Chaines() {
     }
   };
 
+
+
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
       "text/plain",
@@ -191,7 +194,6 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return; 
@@ -236,6 +238,7 @@ export default function Chaines() {
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
       });
+
       navigate(0)
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
@@ -368,15 +371,6 @@ export default function Chaines() {
                         </div>
                       </StyledListGroupItem>
                     ))}
-                    {data[6].length === 0 && (
-                      <StyledListGroupItem
-                        onDrop={(e) => handleDrop(e, 6, 0)}
-                        onDragOver={handleDragOver}
-                        className="bg-secondary text-white"
-                      >
-                        Drop items here
-                      </StyledListGroupItem>
-                    )}
                   </ListGroup>
                 </Card.Body>
               </StyledCard>
