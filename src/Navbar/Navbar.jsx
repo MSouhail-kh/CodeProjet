@@ -45,10 +45,10 @@ import './Navbar.css';
 
               <Nav className="align-items-center">
                 <Nav.Link className="btn gradient-btn me-2" onClick={handleShowProduit}>
-                  <PlusCircle className="icon-btn" /> Créer un Modal
+                  <PlusCircle className="icon-btn" /> 
                 </Nav.Link>
                 <Nav.Link className="btn gradient-btn" onClick={handleShowExcel}>
-                  <FileEarmarkExcel className="icon-btn" /> Importer Excel
+                  <FileEarmarkExcel className="icon-btn" /> 
                 </Nav.Link>
                 <Nav.Item className="ms-3">
                   <UserProfile />
