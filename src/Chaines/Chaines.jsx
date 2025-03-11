@@ -106,8 +106,8 @@ const HoverCard = styled.div`
 `;
 
 const ControlButton = styled(Button)`
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 100%;
   background: none;
   border: none;
   opacity: 0;
