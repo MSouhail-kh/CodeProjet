@@ -343,7 +343,8 @@ export default function Chaines() {
                               color: "#888",
                             }}
                           >
-                            Glissez ici pour ajouter un Style
+                            <br />
+                            <br />
                           </StyledListGroupItem>
                         ) : (
                           filterAndSortProducts(data[num], num).map((item, index) => (
@@ -392,16 +393,17 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, 6, filterAndSortProducts(data[6], 6).length)}
                   >
-                    
                     {filterAndSortProducts(data[6], 6).length === 0 ? (
                       <StyledListGroupItem
                         style={{
-                          background: "transparent",
-                          opacity: 0,
-                          padding: 0, 
-                          border: "none" 
+                          textAlign: "center",
+                          fontStyle: "italic",
+                          background: "#f0f0f0",
+                          color: "#888",
                         }}
                       >
+                        <br />
+                        <br />
                       </StyledListGroupItem>
                     ) : (
                       filterAndSortProducts(data[6], 6).map((item, index) => (
