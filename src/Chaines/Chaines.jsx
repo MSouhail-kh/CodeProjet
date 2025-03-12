@@ -339,7 +339,7 @@ export default function Chaines() {
                             style={{
                               textAlign: "center",
                               fontStyle: "italic",
-                              background: "#f0f0f0",
+                              background: "transparent",
                               color: "#888",
                             }}
                           >
@@ -398,7 +398,7 @@ export default function Chaines() {
                         style={{
                           textAlign: "center",
                           fontStyle: "italic",
-                          background: "#f0f0f0",
+                          background: "transparent",
                           color: "#888",
                         }}
                       >
