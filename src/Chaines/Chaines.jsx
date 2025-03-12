@@ -330,28 +330,44 @@ export default function Chaines() {
                     Chaine {num}
                   </Card.Title>
                   <ListGroup
-                    variant="secondary"
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, num, 0)}
-                  >
-                    {filterAndSortProducts(data[num], num).map((item, index) => (
-                      <StyledListGroupItem
-                        key={item.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, num, item, index)}
-                        onDrop={(e) => handleDrop(e, num, index)}
+                        variant="secondary"
                         onDragOver={handleDragOver}
-                        onClick={() => handleItemClick(item)}
-                        onMouseEnter={(e) => handleMouseEnter(e, item)}
-                        onMouseMove={handleMouseMove}
-                        onMouseLeave={handleMouseLeave}
+                        onDrop={(e) =>
+                          handleDrop(e, num, filterAndSortProducts(data[num], num).length)
+                        }
                       >
-                        <ProductContainer>
-                          <ProductStyle>{item.style}</ProductStyle>
-                        </ProductContainer>
-                      </StyledListGroupItem>
-                    ))}
-                  </ListGroup>
+                        {filterAndSortProducts(data[num], num).length === 0 ? (
+                          <StyledListGroupItem
+                            style={{
+                              textAlign: "center",
+                              fontStyle: "italic",
+                              background: "#f0f0f0",
+                              color: "#888",
+                            }}
+                          >
+                            Glissez ici pour ajouter un produit
+                          </StyledListGroupItem>
+                        ) : (
+                          filterAndSortProducts(data[num], num).map((item, index) => (
+                            <StyledListGroupItem
+                              key={item.id}
+                              draggable
+                              onDragStart={(e) => handleDragStart(e, num, item, index)}
+                              onDrop={(e) => handleDrop(e, num, index)}
+                              onDragOver={handleDragOver}
+                              onClick={() => handleItemClick(item)}
+                              onMouseEnter={(e) => handleMouseEnter(e, item)}
+                              onMouseMove={handleMouseMove}
+                              onMouseLeave={handleMouseLeave}
+                            >
+                              <ProductContainer>
+                                <ProductStyle>{item.style}</ProductStyle>
+                              </ProductContainer>
+                            </StyledListGroupItem>
+                          ))
+                        )}
+                      </ListGroup>
+
                 </Card.Body>
               </StyledCard>
             </Col>
