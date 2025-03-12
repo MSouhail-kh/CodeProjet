@@ -366,7 +366,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
 
           <Modal.Footer>
            <GradientButton type="submit" className="btn-sm">
-             🚀 Ajouter le Modal
+             🚀 Ajouter le Style
            </GradientButton>
           </Modal.Footer>
         </Form>
