@@ -6,6 +6,7 @@
   .custom-dropdown .dropdown-toggle {
     background: transparent !important;
     border: none !important;
+    padding: 0;
     box-shadow: none !important;
   }
   
@@ -13,9 +14,19 @@
     display: none !important;
   }
   
-
+  .profile-trigger {
+    transition: all 0.2s ease;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .profile-trigger:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+  }
+  
   .dropdown-menu-content {
-    padding: 15px;
+    padding: 16px;
     min-width: 240px;
     background: rgba(255, 255, 255, 0.98);
     border: 1px solid rgba(0, 0, 0, 0.1);
