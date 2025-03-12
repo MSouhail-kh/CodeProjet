@@ -141,20 +141,19 @@ export default function Chaines() {
   const isMounted = useRef(true);
   const isProcessing = useRef(false);
   const navigate = useNavigate();
-
   const filterAndSortProducts = (products, positionId) => {
-    if (!products || products.length === 0) {
-      return [{ id: `invisible-${positionId}`, style: "Invisible", order: null }];
-    }
-    const sortedProducts = products
-      .filter((product) => product.order !== undefined && product.order !== null)
-      .sort((a, b) => a.order - b.order);
+    if (!products || products.length === 0) return [];
   
-    return sortedProducts.map((product, index) => ({
+    const productsWithDefaultOrder = products.map((product, index) => ({
       ...product,
-      order: index + 1,
+      order: product.order !== undefined && product.order !== null ? product.order : index + 1,
     }));
+  
+    const sortedProducts = productsWithDefaultOrder.sort((a, b) => a.order - b.order);
+  
+    return sortedProducts;
   };
+
 
   useEffect(() => {
     isMounted.current = true;
@@ -163,29 +162,28 @@ export default function Chaines() {
       isMounted.current = false;
     };
   }, []);
-
   const fetchData = async () => {
     setIsLoading(true);
     try {
       const response = await api.get("/produits");
       const produits = Object.values(response.data);
-
+  
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
       produits.forEach((produit) => {
         if (groupedData[produit.position_id]) {
           groupedData[produit.position_id].push(produit);
         }
       });
-
+  
       for (const key in groupedData) {
-        groupedData[key] = filterAndSortProducts(groupedData[key]);
+        groupedData[key] = filterAndSortProducts(groupedData[key], key);
       }
-
+  
       if (isMounted.current) {
         setData(groupedData);
         setError(null);
       }
-
+  
       setTimeout(async () => {
         try {
           await api.post("/trigger-update", { newPosition: produits.map(p => p.position_id) }, {
@@ -196,7 +194,7 @@ export default function Chaines() {
           setError("Problème de synchronisation avec Google Sheets");
         }
       }, 2000);
-
+  
     } catch (err) {
       console.error("Erreur :", err);
       if (isMounted.current) setError("Échec de la récupération des données.");
@@ -215,7 +213,6 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
@@ -228,18 +225,20 @@ export default function Chaines() {
         const newData = { ...prev };
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
+        const [movedItem] = sourceList.splice(transferData.index, 1);
   
+        // Si la chaîne cible est vide, supprimer le produit invisible (si présent)
         if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
           targetList.pop();
         }
   
-        const [movedItem] = sourceList.splice(transferData.index, 1);
         if (transferData.from === targetPosition) {
           targetList.splice(dropIndex, 0, movedItem);
         } else {
           targetList.splice(dropIndex, 0, movedItem);
         }
   
+        // Mettre à jour les ordres des éléments dans les listes
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -317,6 +316,7 @@ export default function Chaines() {
       </LoaderContainer>
     );
   }
+
   return (
     <>
       <MyNavbar />
@@ -337,18 +337,14 @@ export default function Chaines() {
                     {filterAndSortProducts(data[num], num).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
-                        draggable={item.id !== `invisible-${num}`}
+                        draggable
                         onDragStart={(e) => handleDragStart(e, num, item, index)}
                         onDrop={(e) => handleDrop(e, num, index)}
                         onDragOver={handleDragOver}
-                        onClick={() => item.id !== `invisible-${num}` && handleItemClick(item)}
-                        onMouseEnter={(e) => item.id !== `invisible-${num}` && handleMouseEnter(e, item)}
+                        onClick={() => handleItemClick(item)}
+                        onMouseEnter={(e) => handleMouseEnter(e, item)}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
-                        style={{
-                          opacity: item.id === `invisible-${num}` ? 0.5 : 1,
-                          cursor: item.id === `invisible-${num}` ? "not-allowed" : "pointer",
-                        }}
                       >
                         <ProductContainer>
                           <ProductStyle>{item.style}</ProductStyle>
@@ -385,19 +381,15 @@ export default function Chaines() {
                     {filterAndSortProducts(data[6], 6).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
-                        draggable={item.id !== `invisible-6`}
+                        draggable
                         onDragStart={(e) => handleDragStart(e, 6, item, index)}
                         onDrop={(e) => handleDrop(e, 6, index)}
                         onDragOver={handleDragOver}
-                        onClick={() => item.id !== `invisible-6` && handleItemClick(item)}
-                        onMouseEnter={(e) => item.id !== `invisible-6` && handleMouseEnter(e, item)}
+                        onClick={() => handleItemClick(item)}
+                        onMouseEnter={(e) => handleMouseEnter(e, item)}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
                         className="bg-secondary text-white"
-                        style={{
-                          opacity: item.id === `invisible-6` ? 0.5 : 1,
-                          cursor: item.id === `invisible-6` ? "not-allowed" : "pointer",
-                        }}
                       >
                         <ProductContainer>
                           <ProductStyle>{item.style}</ProductStyle>
