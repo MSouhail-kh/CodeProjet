@@ -139,14 +139,12 @@ const SearchResultsModal = ({ show, handleClose }) => {
           <Table striped bordered hover responsive className="mt-3">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Style</th>
               </tr>
             </thead>
             <tbody>
               {searchResults.map((result) => (
                 <tr key={result.id} onClick={() => handleNavigation(result.id)} style={{ cursor: 'pointer' }}>
-                  <td>{result.id}</td>
                   <td>{result.style}</td>
                 </tr>
               ))}
