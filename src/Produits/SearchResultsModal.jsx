@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form, Table } from 'react-bootstrap';
 import { XLg, Search } from 'react-bootstrap-icons';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/axios';
 
 export const AnimatedModal = styled(Modal)`
@@ -74,6 +75,7 @@ const SearchResultsModal = ({ show, handleClose }) => {
   const [searchType, setSearchType] = useState('style');
   const [searchResults, setSearchResults] = useState([]);
   const [searchError, setSearchError] = useState(null);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setSearchValue(e.target.value);
@@ -99,6 +101,10 @@ const SearchResultsModal = ({ show, handleClose }) => {
       setSearchError(err.response?.data?.error || 'An error occurred');
       setSearchResults([]);
     }
+  };
+
+  const handleNavigation = (id) => {
+    navigate(`/produit/${id}`);
   };
 
   return (
@@ -139,7 +145,7 @@ const SearchResultsModal = ({ show, handleClose }) => {
             </thead>
             <tbody>
               {searchResults.map((result) => (
-                <tr key={result.id}>
+                <tr key={result.id} onClick={() => handleNavigation(result.id)} style={{ cursor: 'pointer' }}>
                   <td>{result.id}</td>
                   <td>{result.style}</td>
                 </tr>

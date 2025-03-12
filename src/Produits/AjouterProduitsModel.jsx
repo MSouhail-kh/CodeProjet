@@ -114,6 +114,7 @@ export const GradientButton = styled(Button)`
   }
 `;
 
+
 const AjouterProduitsModel = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({
     style: '',
@@ -363,10 +364,11 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
             </Col>
           </Row>
 
-
-          <GradientButton type="submit" className="btn-sm">
-            🚀 Ajouter le Modal
-          </GradientButton>
+          <Modal.Footer>
+           <GradientButton type="submit" className="btn-sm">
+             🚀 Ajouter le Modal
+           </GradientButton>
+          </Modal.Footer>
         </Form>
       </ModalBody>
     </AnimatedModal>
