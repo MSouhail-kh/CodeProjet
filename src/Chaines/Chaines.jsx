@@ -340,6 +340,7 @@ export default function Chaines() {
                               textAlign: "center",
                               fontStyle: "italic",
                               background: "transparent",
+                              height : "100vh",
                               color: "#888",
                             }}
                           >
@@ -399,6 +400,7 @@ export default function Chaines() {
                           textAlign: "center",
                           fontStyle: "italic",
                           background: "transparent",
+                          height : "100vh",
                           color: "#888",
                         }}
                       >
