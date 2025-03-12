@@ -48,7 +48,7 @@ const MyNavbar = ({ darkMode }) => {
                 <Nav.Link className="btn gradient-btn btn-lg" onClick={handleShowExcel}>
                   <FileEarmarkPlus className="icon-btn" size={28} />
                 </Nav.Link>
-                <Nav.Item className="ms-3">
+                <Nav.Item className="btn gradient-btn btn-lg me-2">
                   <UserProfile />
                 </Nav.Item>
               </Nav>
