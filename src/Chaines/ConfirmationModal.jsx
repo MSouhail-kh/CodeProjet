@@ -92,10 +92,9 @@ const ConfirmationModal = ({ show, message, onCancel }) => {
         navigate(0);
       } catch (error) {
         console.error("Erreur lors de la suppression :", error);
-        alert("Échec de la suppression de tous les produits !");
       }
     } else {
-      alert("Mot de passe incorrect !");
+      console.error("Mot de passe incorrect !");
     }
   };
 

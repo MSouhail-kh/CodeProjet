@@ -341,6 +341,7 @@ export default function Chaines() {
                               fontStyle: "italic",
                               background: "transparent",
                               height : "100vh",
+                              border : "none",
                               color: "#888",
                             }}
                           >
@@ -401,6 +402,7 @@ export default function Chaines() {
                           fontStyle: "italic",
                           background: "transparent",
                           height : "100vh",
+                          border : "none",
                           color: "#888",
                         }}
                       >
