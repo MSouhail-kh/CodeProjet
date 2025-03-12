@@ -345,7 +345,7 @@ export default function Chaines() {
                               color: "#888",
                             }}
                           >
-                            Glissez ici pour ajouter un produit
+                            Glissez ici pour ajouter un Style
                           </StyledListGroupItem>
                         ) : (
                           filterAndSortProducts(data[num], num).map((item, index) => (
@@ -403,7 +403,7 @@ export default function Chaines() {
                           color: "#888",
                         }}
                       >
-                        Glissez ici pour ajouter un produit
+                        Glissez ici pour ajouter un Style
                       </StyledListGroupItem>
                     ) : (
                       filterAndSortProducts(data[6], 6).map((item, index) => (

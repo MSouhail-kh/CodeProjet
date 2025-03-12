@@ -182,7 +182,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
       <ModalHeader closeButton>
-        <Modal.Title>✨ Ajouter un Modal</Modal.Title>
+        <Modal.Title>✨ Ajouter un Style</Modal.Title>
       </ModalHeader>
       <ModalBody>
         <Form onSubmit={handleSubmit}>

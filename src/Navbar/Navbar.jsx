@@ -37,7 +37,7 @@ const MyNavbar = ({ darkMode }) => {
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <div className="d-flex flex-grow-1 justify-content-end align-items-center flex-row">
+            <div className={`d-flex flex-grow-1 ${window.innerWidth <= 768 ? 'justify-content-center' : 'justify-content-end'} align-items-center flex-row`}>
               <Nav className="align-items-center">
                 <Nav.Link className='btn gradient-btn btn-lg me-2' onClick={handleShowSearchModal}>
                   <Search className="icon-btn" size={28}/>
