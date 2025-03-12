@@ -4,7 +4,7 @@ import { PlusCircle, FileEarmarkPlus, Search } from 'react-bootstrap-icons';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
-import SearchResultsModal from './SearchResultsModal';
+import SearchResultsModal from '../Produits/SearchResultsModal';
 import './Navbar.css';
 
 const MyNavbar = ({ darkMode }) => {
@@ -37,7 +37,7 @@ const MyNavbar = ({ darkMode }) => {
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <div className="d-flex flex-grow-1 justify-content-between align-items-center flex-row">
+            <div className="d-flex flex-grow-1 justify-content-end align-items-center flex-row">
               <Nav className="align-items-center">
                 <Nav.Link className='btn gradient-btn btn-lg me-2' onClick={handleShowSearchModal}>
                   <Search className="icon-btn" size={28}/>

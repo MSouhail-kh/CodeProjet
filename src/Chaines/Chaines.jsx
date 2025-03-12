@@ -392,26 +392,39 @@ export default function Chaines() {
                   <ListGroup
                     variant="flush"
                     onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, 6, 0)}
+                    onDrop={(e) => handleDrop(e, 6, filterAndSortProducts(data[6], 6).length)}
                   >
-                    {filterAndSortProducts(data[6], 6).map((item, index) => (
+                    {filterAndSortProducts(data[6], 6).length === 0 ? (
                       <StyledListGroupItem
-                        key={item.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, 6, item, index)}
-                        onDrop={(e) => handleDrop(e, 6, index)}
-                        onDragOver={handleDragOver}
-                        onClick={() => handleItemClick(item)}
-                        onMouseEnter={(e) => handleMouseEnter(e, item)}
-                        onMouseMove={handleMouseMove}
-                        onMouseLeave={handleMouseLeave}
-                        className="bg-secondary text-white"
+                        style={{
+                          textAlign: "center",
+                          fontStyle: "italic",
+                          background: "#f0f0f0",
+                          color: "#888",
+                        }}
                       >
-                        <ProductContainer>
-                          <ProductStyle>{item.style}</ProductStyle>
-                        </ProductContainer>
+                        Glissez ici pour ajouter un produit
                       </StyledListGroupItem>
-                    ))}
+                    ) : (
+                      filterAndSortProducts(data[6], 6).map((item, index) => (
+                        <StyledListGroupItem
+                          key={item.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, 6, item, index)}
+                          onDrop={(e) => handleDrop(e, 6, index)}
+                          onDragOver={handleDragOver}
+                          onClick={() => handleItemClick(item)}
+                          onMouseEnter={(e) => handleMouseEnter(e, item)}
+                          onMouseMove={handleMouseMove}
+                          onMouseLeave={handleMouseLeave}
+                          className="bg-secondary text-white"
+                        >
+                          <ProductContainer>
+                            <ProductStyle>{item.style}</ProductStyle>
+                          </ProductContainer>
+                        </StyledListGroupItem>
+                      ))
+                    )}
                   </ListGroup>
                 </Card.Body>
               </StyledCard>
