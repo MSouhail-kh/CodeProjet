@@ -71,6 +71,19 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   }
 `;
 
+const StyledList = styled.div`
+  text-align: center;
+  font-style: italic;
+  background: transparent;
+  border: none;
+  color: #888;
+  height: 100vh;
+
+  @media (max-width: 768px) {
+    height: 50vh; 
+  }
+`;
+
 const ProductContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -335,19 +348,10 @@ export default function Chaines() {
                         }
                       >
                         {filterAndSortProducts(data[num], num).length === 0 ? (
-                          <StyledListGroupItem
-                            style={{
-                              textAlign: "center",
-                              fontStyle: "italic",
-                              background: "transparent",
-                              height : "100vh",
-                              border : "none",
-                              color: "#888",
-                            }}
-                          >
+                          <StyledList>
                             <br />
                             <br />
-                          </StyledListGroupItem>
+                          </StyledList>
                         ) : (
                           filterAndSortProducts(data[num], num).map((item, index) => (
                             <StyledListGroupItem
@@ -396,19 +400,10 @@ export default function Chaines() {
                     onDrop={(e) => handleDrop(e, 6, filterAndSortProducts(data[6], 6).length)}
                   >
                     {filterAndSortProducts(data[6], 6).length === 0 ? (
-                      <StyledListGroupItem
-                        style={{
-                          textAlign: "center",
-                          fontStyle: "italic",
-                          background: "transparent",
-                          height : "100vh",
-                          border : "none",
-                          color: "#888",
-                        }}
-                      >
+                      <StyledList>
                         <br />
                         <br />
-                      </StyledListGroupItem>
+                      </StyledList>
                     ) : (
                       filterAndSortProducts(data[6], 6).map((item, index) => (
                         <StyledListGroupItem
