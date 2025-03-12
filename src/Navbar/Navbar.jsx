@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
-import { PlusCircle, FileEarmarkPlus, Search } from 'react-bootstrap-icons';
+import { PlusCircle, FileEarmarkPlus, Search, ArrowClockwise } from 'react-bootstrap-icons';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
 import SearchResultsModal from '../Produits/SearchResultsModal';
 import './Navbar.css';
+import api from '../services/axios';
 
 const MyNavbar = ({ darkMode }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
@@ -27,6 +28,18 @@ const MyNavbar = ({ darkMode }) => {
   const handleShowSearchModal = () => setShowSearchModal(true);
   const handleCloseSearchModal = () => setShowSearchModal(false);
 
+  const handleRefreshPage = async () => {
+    try {
+      await api.post("/trigger-update", { newPosition: produits.map(p => p.position_id) }, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log("Mise à jour déclenchée avec succès");
+    } catch (syncError) {
+      console.error("Erreur de synchronisation :", syncError);
+      setError("Problème de synchronisation avec Google Sheets");
+    }
+  };
+
   return (
     <>
       <Navbar expand="lg" variant="dark" className="custom-navbar shadow">
@@ -45,8 +58,11 @@ const MyNavbar = ({ darkMode }) => {
                 <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowProduit}>
                   <PlusCircle className="icon-btn" size={28} />
                 </Nav.Link>
-                <Nav.Link className="btn gradient-btn btn-lg" onClick={handleShowExcel}>
+                <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowExcel}>
                   <FileEarmarkPlus className="icon-btn" size={28} />
+                </Nav.Link>
+                <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleRefreshPage}>
+                  <ArrowClockwise className="icon-btn" size={28} />
                 </Nav.Link>
                 <Nav.Item className="btn gradient-btn btn-lg me-2">
                   <UserProfile />
