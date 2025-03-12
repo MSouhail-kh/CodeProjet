@@ -113,12 +113,16 @@ const ControlButton = styled(Button)`
   opacity: 0;
   position: relative;
   cursor: pointer;
-  
+
   &:focus {
     outline: none;
   }
-`;
 
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 50px;
+  }
+`;
 
 
 
@@ -227,7 +231,6 @@ export default function Chaines() {
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
   
-        // Si la chaîne cible est vide, supprimer le produit invisible (si présent)
         if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
           targetList.pop();
         }
@@ -238,7 +241,6 @@ export default function Chaines() {
           targetList.splice(dropIndex, 0, movedItem);
         }
   
-        // Mettre à jour les ordres des éléments dans les listes
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,

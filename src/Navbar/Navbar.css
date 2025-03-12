@@ -1,3 +1,10 @@
+@media (max-width: 768px) {
+  .navbar-collapse .d-flex {
+    justify-content: center !important;
+  }
+}
+
+
 .custom-navbar {
     background: linear-gradient(135deg, #6a11cb, #2575fc) !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
