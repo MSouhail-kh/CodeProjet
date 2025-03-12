@@ -392,6 +392,7 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, 6, filterAndSortProducts(data[6], 6).length)}
                   >
+                    
                     {filterAndSortProducts(data[6], 6).length === 0 ? (
                       <StyledListGroupItem
                         style={{
