@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Navbar, Nav, Container, Form, InputGroup, Button } from 'react-bootstrap';
-import { PlusCircle, FileEarmarkPlus } from 'react-bootstrap-icons';
+import { Navbar, Nav, Container, Button } from 'react-bootstrap';
+import { PlusCircle, FileEarmarkPlus, Search } from 'react-bootstrap-icons';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
@@ -8,18 +8,13 @@ import SearchResultsModal from './SearchResultsModal';
 import './Navbar.css';
 
 const MyNavbar = ({ darkMode }) => {
-  // États pour les modals
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showExcelModal, setShowExcelModal] = useState(false);
-  const [file, setFile] = useState(null);
-
-  // États pour la recherche
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
-  const [searchError, setSearchError] = useState('');
+  const [file, setFile] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchError, setSearchError] = useState(null);
 
-  // Gestion des modals existants
   const handleShowProduit = () => setShowProduitModal(true);
   const handleCloseProduit = () => setShowProduitModal(false);
 
@@ -29,64 +24,8 @@ const MyNavbar = ({ darkMode }) => {
     setFile(null);
   };
 
-  // Gestion de la recherche
-  const parseSearchQuery = (query) => {
-    const params = {};
-    const pairs = query.split('&');
-
-    pairs.forEach((pair) => {
-      const [key, value] = pair.split('=');
-      if (key && value) {
-        const cleanKey = key.trim().toLowerCase();
-        params[cleanKey] = value.trim();
-      }
-    });
-
-    return params;
-  };
-
-  const handleSearch = async () => {
-    if (!searchQuery) {
-      setSearchError('Veuillez entrer un critère de recherche.');
-      setShowSearchModal(true);
-      return;
-    }
-
-    try {
-      const searchParams = parseSearchQuery(searchQuery);
-
-      if (Object.keys(searchParams).length === 0) {
-        setSearchError('Format de recherche invalide. Utilisez "clé=valeur".');
-        setShowSearchModal(true);
-        return;
-      }
-
-      const queryString = new URLSearchParams(searchParams).toString();
-      const response = await fetch(`/produits/search?${queryString}`);
-
-      if (response.ok) {
-        const data = await response.json();
-        setSearchResults(data.results);
-        setSearchError('');
-      } else {
-        const errorData = await response.json();
-        setSearchError(errorData.error || 'Erreur lors de la recherche.');
-      }
-    } catch (error) {
-      setSearchError('Erreur de connexion au serveur.');
-    }
-    setShowSearchModal(true);
-  };
-
-  const handleSearchInputChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleCloseSearchModal = () => {
-    setShowSearchModal(false);
-    setSearchResults([]);
-    setSearchError('');
-  };
+  const handleShowSearchModal = () => setShowSearchModal(true);
+  const handleCloseSearchModal = () => setShowSearchModal(false);
 
   return (
     <>
@@ -99,53 +38,15 @@ const MyNavbar = ({ darkMode }) => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <div className="d-flex flex-grow-1 justify-content-between align-items-center flex-row">
-            <Form
-                  className="d-flex mx-4 my-2 my-lg-0 flex-grow-1 justify-content-center align-items-center"
-                  style={{ maxWidth: '600px', width: '100%' }}
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSearch();
-                  }}
-                >
-                  <InputGroup className="w-100" style={{ maxWidth: '600px' }}>
-                    <InputGroup.Text
-                      className="border-0 bg-white d-flex align-items-center justify-content-center"
-                      style={{ padding: '0.5rem 0.75rem' }}
-                    >
-                      🔍
-                    </InputGroup.Text>
-
-                    <Form.Control
-                      type="search"
-                      placeholder="Rechercher (ex: style=1&brand=nike)"
-                      className="border-0 py-2"
-                      style={{ flexGrow: 1 }}
-                      value={searchQuery}
-                      onChange={handleSearchInputChange}
-                    />
-
-                    <Button
-                      variant="outline-light"
-                      type="submit"
-                      style={{
-                        whiteSpace: 'nowrap',
-                        padding: '0.5rem 1rem',
-                        borderRadius: '0 5px 5px 0',
-                      }}
-                    >
-                      Rechercher
-                    </Button>
-                  </InputGroup>
-                </Form>
-
-
-
               <Nav className="align-items-center">
+                <Nav.Link className='btn gradient-btn btn-lg me-2' onClick={handleShowSearchModal}>
+                  <Search className="icon-btn" size={28}/>
+                </Nav.Link>
                 <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowProduit}>
-                  <PlusCircle className="icon-btn" size={20} />
+                  <PlusCircle className="icon-btn" size={28} />
                 </Nav.Link>
                 <Nav.Link className="btn gradient-btn btn-lg" onClick={handleShowExcel}>
-                  <FileEarmarkPlus className="icon-btn" size={20} />
+                  <FileEarmarkPlus className="icon-btn" size={28} />
                 </Nav.Link>
                 <Nav.Item className="ms-3">
                   <UserProfile />

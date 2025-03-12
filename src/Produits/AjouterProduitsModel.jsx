@@ -167,7 +167,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
   
     try {
       const response = await api.post('/ajouter/produits', formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
   
       console.log('Réponse:', response.data);

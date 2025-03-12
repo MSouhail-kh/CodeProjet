@@ -173,12 +173,10 @@ const ImporterProduitsModal = ({ show, handleClose }) => {
       const ws = wb.Sheets[wsname];
       const jsonData = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
 
-      // Convertir les dates brutes en format lisible
       const formattedData = jsonData.map((row, rowIndex) => {
-        if (rowIndex === 0) return row; // La première ligne est l'en-tête
+        if (rowIndex === 0) return row; 
         return row.map((cell, cellIndex) => {
           if (typeof cell === 'number' && XLSX.SSF.is_date(cell)) {
-            // Convertir les dates brutes en format "YYYY-MM-DD"
             return XLSX.SSF.format('YYYY-MM-DD', cell);
           }
           return cell;
