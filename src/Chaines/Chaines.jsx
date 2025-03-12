@@ -113,16 +113,12 @@ const ControlButton = styled(Button)`
   opacity: 0;
   position: relative;
   cursor: pointer;
-
+  
   &:focus {
     outline: none;
   }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 50px;
-  }
 `;
+
 
 
 
@@ -399,13 +395,12 @@ export default function Chaines() {
                     {filterAndSortProducts(data[6], 6).length === 0 ? (
                       <StyledListGroupItem
                         style={{
-                          textAlign: "center",
-                          fontStyle: "italic",
-                          background: "#f0f0f0",
-                          color: "#888",
+                          background: "transparent",
+                          opacity: 0,
+                          padding: 0, 
+                          border: "none" 
                         }}
                       >
-                        Glissez ici pour ajouter un Style
                       </StyledListGroupItem>
                     ) : (
                       filterAndSortProducts(data[6], 6).map((item, index) => (
