@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/axios';
 
 export const ModalBody = styled(Modal.Body)`
@@ -84,6 +85,7 @@ export const FermerButton = styled(Button)`
 
 const ConfirmationModal = ({ show, message, onCancel }) => {
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleConfirm = async () => {
     if (password === "12345678") {
