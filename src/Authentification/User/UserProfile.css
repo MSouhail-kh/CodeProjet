@@ -17,8 +17,6 @@
   .profile-trigger {
     transition: all 0.2s ease;
     color: rgba(255, 255, 255, 0.8);
-    padding: 4px;
-    border-radius: 50%;
   }
   
   .profile-trigger:hover {
