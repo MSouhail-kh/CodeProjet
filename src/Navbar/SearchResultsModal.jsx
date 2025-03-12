@@ -104,7 +104,7 @@ const SearchResultsModal = ({ show, handleClose }) => {
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
       <ModalHeader closeButton>
-        <Modal.Title><Search /> Search Products</Modal.Title>
+        <Modal.Title>🔍 Search Products</Modal.Title>
       </ModalHeader>
       <ModalBody>
         <Form>
@@ -126,9 +126,7 @@ const SearchResultsModal = ({ show, handleClose }) => {
               <option value="reference">Reference</option>
             </Form.Control>
           </Form.Group>
-          <GradientButton onClick={handleSearch}>
-            <Search /> Search
-          </GradientButton>
+
         </Form>
         {searchError && <p className="text-danger mt-3">{searchError}</p>}
         {searchResults.length > 0 && (
@@ -151,9 +149,9 @@ const SearchResultsModal = ({ show, handleClose }) => {
         )}
       </ModalBody>
       <Modal.Footer>
-        <GradientButton variant="secondary" onClick={handleClose}>
-          <XLg /> Close
-        </GradientButton>
+          <GradientButton onClick={handleSearch}>
+              <Search /> Search
+          </GradientButton>
       </Modal.Footer>
     </AnimatedModal>
   );

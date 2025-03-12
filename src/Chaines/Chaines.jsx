@@ -142,12 +142,14 @@ export default function Chaines() {
   const isProcessing = useRef(false);
   const navigate = useNavigate();
 
-  const filterAndSortProducts = (products) => {
-    if (!products) return [];
+  const filterAndSortProducts = (products, positionId) => {
+    if (!products || products.length === 0) {
+      return [{ id: `invisible-${positionId}`, style: "Invisible", order: null }];
+    }
     const sortedProducts = products
       .filter((product) => product.order !== undefined && product.order !== null)
       .sort((a, b) => a.order - b.order);
-
+  
     return sortedProducts.map((product, index) => ({
       ...product,
       order: index + 1,
@@ -227,21 +229,17 @@ export default function Chaines() {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
   
-        // Vérifier si la targetPosition est vide et si le produit est égal à 0
-        if (targetList.length === 0 && transferData.item === 0) {
-          // Ajouter le produit avec order = 1
-          targetList.push({ ...transferData.item, order: 1 });
-        } else {
-          // Logique existante pour déplacer le produit
-          const [movedItem] = sourceList.splice(transferData.index, 1);
-          if (transferData.from === targetPosition) {
-            targetList.splice(dropIndex, 0, movedItem);
-          } else {
-            targetList.splice(dropIndex, 0, movedItem);
-          }
+        if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
+          targetList.pop();
         }
   
-        // Mettre à jour les ordres des éléments dans les listes
+        const [movedItem] = sourceList.splice(transferData.index, 1);
+        if (transferData.from === targetPosition) {
+          targetList.splice(dropIndex, 0, movedItem);
+        } else {
+          targetList.splice(dropIndex, 0, movedItem);
+        }
+  
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -319,7 +317,6 @@ export default function Chaines() {
       </LoaderContainer>
     );
   }
-
   return (
     <>
       <MyNavbar />
@@ -337,17 +334,21 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, num, 0)}
                   >
-                    {filterAndSortProducts(data[num]).map((item, index) => (
+                    {filterAndSortProducts(data[num], num).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
-                        draggable
+                        draggable={item.id !== `invisible-${num}`}
                         onDragStart={(e) => handleDragStart(e, num, item, index)}
                         onDrop={(e) => handleDrop(e, num, index)}
                         onDragOver={handleDragOver}
-                        onClick={() => handleItemClick(item)}
-                        onMouseEnter={(e) => handleMouseEnter(e, item)}
+                        onClick={() => item.id !== `invisible-${num}` && handleItemClick(item)}
+                        onMouseEnter={(e) => item.id !== `invisible-${num}` && handleMouseEnter(e, item)}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
+                        style={{
+                          opacity: item.id === `invisible-${num}` ? 0.5 : 1,
+                          cursor: item.id === `invisible-${num}` ? "not-allowed" : "pointer",
+                        }}
                       >
                         <ProductContainer>
                           <ProductStyle>{item.style}</ProductStyle>
@@ -359,16 +360,16 @@ export default function Chaines() {
               </StyledCard>
             </Col>
           ))}
-
+  
           <Col md="auto" className="d-flex align-items-center">
-           <ControlButton
+            <ControlButton
               variant="outline-light"
               onClick={() => {
                 setShowPosition6(!showPosition6);
               }}
             />
           </Col>
-
+  
           {showPosition6 && (
             <Col xs={12} sm={6} md={2}>
               <StyledCard className="bg-dark text-white">
@@ -381,18 +382,22 @@ export default function Chaines() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, 6, 0)}
                   >
-                    {filterAndSortProducts(data[6]).map((item, index) => (
+                    {filterAndSortProducts(data[6], 6).map((item, index) => (
                       <StyledListGroupItem
                         key={item.id}
-                        draggable
+                        draggable={item.id !== `invisible-6`}
                         onDragStart={(e) => handleDragStart(e, 6, item, index)}
                         onDrop={(e) => handleDrop(e, 6, index)}
                         onDragOver={handleDragOver}
-                        onClick={() => handleItemClick(item)}
-                        onMouseEnter={(e) => handleMouseEnter(e, item)}
+                        onClick={() => item.id !== `invisible-6` && handleItemClick(item)}
+                        onMouseEnter={(e) => item.id !== `invisible-6` && handleMouseEnter(e, item)}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
                         className="bg-secondary text-white"
+                        style={{
+                          opacity: item.id === `invisible-6` ? 0.5 : 1,
+                          cursor: item.id === `invisible-6` ? "not-allowed" : "pointer",
+                        }}
                       >
                         <ProductContainer>
                           <ProductStyle>{item.style}</ProductStyle>
@@ -406,14 +411,14 @@ export default function Chaines() {
           )}
         </MobileRow>
       </Container>
-
+  
       <Col
         md="auto"
         className="d-flex align-items-center justify-content-end p-4 m-auto"
       >
         <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
       </Col>
-
+  
       {hoveredItem && (
         <HoverCard
           x={hoverPosition.x}
