@@ -218,22 +218,30 @@ export default function Chaines() {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
-
+  
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-
+  
     try {
       setData((prev) => {
         const newData = { ...prev };
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
-        const [movedItem] = sourceList.splice(transferData.index, 1);
-
-        if (transferData.from === targetPosition) {
-          targetList.splice(dropIndex, 0, movedItem);
+  
+        // Vérifier si la targetPosition est vide et si le produit est égal à 0
+        if (targetList.length === 0 && transferData.item === 0) {
+          // Ajouter le produit avec order = 1
+          targetList.push({ ...transferData.item, order: 1 });
         } else {
-          targetList.splice(dropIndex, 0, movedItem);
+          // Logique existante pour déplacer le produit
+          const [movedItem] = sourceList.splice(transferData.index, 1);
+          if (transferData.from === targetPosition) {
+            targetList.splice(dropIndex, 0, movedItem);
+          } else {
+            targetList.splice(dropIndex, 0, movedItem);
+          }
         }
-
+  
+        // Mettre à jour les ordres des éléments dans les listes
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -242,10 +250,10 @@ export default function Chaines() {
           ...item,
           order: index + 1,
         }));
-
+  
         return newData;
       });
-
+  
       const dragPayload = {
         oldPosition: transferData.from,
         newPosition: targetPosition,
@@ -253,11 +261,11 @@ export default function Chaines() {
         oldOrder: transferData.item.order,
         newIndex: dropIndex,
       };
-
+  
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
       });
-
+  
       navigate(0);
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
