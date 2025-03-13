@@ -190,7 +190,7 @@ export default function Chaines() {
     socket.current = io("https://gestion-planning-back-end-1.onrender.com", {
       transports: ["websocket"], 
       reconnection: true,
-      reconnectionDelay: 3000,
+      reconnectionDelay: 5000,
       reconnectionAttempts: Infinity,
       withCredentials: true,
       autoConnect: true,
