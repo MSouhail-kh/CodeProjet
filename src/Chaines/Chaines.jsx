@@ -8,7 +8,7 @@ import DeleteButton from "./DeleteButton";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 
-// Styles
+// Styles (inchangés)
 const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -50,6 +50,7 @@ const StyledCard = styled(Card)`
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
+
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
@@ -149,6 +150,7 @@ export default function Chaines() {
   const isMounted = useRef(true);
   const isProcessing = useRef(false);
   const navigate = useNavigate();
+
   const filterAndSortProducts = (products, positionId) => {
     if (!products || products.length === 0) return [];
   
@@ -169,6 +171,7 @@ export default function Chaines() {
       isMounted.current = false;
     };
   }, []);
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -190,18 +193,6 @@ export default function Chaines() {
         setData(groupedData);
         setError(null);
       }
-  
-      setTimeout(async () => {
-        try {
-          await api.post("/Get/produits", { newPosition: produits.map(p => p.position_id) }, {
-            headers: { "Content-Type": "application/json" },
-          });
-        } catch (syncError) {
-          console.error("Erreur de synchronisation :", syncError);
-          setError("Problème de synchronisation avec Google Sheets");
-        }
-      }, 1000);
-  
     } catch (err) {
       console.error("Erreur :", err);
       if (isMounted.current) setError("Échec de la récupération des données.");
@@ -220,6 +211,7 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
@@ -380,7 +372,7 @@ export default function Chaines() {
               }}
             />
           </Col>
-  
+            
           {showPosition6 && (
             <Col xs={12} sm={6} md={2}>
               <StyledCard className="bg-dark text-white">
