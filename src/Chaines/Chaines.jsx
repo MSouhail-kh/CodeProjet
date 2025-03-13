@@ -8,7 +8,6 @@ import DeleteButton from "./DeleteButton";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 
-// Styles (inchangés)
 const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -50,7 +49,6 @@ const StyledCard = styled(Card)`
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
-
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
@@ -77,7 +75,7 @@ const StyledList = styled.div`
   background: transparent;
   border: none;
   color: #888;
-  height: 50vh;
+  height: 100vh;
 
   @media (max-width: 768px) {
     height: 50vh; 
@@ -131,6 +129,7 @@ const ControlButton = styled(Button)`
     outline: none;
   }
 `;
+
 
 const MobileRow = styled(Row)`
   @media (max-width: 768px) {
