@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { Navbar, Nav, Container, Button } from 'react-bootstrap';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import { PlusCircle, FileEarmarkPlus, Search, ArrowClockwise } from 'react-bootstrap-icons';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
 import SearchResultsModal from '../Produits/SearchResultsModal';
 import './Navbar.css';
-import api from '../services/axios';
+import api from "../services/axios";
 
-const MyNavbar = ({ darkMode }) => {
+const MyNavbar = ({ darkMode, produits = [] }) => { 
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showExcelModal, setShowExcelModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [file, setFile] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [searchError, setSearchError] = useState(null);
+  const [error, setError] = useState(null); 
 
   const handleShowProduit = () => setShowProduitModal(true);
   const handleCloseProduit = () => setShowProduitModal(false);
@@ -36,7 +37,7 @@ const MyNavbar = ({ darkMode }) => {
       console.log("Mise à jour déclenchée avec succès");
     } catch (syncError) {
       console.error("Erreur de synchronisation :", syncError);
-      setError("Problème de synchronisation avec Google Sheets");
+      setError("Problème de synchronisation avec Google Sheets"); 
     }
   };
 
