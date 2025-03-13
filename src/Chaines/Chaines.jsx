@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
-import socket from "../services/socket";
 
 // Styles
 const LoaderContainer = styled.div`
@@ -113,7 +112,7 @@ const HoverCard = styled.div`
   width: 240px;
   transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   opacity: ${({ show }) => (show ? 1 : 0)};
-  transform: ${({ show }) => (show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-15px)")};
+  transform: ${({ show }) => show ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-15px)'};
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
   pointer-events: none;
 `;
@@ -139,7 +138,6 @@ const MobileRow = styled(Row)`
   }
 `;
 
-
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -151,79 +149,66 @@ export default function Chaines() {
   const isMounted = useRef(true);
   const isProcessing = useRef(false);
   const navigate = useNavigate();
-
   const filterAndSortProducts = (products, positionId) => {
     if (!products || products.length === 0) return [];
   
     const productsWithDefaultOrder = products.map((product, index) => ({
       ...product,
-      order:
-        product.order !== undefined && product.order !== null
-          ? product.order
-          : index + 1,
+      order: product.order !== undefined && product.order !== null ? product.order : index + 1,
     }));
   
-    const sortedProducts = productsWithDefaultOrder.sort(
-      (a, b) => a.order - b.order
-    );
+    const sortedProducts = productsWithDefaultOrder.sort((a, b) => a.order - b.order);
   
     return sortedProducts;
   };
 
-  const groupAndSortProducts = (produits) => {
-    const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-    produits.forEach((produit) => {
-      if (groupedData[produit.position_id]) {
-        groupedData[produit.position_id].push(produit);
-      }
-    });
-    for (const key in groupedData) {
-      groupedData[key] = filterAndSortProducts(groupedData[key], key);
-    }
-    return groupedData;
-  };
-
   useEffect(() => {
     isMounted.current = true;
-
-    socket.on("connect", () => {
-      console.log("Connected to WebSocket server");
-    });
-
-    socket.on("initial_state", (msg) => {
-      if (isMounted.current) {
-        const groupedData = groupAndSortProducts(msg.produits);
-        setData(groupedData);
-        setError(null);
-        setIsLoading(false);
-      }
-      setTimeout(() => {
-        socket.emit("trigger_update", {});
-      }, 1000);
-    });
-
-    socket.on("update_state", (msg) => {
-      if (isMounted.current) {
-        const groupedData = groupAndSortProducts(msg.produits);
-        setData(groupedData);
-        setError(null);
-      }
-    });
-
-    socket.on("error", (err) => {
-      console.error("WebSocket error:", err);
-      setError("Connection issue with the WebSocket server");
-    });
-
+    fetchData();
     return () => {
       isMounted.current = false;
-      socket.off("connect");
-      socket.off("initial_state");
-      socket.off("update_state");
-      socket.off("error");
-
     };
   }, []);
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get("/Get/produits");
+      const produits = Object.values(response.data);
+  
+      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      produits.forEach((produit) => {
+        if (groupedData[produit.position_id]) {
+          groupedData[produit.position_id].push(produit);
+        }
+      });
+  
+      for (const key in groupedData) {
+        groupedData[key] = filterAndSortProducts(groupedData[key], key);
+      }
+  
+      if (isMounted.current) {
+        setData(groupedData);
+        setError(null);
+      }
+  
+      setTimeout(async () => {
+        try {
+          await api.post("/Get/produits", { newPosition: produits.map(p => p.position_id) }, {
+            headers: { "Content-Type": "application/json" },
+          });
+        } catch (syncError) {
+          console.error("Erreur de synchronisation :", syncError);
+          setError("Problème de synchronisation avec Google Sheets");
+        }
+      }, 1000);
+  
+    } catch (err) {
+      console.error("Erreur :", err);
+      if (isMounted.current) setError("Échec de la récupération des données.");
+    } finally {
+      if (isMounted.current) setIsLoading(false);
+    }
+  };
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -235,30 +220,30 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
-
+  
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-
+  
     try {
       setData((prev) => {
         const newData = { ...prev };
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
-
-        if (
-          targetList.length === 1 &&
-          targetList[0].id === `invisible-${targetPosition}`
-        ) {
+  
+        if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
           targetList.pop();
         }
-
-        targetList.splice(dropIndex, 0, movedItem);
-
+  
+        if (transferData.from === targetPosition) {
+          targetList.splice(dropIndex, 0, movedItem);
+        } else {
+          targetList.splice(dropIndex, 0, movedItem);
+        }
+  
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -267,10 +252,10 @@ export default function Chaines() {
           ...item,
           order: index + 1,
         }));
-
+  
         return newData;
       });
-
+  
       const dragPayload = {
         oldPosition: transferData.from,
         newPosition: targetPosition,
@@ -278,11 +263,11 @@ export default function Chaines() {
         oldOrder: transferData.item.order,
         newIndex: dropIndex,
       };
-
+  
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
       });
-
+  
       navigate(0);
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
@@ -350,42 +335,43 @@ export default function Chaines() {
                     Chaine {num}
                   </Card.Title>
                   <ListGroup
-                    variant="secondary"
-                    onDragOver={handleDragOver}
-                    onDrop={(e) =>
-                      handleDrop(e, num, filterAndSortProducts(data[num], num).length)
-                    }
-                  >
-                    {filterAndSortProducts(data[num], num).length === 0 ? (
-                      <StyledList>
-                        <br />
-                        <br />
-                      </StyledList>
-                    ) : (
-                      filterAndSortProducts(data[num], num).map((item, index) => (
-                        <StyledListGroupItem
-                          key={item.id}
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, num, item, index)}
-                          onDrop={(e) => handleDrop(e, num, index)}
-                          onDragOver={handleDragOver}
-                          onClick={() => handleItemClick(item)}
-                          onMouseEnter={(e) => handleMouseEnter(e, item)}
-                          onMouseMove={handleMouseMove}
-                          onMouseLeave={handleMouseLeave}
-                        >
-                          <ProductContainer>
-                            <ProductStyle>{item.style}</ProductStyle>
-                          </ProductContainer>
-                        </StyledListGroupItem>
-                      ))
-                    )}
-                  </ListGroup>
+                        variant="secondary"
+                        onDragOver={handleDragOver}
+                        onDrop={(e) =>
+                          handleDrop(e, num, filterAndSortProducts(data[num], num).length)
+                        }
+                      >
+                        {filterAndSortProducts(data[num], num).length === 0 ? (
+                          <StyledList>
+                            <br />
+                            <br />
+                          </StyledList>
+                        ) : (
+                          filterAndSortProducts(data[num], num).map((item, index) => (
+                            <StyledListGroupItem
+                              key={item.id}
+                              draggable
+                              onDragStart={(e) => handleDragStart(e, num, item, index)}
+                              onDrop={(e) => handleDrop(e, num, index)}
+                              onDragOver={handleDragOver}
+                              onClick={() => handleItemClick(item)}
+                              onMouseEnter={(e) => handleMouseEnter(e, item)}
+                              onMouseMove={handleMouseMove}
+                              onMouseLeave={handleMouseLeave}
+                            >
+                              <ProductContainer>
+                                <ProductStyle>{item.style}</ProductStyle>
+                              </ProductContainer>
+                            </StyledListGroupItem>
+                          ))
+                        )}
+                      </ListGroup>
+
                 </Card.Body>
               </StyledCard>
             </Col>
           ))}
-
+  
           <Col md="auto" className="d-flex align-items-center">
             <ControlButton
               variant="outline-light"
@@ -394,7 +380,7 @@ export default function Chaines() {
               }}
             />
           </Col>
-
+  
           {showPosition6 && (
             <Col xs={12} sm={6} md={2}>
               <StyledCard className="bg-dark text-white">
@@ -405,9 +391,7 @@ export default function Chaines() {
                   <ListGroup
                     variant="flush"
                     onDragOver={handleDragOver}
-                    onDrop={(e) =>
-                      handleDrop(e, 6, filterAndSortProducts(data[6], 6).length)
-                    }
+                    onDrop={(e) => handleDrop(e, 6, filterAndSortProducts(data[6], 6).length)}
                   >
                     {filterAndSortProducts(data[6], 6).length === 0 ? (
                       <StyledList>
@@ -441,14 +425,14 @@ export default function Chaines() {
           )}
         </MobileRow>
       </Container>
-
+  
       <Col
         md="auto"
         className="d-flex align-items-center justify-content-end p-4 m-auto"
       >
         <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
       </Col>
-
+  
       {hoveredItem && (
         <HoverCard
           x={hoverPosition.x}
