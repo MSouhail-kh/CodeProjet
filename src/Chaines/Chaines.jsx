@@ -187,7 +187,18 @@ export default function Chaines() {
   // Connexion via WebSocket avec l'URL du backend sur Render
   const connectSocket = () => {
     setIsLoading(true);
-    socket.current = io("https://gestion-planning-back-end-1.onrender.com");
+    socket.current = io("https://gestion-planning-back-end-1.onrender.com", {
+      transports: ["websocket"], 
+      reconnection: true,
+      reconnectionDelay: 3000,
+      reconnectionAttempts: Infinity,
+      withCredentials: true,
+      autoConnect: true,
+      extraHeaders: {
+        "my-custom-header": "abcd",
+        "x-client-version": "1.0.0"
+      }
+    });
 
     socket.current.on("connect", () => {
       console.log("Connecté au serveur WebSocket");
@@ -200,7 +211,7 @@ export default function Chaines() {
         setError(null);
         setIsLoading(false);
       }
-      // Déclenchement d'une mise à jour après 1 seconde (optionnel)
+
       setTimeout(() => {
         socket.current.emit("trigger_update", {});
       }, 1000);
