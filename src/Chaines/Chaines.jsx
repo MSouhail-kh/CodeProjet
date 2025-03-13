@@ -6,8 +6,8 @@ import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import DeleteButton from "./DeleteButton";
 import NoImage from "../assets/No+Image.png";
-import { io } from "socket.io-client";
 import api from "../services/axios";
+import socket from "../services/socket";
 
 // Styles
 const LoaderContainer = styled.div`
@@ -139,6 +139,7 @@ const MobileRow = styled(Row)`
   }
 `;
 
+
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -150,7 +151,6 @@ export default function Chaines() {
   const isMounted = useRef(true);
   const isProcessing = useRef(false);
   const navigate = useNavigate();
-  const socket = useRef(null);
 
   const filterAndSortProducts = (products, positionId) => {
     if (!products || products.length === 0) return [];
@@ -170,7 +170,6 @@ export default function Chaines() {
     return sortedProducts;
   };
 
-  // Fonction utilitaire pour grouper et trier les produits par chaîne
   const groupAndSortProducts = (produits) => {
     const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
     produits.forEach((produit) => {
@@ -184,40 +183,26 @@ export default function Chaines() {
     return groupedData;
   };
 
-  // Connexion via WebSocket avec l'URL du backend sur Render
-  const connectSocket = () => {
-    setIsLoading(true);
-    socket.current = io("https://gestion-planning-back-end-1.onrender.com", {
-      transports: ["websocket"], 
-      reconnection: true,
-      reconnectionDelay: 5000,
-      reconnectionAttempts: Infinity,
-      withCredentials: true,
-      autoConnect: true,
-      extraHeaders: {
-        "my-custom-header": "abcd",
-        "x-client-version": "1.0.0"
-      }
+  useEffect(() => {
+    isMounted.current = true;
+
+    socket.on("connect", () => {
+      console.log("Connected to WebSocket server");
     });
 
-    socket.current.on("connect", () => {
-      console.log("Connecté au serveur WebSocket");
-    });
-
-    socket.current.on("initial_state", (msg) => {
+    socket.on("initial_state", (msg) => {
       if (isMounted.current) {
         const groupedData = groupAndSortProducts(msg.produits);
         setData(groupedData);
         setError(null);
         setIsLoading(false);
       }
-
       setTimeout(() => {
-        socket.current.emit("trigger_update", {});
+        socket.emit("trigger_update", {});
       }, 1000);
     });
 
-    socket.current.on("update_state", (msg) => {
+    socket.on("update_state", (msg) => {
       if (isMounted.current) {
         const groupedData = groupAndSortProducts(msg.produits);
         setData(groupedData);
@@ -225,20 +210,18 @@ export default function Chaines() {
       }
     });
 
-    socket.current.on("error", (err) => {
-      console.error("Erreur WebSocket :", err);
-      setError("Problème de connexion avec le serveur WebSocket");
+    socket.on("error", (err) => {
+      console.error("WebSocket error:", err);
+      setError("Connection issue with the WebSocket server");
     });
-  };
 
-  useEffect(() => {
-    isMounted.current = true;
-    connectSocket();
     return () => {
       isMounted.current = false;
-      if (socket.current) {
-        socket.current.disconnect();
-      }
+      socket.off("connect");
+      socket.off("initial_state");
+      socket.off("update_state");
+      socket.off("error");
+
     };
   }, []);
 
