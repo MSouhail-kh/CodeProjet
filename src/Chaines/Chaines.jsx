@@ -41,7 +41,7 @@ const Dot = styled.div`
 `;
 
 const StyledCard = styled(Card)`
-  height: 50%;
+  height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
 
