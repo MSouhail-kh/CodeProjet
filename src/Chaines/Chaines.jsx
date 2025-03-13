@@ -164,42 +164,37 @@ export default function Chaines() {
     return sortedProducts;
   };
 
-  useEffect(() => {
-    isMounted.current = true;
-    fetchData();
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  const fetchData = async () => {
+  const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
-      const response = await api.get("/Get/produits");
-      const produits = Object.values(response.data);
-  
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
       produits.forEach((produit) => {
         if (groupedData[produit.position_id]) {
           groupedData[produit.position_id].push(produit);
         }
       });
-  
+
       for (const key in groupedData) {
         groupedData[key] = filterAndSortProducts(groupedData[key], key);
       }
-  
-      if (isMounted.current) {
-        setData(groupedData);
-        setError(null);
-      }
+
+      setData(groupedData);
+      setError(null);
     } catch (err) {
       console.error("Erreur :", err);
-      if (isMounted.current) setError("Échec de la récupération des données.");
+      setError("Échec de la récupération des données.");
     } finally {
-      if (isMounted.current) setIsLoading(false);
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    isMounted.current = true;
+    handleRefresh([]); 
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -316,7 +311,7 @@ export default function Chaines() {
 
   return (
     <>
-      <MyNavbar />
+      <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (

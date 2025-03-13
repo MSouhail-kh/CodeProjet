@@ -8,7 +8,7 @@ import SearchResultsModal from '../Produits/SearchResultsModal';
 import './Navbar.css';
 import api from "../services/axios";
 
-const MyNavbar = ({ darkMode, produits = [] }) => { 
+const MyNavbar = ({ darkMode, produits = [], onRefresh }) => { 
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showExcelModal, setShowExcelModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -29,12 +29,12 @@ const MyNavbar = ({ darkMode, produits = [] }) => {
   const handleShowSearchModal = () => setShowSearchModal(true);
   const handleCloseSearchModal = () => setShowSearchModal(false);
 
-
   const handleRefreshPage = async () => {
     try {
       const response = await api.get("/Get/produits");
       const produits = Object.values(response.data);
       console.log("Produits récupérés avec succès :", produits);
+      onRefresh(produits); // Passer les données à Chaines
     } catch (syncError) {
       console.error("Erreur de synchronisation :", syncError);
       setError("Problème de synchronisation avec Google Sheets");
