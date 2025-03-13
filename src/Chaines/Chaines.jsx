@@ -253,9 +253,7 @@ export default function Chaines() {
   
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
-      });
-  
-      navigate(0);
+      });  
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");

@@ -34,7 +34,7 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
       const response = await api.get("/Get/produits");
       const produits = Object.values(response.data);
       console.log("Produits récupérés avec succès :", produits);
-      onRefresh(produits); // Passer les données à Chaines
+      onRefresh(produits); 
     } catch (syncError) {
       console.error("Erreur de synchronisation :", syncError);
       setError("Problème de synchronisation avec Google Sheets");
