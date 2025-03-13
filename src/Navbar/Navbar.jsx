@@ -29,15 +29,15 @@ const MyNavbar = ({ darkMode, produits = [] }) => {
   const handleShowSearchModal = () => setShowSearchModal(true);
   const handleCloseSearchModal = () => setShowSearchModal(false);
 
+
   const handleRefreshPage = async () => {
     try {
-      await api.post("/trigger-update", { newPosition: produits.map(p => p.position_id) }, {
-        headers: { "Content-Type": "application/json" },
-      });
-      console.log("Mise à jour déclenchée avec succès");
+      const response = await api.get("/Get/produits");
+      const produits = Object.values(response.data);
+      console.log("Produits récupérés avec succès :", produits);
     } catch (syncError) {
       console.error("Erreur de synchronisation :", syncError);
-      setError("Problème de synchronisation avec Google Sheets"); 
+      setError("Problème de synchronisation avec Google Sheets");
     }
   };
 
