@@ -219,52 +219,54 @@ export default function Chaines() {
     isProcessing.current = true;
   
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    let updatedData = null;
+    
+    // On récupère l'état courant et on s'assure que les clés existent
+    const newData = { ...data };
+    if (!newData[targetPosition]) newData[targetPosition] = [];
+    if (!newData[transferData.from]) newData[transferData.from] = [];
   
     try {
-      // Mise à jour de l'état avec le nouvel ordre
-      setData((prev) => {
-        const newData = { ...prev };
-  
+      if (transferData.from === targetPosition) {
         // Déplacement dans la même chaîne
-        if (transferData.from === targetPosition) {
-          const list = [...newData[targetPosition]];
-          const [movedItem] = list.splice(transferData.index, 1);
-          list.splice(dropIndex, 0, movedItem);
-          newData[targetPosition] = list.map((item, index) => ({
-            ...item,
-            order: index + 1,
-          }));
-        } else {
-          // Déplacement entre deux chaînes : mise à jour de la chaîne source et cible
-          const sourceList = [...newData[transferData.from]];
-          const targetList = [...newData[targetPosition]];
-          const [movedItem] = sourceList.splice(transferData.index, 1);
+        const list = [...newData[targetPosition]];
+        const [movedItem] = list.splice(transferData.index, 1);
+        list.splice(dropIndex, 0, movedItem);
+        newData[targetPosition] = list.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+      } else {
+        // Déplacement entre deux chaînes
+        const sourceList = [...newData[transferData.from]];
+        const targetList = [...newData[targetPosition]];
+        const [movedItem] = sourceList.splice(transferData.index, 1);
   
-          // Si la liste cible contient uniquement un élément invisible, le supprimer
-          if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
-            targetList.pop();
-          }
-  
-          targetList.splice(dropIndex, 0, movedItem);
-  
-          newData[transferData.from] = sourceList.map((item, index) => ({
-            ...item,
-            order: index + 1,
-          }));
-          newData[targetPosition] = targetList.map((item, index) => ({
-            ...item,
-            order: index + 1,
-          }));
+        // Suppression éventuelle de l'élément "invisible" dans la chaîne cible
+        if (
+          targetList.length === 1 &&
+          targetList[0].id === `invisible-${targetPosition}`
+        ) {
+          targetList.pop();
         }
-        updatedData = newData;
-        return newData;
-      });
   
-      // Construction du payload avec l'ensemble des produits à mettre à jour
+        targetList.splice(dropIndex, 0, movedItem);
+        newData[transferData.from] = sourceList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+        newData[targetPosition] = targetList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+      }
+  
+      // Mise à jour de l'état
+      setData(newData);
+  
+      // Construction du payload avec la mise à jour de tous les produits de la chaîne concernée
       let updates = [];
       if (transferData.from === targetPosition) {
-        updatedData[targetPosition].forEach((item, index) => {
+        newData[targetPosition].forEach((item, index) => {
           updates.push({
             produit: item,
             newPosition: targetPosition,
@@ -272,16 +274,14 @@ export default function Chaines() {
           });
         });
       } else {
-        // Mettre à jour les produits de la chaîne cible
-        updatedData[targetPosition].forEach((item, index) => {
+        newData[targetPosition].forEach((item, index) => {
           updates.push({
             produit: item,
             newPosition: targetPosition,
             newOrder: index + 1,
           });
         });
-        // Mettre à jour les produits de la chaîne source
-        updatedData[transferData.from].forEach((item, index) => {
+        newData[transferData.from].forEach((item, index) => {
           updates.push({
             produit: item,
             newPosition: transferData.from,
@@ -302,7 +302,7 @@ export default function Chaines() {
       isProcessing.current = false;
     }
   };
-
+  
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
