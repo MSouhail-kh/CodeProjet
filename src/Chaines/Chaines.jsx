@@ -42,14 +42,15 @@ const Dot = styled.div`
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: clamp(300px, 40vh, 500px); /* Hauteur dynamique entre 300px et 500px */
+  height: 50%;
+  min-height: clamp(300px, 40vh, 500px);
   max-height: 90vh;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
+  position: relative;
 
   .card-body {
     display: flex;
@@ -57,6 +58,26 @@ const StyledCard = styled(Card)`
     flex: 1 1 auto;
     padding: 1.25rem;
     overflow: hidden;
+    
+    > * {
+      flex-shrink: 0;
+    }
+    
+    .list-group {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #007bff transparent;
+      
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #007bff;
+        border-radius: 3px;
+      }
+    }
   }
 
   &:hover {
@@ -67,6 +88,16 @@ const StyledCard = styled(Card)`
   @media (max-width: 768px) {
     min-height: 250px;
     max-height: 70vh;
+    border-radius: 8px;
+    
+    .card-body {
+      padding: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    min-height: 200px;
+    max-height: 60vh;
   }
 `;
 
@@ -97,11 +128,11 @@ const StyledList = styled.div`
   border: none;
   color: #888;
   height: auto;           
-  min-height: 50px;    
+  min-height: 100px;    
 
   @media (max-width: 768px) {
     height: auto;         
-    min-height: 35vh;    
+    min-height: 50vh;    
   }
 `;
 
