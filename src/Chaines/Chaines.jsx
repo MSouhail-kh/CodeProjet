@@ -229,7 +229,10 @@ export default function Chaines() {
                 const list = [...newData[targetPosition]];
                 const [movedItem] = list.splice(transferData.index, 1);
                 list.splice(dropIndex, 0, movedItem);
-                newData[targetPosition] = list;
+                newData[targetPosition] = list.map((item, index) => ({
+                    ...item,
+                    order: index + 1,
+                }));
             } else {
                 // Déplacement d'une chaîne à une autre
                 const sourceList = [...newData[transferData.from]];
@@ -243,18 +246,16 @@ export default function Chaines() {
 
                 targetList.splice(dropIndex, 0, movedItem);
 
-                newData[transferData.from] = sourceList;
-                newData[targetPosition] = targetList;
-            }
+                newData[transferData.from] = sourceList.map((item, index) => ({
+                    ...item,
+                    order: index + 1,
+                }));
 
-            // Recalculer les ordres pour les chaînes affectées
-            if (transferData.from === targetPosition) {
-                newData[targetPosition] = filterAndSortProducts(newData[targetPosition], targetPosition);
-            } else {
-                newData[transferData.from] = filterAndSortProducts(newData[transferData.from], transferData.from);
-                newData[targetPosition] = filterAndSortProducts(newData[targetPosition], targetPosition);
+                newData[targetPosition] = targetList.map((item, index) => ({
+                    ...item,
+                    order: index + 1,
+                }));
             }
-
             return newData;
         });
 
@@ -263,31 +264,36 @@ export default function Chaines() {
             multipleUpdates: [], // Liste des mises à jour
         };
 
-        // Récupérer les données mises à jour
-        const updatedSourceList = transferData.from === targetPosition ? [] : filterAndSortProducts(data[transferData.from], transferData.from);
-        const updatedTargetList = filterAndSortProducts(data[targetPosition], targetPosition);
+        if (transferData.from === targetPosition) {
+            const list = data[targetPosition];
+            list.forEach((item, index) => {
+                updatePayload.multipleUpdates.push({
+                    produit: { po: item.po },
+                    newPosition: targetPosition,
+                    newOrder: index + 1,
+                });
+            });
+        } else {
+            const sourceList = data[transferData.from];
+            const targetList = data[targetPosition];
 
-        // Ajouter les mises à jour pour la chaîne source (si différente de la cible)
-        if (transferData.from !== targetPosition) {
-            updatedSourceList.forEach((item) => {
+            sourceList.forEach((item, index) => {
                 updatePayload.multipleUpdates.push({
                     produit: { po: item.po },
                     newPosition: transferData.from,
-                    newOrder: item.order,
+                    newOrder: index + 1,
+                });
+            });
+
+            targetList.forEach((item, index) => {
+                updatePayload.multipleUpdates.push({
+                    produit: { po: item.po },
+                    newPosition: targetPosition,
+                    newOrder: index + 1,
                 });
             });
         }
 
-        // Ajouter les mises à jour pour la chaîne cible
-        updatedTargetList.forEach((item) => {
-            updatePayload.multipleUpdates.push({
-                produit: { po: item.po },
-                newPosition: targetPosition,
-                newOrder: item.order,
-            });
-        });
-
-        // Appel à la route update_drag pour mettre à jour Google Sheets
         await api.post("/update_drag", updatePayload, {
             headers: { "Content-Type": "application/json" },
         });
@@ -382,7 +388,7 @@ export default function Chaines() {
                               onMouseLeave={handleMouseLeave}
                             >
                               <ProductContainer>
-                                <ProductStyle>{item.style}/{item.order}</ProductStyle>
+                                <ProductStyle>{item.style}</ProductStyle>
                               </ProductContainer>
                             </StyledListGroupItem>
                           ))
@@ -435,7 +441,7 @@ export default function Chaines() {
                           className="bg-secondary text-white"
                         >
                           <ProductContainer>
-                            <ProductStyle>{item.style}/{item.order}</ProductStyle>
+                            <ProductStyle>{item.style}</ProductStyle>
                           </ProductContainer>
                         </StyledListGroupItem>
                       ))
