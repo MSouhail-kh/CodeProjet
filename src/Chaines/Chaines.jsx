@@ -40,8 +40,11 @@ const Dot = styled.div`
 `;
 
 const StyledCard = styled(Card)`
-  height: auto;          
-  min-height: 300px;       
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-height: 300px; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
 
@@ -50,6 +53,7 @@ const StyledCard = styled(Card)`
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
+
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
