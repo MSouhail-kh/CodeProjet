@@ -223,6 +223,8 @@ export default function Chaines() {
     try {
         setData((prev) => {
             const newData = { ...prev };
+
+            // Déplacement dans la même chaîne
             if (transferData.from === targetPosition) {
                 const list = [...newData[targetPosition]];
                 const [movedItem] = list.splice(transferData.index, 1);
@@ -257,40 +259,28 @@ export default function Chaines() {
             return newData;
         });
 
-        // Préparation du payload pour la route update_drag
         const updatePayload = {
-            multipleUpdates: [], // Liste des mises à jour
+            multipleUpdates: [], 
         };
 
-        if (transferData.from === targetPosition) {
-            const list = data[targetPosition];
-            list.forEach((item, index) => {
-                updatePayload.multipleUpdates.push({
-                    produit: { po: item.po },
-                    newPosition: targetPosition,
-                    newOrder: index + 1,
-                });
-            });
-        } else {
-            const sourceList = data[transferData.from];
-            const targetList = data[targetPosition];
+        const updatedSourceList = filterAndSortProducts(data[transferData.from], transferData.from);
+        const updatedTargetList = filterAndSortProducts(data[targetPosition], targetPosition);
 
-            sourceList.forEach((item, index) => {
-                updatePayload.multipleUpdates.push({
-                    produit: { po: item.po },
-                    newPosition: transferData.from,
-                    newOrder: index + 1,
-                });
+        updatedSourceList.forEach((item) => {
+            updatePayload.multipleUpdates.push({
+                produit: { po: item.po },
+                newPosition: transferData.from,
+                newOrder: item.order,
             });
+        });
 
-            targetList.forEach((item, index) => {
-                updatePayload.multipleUpdates.push({
-                    produit: { po: item.po },
-                    newPosition: targetPosition,
-                    newOrder: index + 1,
-                });
+        updatedTargetList.forEach((item) => {
+            updatePayload.multipleUpdates.push({
+                produit: { po: item.po },
+                newPosition: targetPosition,
+                newOrder: item.order,
             });
-        }
+        });
 
         await api.post("/update_drag", updatePayload, {
             headers: { "Content-Type": "application/json" },
