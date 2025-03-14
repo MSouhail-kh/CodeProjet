@@ -49,16 +49,13 @@ const StyledCard = styled(Card)`
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   background: #ffffff;
   border-radius: 12px;
-  overflow: hidden;
   position: relative;
 
   .card-body {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    padding: 1.25rem;
-    overflow: hidden;
-    
+    padding: 1.25rem;    
     > * {
       flex-shrink: 0;
     }
