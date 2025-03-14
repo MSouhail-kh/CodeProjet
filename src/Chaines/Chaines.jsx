@@ -87,7 +87,7 @@ const StyledList = styled.div`
   background: transparent;
   border: none;
   color: #888;
-  height: auto;
+  height: 50vh;
 
   @media (max-width: 768px) {
     min-height: 50vh;
