@@ -88,10 +88,8 @@ const StyledList = styled.div`
   border: none;
   color: #888;
   height: auto;
-  min-height: 100px;
 
   @media (max-width: 768px) {
-    /* La hauteur reste auto avec une hauteur minimale imposée */
     min-height: 50vh;
   }
 `;
