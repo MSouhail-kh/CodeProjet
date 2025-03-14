@@ -223,10 +223,18 @@ export default function Chaines() {
   
     try {
       setData((prev) => {
+        // Assurez-vous que la chaîne cible existe
         const newData = { ...prev };
+        if (!newData[targetPosition]) {
+          newData[targetPosition] = [];
+        }
   
         if (transferData.from === targetPosition) {
           const list = [...newData[targetPosition]];
+          // Vérifier que transferData.index existe dans list
+          if (transferData.index < 0 || transferData.index >= list.length) {
+            throw new Error("Index source invalide pour le drag");
+          }
           const [movedItem] = list.splice(transferData.index, 1);
           list.splice(dropIndex, 0, movedItem);
           newData[targetPosition] = list.map((item, index) => ({
@@ -234,8 +242,15 @@ export default function Chaines() {
             order: index + 1,
           }));
         } else {
+          // Pour la chaîne source, s'assurer qu'elle existe
+          if (!newData[transferData.from]) {
+            newData[transferData.from] = [];
+          }
           const sourceList = [...newData[transferData.from]];
-          const targetList = [...newData[targetPosition]];
+          const targetList = newData[targetPosition] ? [...newData[targetPosition]] : [];
+          if (transferData.index < 0 || transferData.index >= sourceList.length) {
+            throw new Error("Index source invalide pour le drag");
+          }
           const [movedItem] = sourceList.splice(transferData.index, 1);
   
           if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
@@ -258,11 +273,16 @@ export default function Chaines() {
         return newData;
       });
   
+      // Construction du payload en fonction de la position
       let updatePayload;
       if (transferData.from === targetPosition) {
+        // S'assurer que updatedData[targetPosition] est bien défini
+        if (!updatedData[targetPosition] || !Array.isArray(updatedData[targetPosition])) {
+          throw new Error("Données de la chaîne cible manquantes ou invalides");
+        }
         const chainUpdates = updatedData[targetPosition].map((item) => ({
-          po: item.po,       
-          newOrder: item.order 
+          po: item.po,        // identifiant unique de l'item
+          newOrder: item.order // nouvel ordre recalculé
         }));
         updatePayload = {
           newPosition: targetPosition,
