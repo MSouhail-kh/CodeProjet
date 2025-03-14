@@ -213,108 +213,71 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-  const handleDrop = async (e, targetPosition, dropIndex) => {
-    e.preventDefault();
-    if (isProcessing.current) return;
-    isProcessing.current = true;
 
-    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const handleDrop = async (e, targetPosition, dropIndex) => {
+      e.preventDefault();
+      if (isProcessing.current) return;
+      isProcessing.current = true;
 
-    try {
+      const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+
+      try {
         setData((prev) => {
-            const newData = { ...prev };
+          const newData = { ...prev };
 
-            // Déplacement dans la même chaîne
-            if (transferData.from === targetPosition) {
-                const list = [...newData[targetPosition]];
-                const [movedItem] = list.splice(transferData.index, 1);
-                list.splice(dropIndex, 0, movedItem);
+          // Cas où le déplacement se fait dans la même chaîne
+          if (transferData.from === targetPosition) {
+            const list = [...newData[targetPosition]];
+            const [movedItem] = list.splice(transferData.index, 1);
+            list.splice(dropIndex, 0, movedItem);
+            newData[targetPosition] = list.map((item, index) => ({
+              ...item,
+              order: index + 1,
+            }));
+          } else {
+            const sourceList = [...newData[transferData.from]];
+            const targetList = [...newData[targetPosition]];
+            const [movedItem] = sourceList.splice(transferData.index, 1);
 
-                // Mettre à jour tous les ordres dans la même position
-                newData[targetPosition] = list.map((item, index) => ({
-                    ...item,
-                    order: index + 1,
-                }));
-            } else {
-                // Déplacement d'une chaîne à une autre
-                const sourceList = [...newData[transferData.from]];
-                const targetList = [...newData[targetPosition]];
-                const [movedItem] = sourceList.splice(transferData.index, 1);
-
-                // Si la cible contient un item "invisible", on le retire
-                if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
-                    targetList.pop();
-                }
-
-                targetList.splice(dropIndex, 0, movedItem);
-
-                // Mettre à jour tous les ordres dans la chaîne source
-                newData[transferData.from] = sourceList.map((item, index) => ({
-                    ...item,
-                    order: index + 1,
-                }));
-
-                // Mettre à jour tous les ordres dans la chaîne cible
-                newData[targetPosition] = targetList.map((item, index) => ({
-                    ...item,
-                    order: index + 1,
-                }));
+            if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
+              targetList.pop();
             }
-            return newData;
+
+            targetList.splice(dropIndex, 0, movedItem);
+
+            newData[transferData.from] = sourceList.map((item, index) => ({
+              ...item,
+              order: index + 1,
+            }));
+
+            newData[targetPosition] = targetList.map((item, index) => ({
+              ...item,
+              order: index + 1,
+            }));
+          }
+          return newData;
         });
 
-        // Préparation du payload pour la route update_drag
-        const updatePayload = {
-            multipleUpdates: [], // Liste des mises à jour
+        const dragPayload = {
+          multipleUpdates: [
+            {
+              produit: transferData.item,
+              newPosition: targetPosition,
+              newOrder: dropIndex + 1,
+            },
+          ],
         };
 
-        // Déplacement dans la même chaîne
-        if (transferData.from === targetPosition) {
-            const list = data[targetPosition];
-
-            // Mettre à jour tous les produits dans la même position
-            list.forEach((item, index) => {
-                updatePayload.multipleUpdates.push({
-                    produit: { po: item.po },
-                    newPosition: targetPosition,
-                    newOrder: index + 1,
-                });
-            });
-        } else {
-            // Déplacement d'une chaîne à une autre
-            const sourceList = data[transferData.from];
-            const targetList = data[targetPosition];
-
-            // Mettre à jour tous les produits dans la chaîne source
-            sourceList.forEach((item, index) => {
-                updatePayload.multipleUpdates.push({
-                    produit: { po: item.po },
-                    newPosition: transferData.from,
-                    newOrder: index + 1,
-                });
-            });
-
-            // Mettre à jour tous les produits dans la chaîne cible
-            targetList.forEach((item, index) => {
-                updatePayload.multipleUpdates.push({
-                    produit: { po: item.po },
-                    newPosition: targetPosition,
-                    newOrder: index + 1,
-                });
-            });
-        }
-
-        // Appel à la route update_drag pour mettre à jour Google Sheets
-        await api.post("/update_drag", updatePayload, {
-            headers: { "Content-Type": "application/json" },
+        await api.post("/update_drag", dragPayload, {
+          headers: { "Content-Type": "application/json" },
         });
-    } catch (err) {
+      } catch (err) {
         console.error("Erreur lors du déplacement :", err);
         setError("Erreur lors du déplacement - Veuillez réessayer");
-    } finally {
+      } finally {
         isProcessing.current = false;
-    }
-};
+      }
+    };
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
