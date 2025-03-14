@@ -219,12 +219,12 @@ export default function Chaines() {
     isProcessing.current = true;
   
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+    let updatedData;
   
     try {
       setData((prev) => {
         const newData = { ...prev };
   
-        // Déplacement dans la même chaîne
         if (transferData.from === targetPosition) {
           const list = [...newData[targetPosition]];
           const [movedItem] = list.splice(transferData.index, 1);
@@ -234,12 +234,10 @@ export default function Chaines() {
             order: index + 1,
           }));
         } else {
-          // Déplacement d'une chaîne à une autre
           const sourceList = [...newData[transferData.from]];
           const targetList = [...newData[targetPosition]];
           const [movedItem] = sourceList.splice(transferData.index, 1);
   
-          // Si la cible contient un item "invisible", on le retire
           if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
             targetList.pop();
           }
@@ -256,18 +254,30 @@ export default function Chaines() {
             order: index + 1,
           }));
         }
+        updatedData = newData;
         return newData;
       });
   
-      const updatePayload = {
-        produit: {
-          po: transferData.item.po, 
-        },
-        newPosition: targetPosition,
-        newOrder: dropIndex + 1 // l'ordre est défini comme l'indice de dépôt + 1
-      };
+      let updatePayload;
+      if (transferData.from === targetPosition) {
+        const chainUpdates = updatedData[targetPosition].map((item) => ({
+          po: item.po,       
+          newOrder: item.order 
+        }));
+        updatePayload = {
+          newPosition: targetPosition,
+          updates: chainUpdates
+        };
+      } else {
+        updatePayload = {
+          produit: {
+            po: transferData.item.po,
+          },
+          newPosition: targetPosition,
+          newOrder: dropIndex + 1
+        };
+      }
   
-      // Appel à la route update_drag pour mettre à jour Google Sheets
       await api.post("/update_drag", updatePayload, {
         headers: { "Content-Type": "application/json" },
       });
@@ -278,7 +288,6 @@ export default function Chaines() {
       isProcessing.current = false;
     }
   };
-  
   
 
   const handleMouseEnter = (e, item) => {
