@@ -97,11 +97,11 @@ const StyledList = styled.div`
   border: none;
   color: #888;
   height: auto;           
-  min-height: 100px;    
+  min-height: 50px;    
 
   @media (max-width: 768px) {
     height: auto;         
-    min-height: 50vh;    
+    min-height: 35vh;    
   }
 `;
 
