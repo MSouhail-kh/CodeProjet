@@ -217,98 +217,91 @@ export default function Chaines() {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
-  
+
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    let updatedData;
-  
+
     try {
-      setData((prev) => {
-        // Assurez-vous que la chaîne cible existe
-        const newData = { ...prev };
-        if (!newData[targetPosition]) {
-          newData[targetPosition] = [];
-        }
-  
+        setData((prev) => {
+            const newData = { ...prev };
+            if (transferData.from === targetPosition) {
+                const list = [...newData[targetPosition]];
+                const [movedItem] = list.splice(transferData.index, 1);
+                list.splice(dropIndex, 0, movedItem);
+                newData[targetPosition] = list.map((item, index) => ({
+                    ...item,
+                    order: index + 1,
+                }));
+            } else {
+                // Déplacement d'une chaîne à une autre
+                const sourceList = [...newData[transferData.from]];
+                const targetList = [...newData[targetPosition]];
+                const [movedItem] = sourceList.splice(transferData.index, 1);
+
+                // Si la cible contient un item "invisible", on le retire
+                if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
+                    targetList.pop();
+                }
+
+                targetList.splice(dropIndex, 0, movedItem);
+
+                newData[transferData.from] = sourceList.map((item, index) => ({
+                    ...item,
+                    order: index + 1,
+                }));
+
+                newData[targetPosition] = targetList.map((item, index) => ({
+                    ...item,
+                    order: index + 1,
+                }));
+            }
+            return newData;
+        });
+
+        // Préparation du payload pour la route update_drag
+        const updatePayload = {
+            multipleUpdates: [], // Liste des mises à jour
+        };
+
         if (transferData.from === targetPosition) {
-          const list = [...newData[targetPosition]];
-          // Vérifier que transferData.index existe dans list
-          if (transferData.index < 0 || transferData.index >= list.length) {
-            throw new Error("Index source invalide pour le drag");
-          }
-          const [movedItem] = list.splice(transferData.index, 1);
-          list.splice(dropIndex, 0, movedItem);
-          newData[targetPosition] = list.map((item, index) => ({
-            ...item,
-            order: index + 1,
-          }));
+            const list = data[targetPosition];
+            list.forEach((item, index) => {
+                updatePayload.multipleUpdates.push({
+                    produit: { po: item.po },
+                    newPosition: targetPosition,
+                    newOrder: index + 1,
+                });
+            });
         } else {
-          // Pour la chaîne source, s'assurer qu'elle existe
-          if (!newData[transferData.from]) {
-            newData[transferData.from] = [];
-          }
-          const sourceList = [...newData[transferData.from]];
-          const targetList = newData[targetPosition] ? [...newData[targetPosition]] : [];
-          if (transferData.index < 0 || transferData.index >= sourceList.length) {
-            throw new Error("Index source invalide pour le drag");
-          }
-          const [movedItem] = sourceList.splice(transferData.index, 1);
-  
-          if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
-            targetList.pop();
-          }
-  
-          targetList.splice(dropIndex, 0, movedItem);
-  
-          newData[transferData.from] = sourceList.map((item, index) => ({
-            ...item,
-            order: index + 1,
-          }));
-  
-          newData[targetPosition] = targetList.map((item, index) => ({
-            ...item,
-            order: index + 1,
-          }));
+            const sourceList = data[transferData.from];
+            const targetList = data[targetPosition];
+
+            sourceList.forEach((item, index) => {
+                updatePayload.multipleUpdates.push({
+                    produit: { po: item.po },
+                    newPosition: transferData.from,
+                    newOrder: index + 1,
+                });
+            });
+
+            targetList.forEach((item, index) => {
+                updatePayload.multipleUpdates.push({
+                    produit: { po: item.po },
+                    newPosition: targetPosition,
+                    newOrder: index + 1,
+                });
+            });
         }
-        updatedData = newData;
-        return newData;
-      });
-  
-      // Construction du payload en fonction de la position
-      let updatePayload;
-      if (transferData.from === targetPosition) {
-        // S'assurer que updatedData[targetPosition] est bien défini
-        if (!updatedData[targetPosition] || !Array.isArray(updatedData[targetPosition])) {
-          throw new Error("Données de la chaîne cible manquantes ou invalides");
-        }
-        const chainUpdates = updatedData[targetPosition].map((item) => ({
-          po: item.po,        // identifiant unique de l'item
-          newOrder: item.order // nouvel ordre recalculé
-        }));
-        updatePayload = {
-          newPosition: targetPosition,
-          updates: chainUpdates
-        };
-      } else {
-        updatePayload = {
-          produit: {
-            po: transferData.item.po,
-          },
-          newPosition: targetPosition,
-          newOrder: dropIndex + 1
-        };
-      }
-  
-      await api.post("/update_drag", updatePayload, {
-        headers: { "Content-Type": "application/json" },
-      });
+
+        await api.post("/update_drag", updatePayload, {
+            headers: { "Content-Type": "application/json" },
+        });
     } catch (err) {
-      console.error("Erreur lors du déplacement :", err);
-      setError("Erreur lors du déplacement - Veuillez réessayer");
+        console.error("Erreur lors du déplacement :", err);
+        setError("Erreur lors du déplacement - Veuillez réessayer");
     } finally {
-      isProcessing.current = false;
+        isProcessing.current = false;
     }
-  };
-  
+};
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
