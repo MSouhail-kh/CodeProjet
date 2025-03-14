@@ -152,9 +152,8 @@ const ControlButton = styled(Button)`
   &:focus {
     outline: none;
   }
-  @media (max-width: 768px) {
-    height: auto;         
-    min-height: 50vh;    
+  @media (max-width: 768px) {        
+    height: 30vh;    
   }
 `;
 
