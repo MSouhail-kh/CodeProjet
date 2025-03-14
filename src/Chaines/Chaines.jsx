@@ -397,7 +397,7 @@ export default function Chaines() {
                           className="bg-secondary text-white"
                         >
                           <ProductContainer>
-                            <ProductStyle>{item.style}</ProductStyle>
+                            <ProductStyle>{item.style} / {item.order}</ProductStyle>
                           </ProductContainer>
                         </StyledListGroupItem>
                       ))
