@@ -229,10 +229,7 @@ export default function Chaines() {
                 const list = [...newData[targetPosition]];
                 const [movedItem] = list.splice(transferData.index, 1);
                 list.splice(dropIndex, 0, movedItem);
-                newData[targetPosition] = list.map((item, index) => ({
-                    ...item,
-                    order: index + 1,
-                }));
+                newData[targetPosition] = list;
             } else {
                 // Déplacement d'une chaîne à une autre
                 const sourceList = [...newData[transferData.from]];
@@ -246,16 +243,18 @@ export default function Chaines() {
 
                 targetList.splice(dropIndex, 0, movedItem);
 
-                newData[transferData.from] = sourceList.map((item, index) => ({
-                    ...item,
-                    order: index + 1,
-                }));
-
-                newData[targetPosition] = targetList.map((item, index) => ({
-                    ...item,
-                    order: index + 1,
-                }));
+                newData[transferData.from] = sourceList;
+                newData[targetPosition] = targetList;
             }
+
+            // Recalculer les ordres pour les chaînes affectées
+            if (transferData.from === targetPosition) {
+                newData[targetPosition] = filterAndSortProducts(newData[targetPosition], targetPosition);
+            } else {
+                newData[transferData.from] = filterAndSortProducts(newData[transferData.from], transferData.from);
+                newData[targetPosition] = filterAndSortProducts(newData[targetPosition], targetPosition);
+            }
+
             return newData;
         });
 
@@ -264,36 +263,31 @@ export default function Chaines() {
             multipleUpdates: [], // Liste des mises à jour
         };
 
-        if (transferData.from === targetPosition) {
-            const list = data[targetPosition];
-            list.forEach((item, index) => {
-                updatePayload.multipleUpdates.push({
-                    produit: { po: item.po },
-                    newPosition: targetPosition,
-                    newOrder: index + 1,
-                });
-            });
-        } else {
-            const sourceList = data[transferData.from];
-            const targetList = data[targetPosition];
+        // Récupérer les données mises à jour
+        const updatedSourceList = transferData.from === targetPosition ? [] : filterAndSortProducts(data[transferData.from], transferData.from);
+        const updatedTargetList = filterAndSortProducts(data[targetPosition], targetPosition);
 
-            sourceList.forEach((item, index) => {
+        // Ajouter les mises à jour pour la chaîne source (si différente de la cible)
+        if (transferData.from !== targetPosition) {
+            updatedSourceList.forEach((item) => {
                 updatePayload.multipleUpdates.push({
                     produit: { po: item.po },
                     newPosition: transferData.from,
-                    newOrder: index + 1,
-                });
-            });
-
-            targetList.forEach((item, index) => {
-                updatePayload.multipleUpdates.push({
-                    produit: { po: item.po },
-                    newPosition: targetPosition,
-                    newOrder: index + 1,
+                    newOrder: item.order,
                 });
             });
         }
 
+        // Ajouter les mises à jour pour la chaîne cible
+        updatedTargetList.forEach((item) => {
+            updatePayload.multipleUpdates.push({
+                produit: { po: item.po },
+                newPosition: targetPosition,
+                newOrder: item.order,
+            });
+        });
+
+        // Appel à la route update_drag pour mettre à jour Google Sheets
         await api.post("/update_drag", updatePayload, {
             headers: { "Content-Type": "application/json" },
         });
@@ -304,7 +298,6 @@ export default function Chaines() {
         isProcessing.current = false;
     }
 };
-
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
