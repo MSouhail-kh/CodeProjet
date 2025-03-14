@@ -75,12 +75,15 @@ const StyledList = styled.div`
   background: transparent;
   border: none;
   color: #888;
-  height: 100vh;
+  height: auto;           
+  min-height: 100px;    
 
   @media (max-width: 768px) {
-    height: 50vh; 
+    height: auto;         
+    min-height: 50vh;    
   }
 `;
+
 
 const ProductContainer = styled.div`
   display: flex;
