@@ -213,69 +213,72 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
-    const handleDrop = async (e, targetPosition, dropIndex) => {
-      e.preventDefault();
-      if (isProcessing.current) return;
-      isProcessing.current = true;
-    
-      const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    
-      try {
-        setData((prev) => {
-          const newData = { ...prev };
-    
-          // Cas où le déplacement se fait dans la même chaîne
-          if (transferData.from === targetPosition) {
-            const list = [...newData[targetPosition]];
-            const [movedItem] = list.splice(transferData.index, 1);
-            list.splice(dropIndex, 0, movedItem);
-            newData[targetPosition] = list.map((item, index) => ({
-              ...item,
-              order: index + 1,
-            }));
-          } else {
-            const sourceList = [...newData[transferData.from]];
-            const targetList = [...newData[targetPosition]];
-            const [movedItem] = sourceList.splice(transferData.index, 1);
-    
-            if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
-              targetList.pop();
-            }
-    
-            targetList.splice(dropIndex, 0, movedItem);
-    
-            newData[transferData.from] = sourceList.map((item, index) => ({
-              ...item,
-              order: index + 1,
-            }));
-    
-            newData[targetPosition] = targetList.map((item, index) => ({
-              ...item,
-              order: index + 1,
-            }));
+  const handleDrop = async (e, targetPosition, dropIndex) => {
+    e.preventDefault();
+    if (isProcessing.current) return;
+    isProcessing.current = true;
+  
+    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+  
+    try {
+      setData((prev) => {
+        const newData = { ...prev };
+  
+        // Déplacement dans la même chaîne
+        if (transferData.from === targetPosition) {
+          const list = [...newData[targetPosition]];
+          const [movedItem] = list.splice(transferData.index, 1);
+          list.splice(dropIndex, 0, movedItem);
+          newData[targetPosition] = list.map((item, index) => ({
+            ...item,
+            order: index + 1,
+          }));
+        } else {
+          // Déplacement d'une chaîne à une autre
+          const sourceList = [...newData[transferData.from]];
+          const targetList = [...newData[targetPosition]];
+          const [movedItem] = sourceList.splice(transferData.index, 1);
+  
+          // Si la cible contient un item "invisible", on le retire
+          if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
+            targetList.pop();
           }
-          return newData;
-        });
-    
-        const dragPayload = {
-          oldPosition: transferData.from,
-          newPosition: targetPosition,
-          produit: transferData.item,
-          oldOrder: transferData.item.order,
-          newIndex: dropIndex,
-        };
-    
-        await api.post("/drag", dragPayload, {
-          headers: { "Content-Type": "application/json" },
-        });
-      } catch (err) {
-        console.error("Erreur lors du déplacement :", err);
-        setError("Erreur lors du déplacement - Veuillez réessayer");
-      } finally {
-        isProcessing.current = false;
-      }
-    };
+  
+          targetList.splice(dropIndex, 0, movedItem);
+  
+          newData[transferData.from] = sourceList.map((item, index) => ({
+            ...item,
+            order: index + 1,
+          }));
+  
+          newData[targetPosition] = targetList.map((item, index) => ({
+            ...item,
+            order: index + 1,
+          }));
+        }
+        return newData;
+      });
+  
+      const updatePayload = {
+        produit: {
+          po: transferData.item.po, 
+        },
+        newPosition: targetPosition,
+        newOrder: dropIndex + 1 // l'ordre est défini comme l'indice de dépôt + 1
+      };
+  
+      // Appel à la route update_drag pour mettre à jour Google Sheets
+      await api.post("/update_drag", updatePayload, {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err) {
+      console.error("Erreur lors du déplacement :", err);
+      setError("Erreur lors du déplacement - Veuillez réessayer");
+    } finally {
+      isProcessing.current = false;
+    }
+  };
+  
   
 
   const handleMouseEnter = (e, item) => {
