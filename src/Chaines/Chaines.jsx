@@ -278,20 +278,22 @@ export default function Chaines() {
 
             // Si l'ordre a changé, mettre à jour tous les produits
             if (hasOrderChanged) {
-                list.forEach((item, index) => {
-                    updatePayload.multipleUpdates.push({
-                        produit: { po: item.po },
-                        newPosition: targetPosition,
-                        newOrder: index + 1,
-                    });
-                });
+                updatePayload.multipleUpdates.push({
+                  produit: { po: transferData.item.po },
+                  newPosition: targetPosition,
+                  newOrder: dropIndex + 1,
+              });
+
             } else {
                 // Sinon, mettre à jour uniquement l'élément déplacé
-                updatePayload.multipleUpdates.push({
-                    produit: { po: transferData.item.po },
-                    newPosition: targetPosition,
-                    newOrder: dropIndex + 1,
-                });
+
+                list.forEach((item, index) => {
+                  updatePayload.multipleUpdates.push({
+                      produit: { po: item.po },
+                      newPosition: targetPosition,
+                      newOrder: index + 1,
+                  });
+              });
             }
         } else {
             // Déplacement d'une chaîne à une autre
