@@ -221,8 +221,6 @@ export default function Chaines() {
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
 
     try {
-        let hasOrderChanged = false;
-
         setData((prev) => {
             const newData = { ...prev };
 
@@ -232,15 +230,11 @@ export default function Chaines() {
                 const [movedItem] = list.splice(transferData.index, 1);
                 list.splice(dropIndex, 0, movedItem);
 
-                // Vérifier si l'ordre a changé
-                const oldOrder = list.map((item) => item.order);
+                // Mettre à jour tous les ordres dans la même position
                 newData[targetPosition] = list.map((item, index) => ({
                     ...item,
                     order: index + 1,
                 }));
-                const newOrder = newData[targetPosition].map((item) => item.order);
-
-                hasOrderChanged = !oldOrder.every((order, index) => order === newOrder[index]);
             } else {
                 // Déplacement d'une chaîne à une autre
                 const sourceList = [...newData[transferData.from]];
@@ -254,11 +248,13 @@ export default function Chaines() {
 
                 targetList.splice(dropIndex, 0, movedItem);
 
+                // Mettre à jour tous les ordres dans la chaîne source
                 newData[transferData.from] = sourceList.map((item, index) => ({
                     ...item,
                     order: index + 1,
                 }));
 
+                // Mettre à jour tous les ordres dans la chaîne cible
                 newData[targetPosition] = targetList.map((item, index) => ({
                     ...item,
                     order: index + 1,
@@ -276,31 +272,20 @@ export default function Chaines() {
         if (transferData.from === targetPosition) {
             const list = data[targetPosition];
 
-            // Si l'ordre a changé, mettre à jour tous les produits
-            if (hasOrderChanged) {
+            // Mettre à jour tous les produits dans la même position
+            list.forEach((item, index) => {
                 updatePayload.multipleUpdates.push({
-                  produit: { po: transferData.item.po },
-                  newPosition: targetPosition,
-                  newOrder: dropIndex + 1,
-              });
-
-            } else {
-                // Sinon, mettre à jour uniquement l'élément déplacé
-
-                list.forEach((item, index) => {
-                  updatePayload.multipleUpdates.push({
-                      produit: { po: item.po },
-                      newPosition: targetPosition,
-                      newOrder: index + 1,
-                  });
-              });
-            }
+                    produit: { po: item.po },
+                    newPosition: targetPosition,
+                    newOrder: index + 1,
+                });
+            });
         } else {
             // Déplacement d'une chaîne à une autre
             const sourceList = data[transferData.from];
             const targetList = data[targetPosition];
 
-            // Mettre à jour l'ordre des éléments dans la chaîne source
+            // Mettre à jour tous les produits dans la chaîne source
             sourceList.forEach((item, index) => {
                 updatePayload.multipleUpdates.push({
                     produit: { po: item.po },
@@ -309,7 +294,7 @@ export default function Chaines() {
                 });
             });
 
-            // Mettre à jour l'ordre des éléments dans la chaîne cible
+            // Mettre à jour tous les produits dans la chaîne cible
             targetList.forEach((item, index) => {
                 updatePayload.multipleUpdates.push({
                     produit: { po: item.po },
