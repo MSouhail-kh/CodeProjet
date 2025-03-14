@@ -8,6 +8,7 @@ import DeleteButton from "./DeleteButton";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 
+// Loader et animation
 const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -18,9 +19,18 @@ const LoaderContainer = styled.div`
 `;
 
 const pulseAnimation = keyframes`
-  0% { transform: scale(0.8); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.8); opacity: 0.7; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
 `;
 
 const BouncingLoader = styled.div`
@@ -36,9 +46,10 @@ const Dot = styled.div`
   border-radius: 50%;
   background-color: #007bff;
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
-  animation-delay: ${(props) => props.delay || "0s"};
+  animation-delay: ${({ delay }) => delay || "0s"};
 `;
 
+// Composants pour les cartes et listes
 const StyledCard = styled(Card)`
   height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -49,6 +60,7 @@ const StyledCard = styled(Card)`
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
+
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
@@ -75,13 +87,16 @@ const StyledList = styled.div`
   background: transparent;
   border: none;
   color: #888;
-  height: 100vh;
+  height: auto;
+  min-height: 100px;
 
   @media (max-width: 768px) {
-    height: 50vh; 
+    /* La hauteur reste auto avec une hauteur minimale imposée */
+    min-height: 50vh;
   }
 `;
 
+// Composants de présentation du produit
 const ProductContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -95,27 +110,30 @@ const ProductStyle = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 15ch; 
+  max-width: 15ch;
   display: inline-block;
 `;
 
+// Hover card affichée au survol d'un élément
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chaine }) => (chaine === 1 ? x + 15 : x - 240 - 15)}px;
+  left: ${({ x, chaine }) => (chaine === 1 ? `${x + 15}px` : `${x - 240 - 15}px`)};
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 20;
-    return calculatedBottom > viewportHeight ? y - cardHeight - 10 : y;
-  }}px;
+    return calculatedBottom > viewportHeight ? `${y - cardHeight - 10}px` : `${y}px`;
+  }};
   z-index: 900;
   width: 240px;
   transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   opacity: ${({ show }) => (show ? 1 : 0)};
-  transform: ${({ show }) => show ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-15px)'};
+  transform: ${({ show }) =>
+    show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-15px)"};
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
   pointer-events: none;
 `;
 
+// Bouton de contrôle (ex. pour afficher/masquer la chaîne 6)
 const ControlButton = styled(Button)`
   width: 25px;
   height: 100vh;
@@ -124,13 +142,13 @@ const ControlButton = styled(Button)`
   opacity: 0;
   position: relative;
   cursor: pointer;
-  
+
   &:focus {
     outline: none;
   }
 `;
 
-
+// Ligne réactive pour mobile
 const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
