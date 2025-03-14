@@ -213,91 +213,91 @@ export default function Chaines() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-    const handleDrop = async (e, targetPosition, dropIndex) => {
-      e.preventDefault();
-      if (isProcessing.current) return;
-      isProcessing.current = true;
+  const handleDrop = async (e, targetPosition, dropIndex) => {
+    e.preventDefault();
+    if (isProcessing.current) return;
+    isProcessing.current = true;
 
-      const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
 
-      try {
-          setData((prev) => {
-              const newData = { ...prev };
+    try {
+        setData((prev) => {
+            const newData = { ...prev };
 
-              // Déplacement dans la même chaîne
-              if (transferData.from === targetPosition) {
-                  const list = [...newData[targetPosition]];
-                  const [movedItem] = list.splice(transferData.index, 1);
-                  list.splice(dropIndex, 0, movedItem);
-                  newData[targetPosition] = list;
-              } else {
-                  // Déplacement d'une chaîne à une autre
-                  const sourceList = [...newData[transferData.from]];
-                  const targetList = [...newData[targetPosition]];
-                  const [movedItem] = sourceList.splice(transferData.index, 1);
+            // Déplacement dans la même chaîne
+            if (transferData.from === targetPosition) {
+                const list = [...newData[targetPosition]];
+                const [movedItem] = list.splice(transferData.index, 1);
+                list.splice(dropIndex, 0, movedItem);
+                newData[targetPosition] = list;
+            } else {
+                // Déplacement d'une chaîne à une autre
+                const sourceList = [...newData[transferData.from]];
+                const targetList = [...newData[targetPosition]];
+                const [movedItem] = sourceList.splice(transferData.index, 1);
 
-                  // Si la cible contient un item "invisible", on le retire
-                  if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
-                      targetList.pop();
-                  }
+                // Si la cible contient un item "invisible", on le retire
+                if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
+                    targetList.pop();
+                }
 
-                  targetList.splice(dropIndex, 0, movedItem);
+                targetList.splice(dropIndex, 0, movedItem);
 
-                  newData[transferData.from] = sourceList;
-                  newData[targetPosition] = targetList;
-              }
+                newData[transferData.from] = sourceList;
+                newData[targetPosition] = targetList;
+            }
 
-              // Recalculer les ordres pour les chaînes affectées
-              if (transferData.from === targetPosition) {
-                  newData[targetPosition] = filterAndSortProducts(newData[targetPosition], targetPosition);
-              } else {
-                  newData[transferData.from] = filterAndSortProducts(newData[transferData.from], transferData.from);
-                  newData[targetPosition] = filterAndSortProducts(newData[targetPosition], targetPosition);
-              }
+            // Recalculer les ordres pour les chaînes affectées
+            if (transferData.from === targetPosition) {
+                newData[targetPosition] = filterAndSortProducts(newData[targetPosition], targetPosition);
+            } else {
+                newData[transferData.from] = filterAndSortProducts(newData[transferData.from], transferData.from);
+                newData[targetPosition] = filterAndSortProducts(newData[targetPosition], targetPosition);
+            }
 
-              return newData;
-          });
+            return newData;
+        });
 
-          // Préparation du payload pour la route update_drag
-          const updatePayload = {
-              multipleUpdates: [], // Liste des mises à jour
-          };
+        // Préparation du payload pour la route update_drag
+        const updatePayload = {
+            multipleUpdates: [], // Liste des mises à jour
+        };
 
-          // Récupérer les données mises à jour
-          const updatedSourceList = transferData.from === targetPosition ? [] : filterAndSortProducts(data[transferData.from], transferData.from);
-          const updatedTargetList = filterAndSortProducts(data[targetPosition], targetPosition);
+        // Récupérer les données mises à jour
+        const updatedSourceList = transferData.from === targetPosition ? [] : filterAndSortProducts(data[transferData.from], transferData.from);
+        const updatedTargetList = filterAndSortProducts(data[targetPosition], targetPosition);
 
-          // Ajouter les mises à jour pour la chaîne source (si différente de la cible)
-          if (transferData.from !== targetPosition) {
-              updatedSourceList.forEach((item) => {
-                  updatePayload.multipleUpdates.push({
-                      produit: { po: item.po },
-                      newPosition: transferData.from,
-                      newOrder: item.order,
-                  });
-              });
-          }
+        // Ajouter les mises à jour pour la chaîne source (si différente de la cible)
+        if (transferData.from !== targetPosition) {
+            updatedSourceList.forEach((item) => {
+                updatePayload.multipleUpdates.push({
+                    produit: { po: item.po },
+                    newPosition: transferData.from,
+                    newOrder: item.order,
+                });
+            });
+        }
 
-          // Ajouter les mises à jour pour la chaîne cible
-          updatedTargetList.forEach((item) => {
-              updatePayload.multipleUpdates.push({
-                  produit: { po: item.po },
-                  newPosition: targetPosition,
-                  newOrder: item.order,
-              });
-          });
+        // Ajouter les mises à jour pour la chaîne cible
+        updatedTargetList.forEach((item) => {
+            updatePayload.multipleUpdates.push({
+                produit: { po: item.po },
+                newPosition: targetPosition,
+                newOrder: item.order,
+            });
+        });
 
-          // Appel à la route update_drag pour mettre à jour Google Sheets
-          await api.post("/update_drag", updatePayload, {
-              headers: { "Content-Type": "application/json" },
-          });
-      } catch (err) {
-          console.error("Erreur lors du déplacement :", err);
-          setError("Erreur lors du déplacement - Veuillez réessayer");
-      } finally {
-          isProcessing.current = false;
-      }
-  };
+        // Appel à la route update_drag pour mettre à jour Google Sheets
+        await api.post("/update_drag", updatePayload, {
+            headers: { "Content-Type": "application/json" },
+        });
+    } catch (err) {
+        console.error("Erreur lors du déplacement :", err);
+        setError("Erreur lors du déplacement - Veuillez réessayer");
+    } finally {
+        isProcessing.current = false;
+    }
+};
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
