@@ -153,7 +153,7 @@ const ControlButton = styled(Button)`
     outline: none;
   }
   @media (max-width: 768px) {        
-    height: 30vh;    
+    height: 10vh;    
   }
 `;
 
