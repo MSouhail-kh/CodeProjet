@@ -43,7 +43,7 @@ const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 100%;
+  height: 90%;
   min-height: 300px; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
