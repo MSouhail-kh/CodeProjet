@@ -149,18 +149,26 @@ export default function Chaines() {
   const isMounted = useRef(true);
   const isProcessing = useRef(false);
   const navigate = useNavigate();
-
   const filterAndSortProducts = (products, positionId) => {
-    if (!products || products.length === 0) return [];
-  
+    if (!products || products.length === 0) return [];  
     const productsWithDefaultOrder = products.map((product, index) => ({
       ...product,
       order: product.order !== undefined && product.order !== null ? product.order : index + 1,
     }));
   
-    const sortedProducts = productsWithDefaultOrder.sort((a, b) => a.order - b.order);
+    const sortedProducts = productsWithDefaultOrder.sort((a, b) => a.order - b.order);  
+    const uniqueOrderProducts = [];
+    const usedOrders = new Set();
   
-    return sortedProducts;
+    for (const product of sortedProducts) {
+      let order = product.order;
+      while (usedOrders.has(order)) {
+        order++;
+      }
+      usedOrders.add(order);
+      uniqueOrderProducts.push({ ...product, order });
+    }
+    return uniqueOrderProducts;
   };
 
   const handleRefresh = (produits) => {
@@ -218,8 +226,7 @@ export default function Chaines() {
         const newData = { ...prev };
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
-        const [movedItem] = sourceList.splice(transferData.index, 1);
-  
+        const [movedItem] = sourceList.splice(transferData.index, 1);  
         if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
           targetList.pop();
         }
@@ -228,12 +235,12 @@ export default function Chaines() {
           targetList.splice(dropIndex, 0, movedItem);
         } else {
           targetList.splice(dropIndex, 0, movedItem);
-        }
-  
+        }  
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
         }));
+  
         newData[targetPosition] = targetList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -252,7 +259,7 @@ export default function Chaines() {
   
       await api.post("/drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
-      });  
+      });
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
@@ -397,7 +404,7 @@ export default function Chaines() {
                           className="bg-secondary text-white"
                         >
                           <ProductContainer>
-                            <ProductStyle>{item.style} / {item.order}</ProductStyle>
+                            <ProductStyle>{item.style}</ProductStyle>
                           </ProductContainer>
                         </StyledListGroupItem>
                       ))
@@ -466,6 +473,8 @@ export default function Chaines() {
                   }}
                 >
                   {hoveredItem.style}
+                  /
+                  {hoveredItem.order}
                 </h3>
                 <span
                   style={{
