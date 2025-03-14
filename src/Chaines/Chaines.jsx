@@ -42,33 +42,18 @@ const Dot = styled.div`
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
+  flex: 1;
   height: 100%;
-  min-height: clamp(300px, 40vh, 500px); /* Hauteur dynamique entre 300px et 500px */
-  max-height: 90vh;
+  min-height: 300px; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-
-  .card-body {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    padding: 1.25rem;
-    overflow: hidden;
-  }
+  transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  @media (max-width: 768px) {
-    min-height: 250px;
-    max-height: 70vh;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
+
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
@@ -140,6 +125,7 @@ const HoverCard = styled.div`
   pointer-events: none;
 `;
 
+
 const ControlButton = styled(Button)`
   width: 25px;
   height: 100vh;
@@ -152,11 +138,13 @@ const ControlButton = styled(Button)`
   &:focus {
     outline: none;
   }
-  @media (max-width: 768px) {    
-    width: 100%;  
-    height: 5vh;    
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 5vh;
   }
 `;
+
 
 
 const MobileRow = styled(Row)`
