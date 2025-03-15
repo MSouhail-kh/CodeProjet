@@ -93,9 +93,17 @@ const StyledList = styled.div`
 
 const ProductContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 10px;
+  gap: 15px; 
+`;
+
+const ProductImage = styled.img`
+  width: 80px; 
+  height: 80px; 
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 `;
 
 const ProductStyle = styled.span`
@@ -104,16 +112,8 @@ const ProductStyle = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 15ch; 
+  max-width: 15ch;
   display: inline-block;
-`;
-
-const ProductImage = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  object-fit: cover;
-  margin-right: 10px;
 `;
 
 const HoverCard = styled.div`
@@ -405,10 +405,10 @@ export default function Chaines() {
                           onMouseMove={handleMouseMove}
                           onMouseLeave={handleMouseLeave}
                         >
-                          <ProductContainer>
-                            <ProductImage src={item.image} alt={item.style} />
-                            <ProductStyle>{item.style}</ProductStyle>
-                          </ProductContainer>
+                            <ProductContainer>
+                              <ProductImage src={item.image} alt={item.style} />
+                              <ProductStyle>{item.style}</ProductStyle>
+                            </ProductContainer>
                         </StyledListGroupItem>
                       ))
                     )}
@@ -458,10 +458,10 @@ export default function Chaines() {
                           onMouseLeave={handleMouseLeave}
                           className="bg-secondary text-white"
                         >
-                          <ProductContainer>
-                            <ProductImage src={item.image} alt={item.style} />
-                            <ProductStyle>{item.style}</ProductStyle>
-                          </ProductContainer>
+                            <ProductContainer>
+                              <ProductImage src={item.image} alt={item.style} />
+                              <ProductStyle>{item.style}</ProductStyle>
+                            </ProductContainer>
                         </StyledListGroupItem>
                       ))
                     )}
