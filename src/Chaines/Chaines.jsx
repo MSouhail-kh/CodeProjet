@@ -47,13 +47,14 @@ const StyledCard = styled(Card)`
   min-height: 300px; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 12px;
+  overflow: hidden;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
-
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
@@ -90,7 +91,6 @@ const StyledList = styled.div`
   }
 `;
 
-
 const ProductContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -106,6 +106,14 @@ const ProductStyle = styled.span`
   text-overflow: ellipsis;
   max-width: 15ch; 
   display: inline-block;
+`;
+
+const ProductImage = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 10px;
 `;
 
 const HoverCard = styled.div`
@@ -124,7 +132,6 @@ const HoverCard = styled.div`
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
   pointer-events: none;
 `;
-
 
 const ControlButton = styled(Button)`
   width: 25px;
@@ -145,15 +152,12 @@ const ControlButton = styled(Button)`
   }
 `;
 
-
-
 const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 1rem;
   }
 `;
-
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -377,43 +381,43 @@ export default function Chaines() {
                     Chaine {num}
                   </Card.Title>
                   <ListGroup
-                        variant="secondary"
-                        onDragOver={handleDragOver}
-                        onDrop={(e) =>
-                          handleDrop(e, num, filterAndSortProducts(data[num], num).length)
-                        }
-                      >
-                        {filterAndSortProducts(data[num], num).length === 0 ? (
-                          <StyledList>
-                            <br />
-                            <br />
-                          </StyledList>
-                        ) : (
-                          filterAndSortProducts(data[num], num).map((item, index) => (
-                            <StyledListGroupItem
-                              key={item.id}
-                              draggable
-                              onDragStart={(e) => handleDragStart(e, num, item, index)}
-                              onDrop={(e) => handleDrop(e, num, index)}
-                              onDragOver={handleDragOver}
-                              onClick={() => handleItemClick(item)}
-                              onMouseEnter={(e) => handleMouseEnter(e, item)}
-                              onMouseMove={handleMouseMove}
-                              onMouseLeave={handleMouseLeave}
-                            >
-                              <ProductContainer>
-                                <ProductStyle>{item.style}</ProductStyle>
-                              </ProductContainer>
-                            </StyledListGroupItem>
-                          ))
-                        )}
-                      </ListGroup>
-
+                    variant="secondary"
+                    onDragOver={handleDragOver}
+                    onDrop={(e) =>
+                      handleDrop(e, num, filterAndSortProducts(data[num], num).length)
+                    }
+                  >
+                    {filterAndSortProducts(data[num], num).length === 0 ? (
+                      <StyledList>
+                        <br />
+                        <br />
+                      </StyledList>
+                    ) : (
+                      filterAndSortProducts(data[num], num).map((item, index) => (
+                        <StyledListGroupItem
+                          key={item.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, num, item, index)}
+                          onDrop={(e) => handleDrop(e, num, index)}
+                          onDragOver={handleDragOver}
+                          onClick={() => handleItemClick(item)}
+                          onMouseEnter={(e) => handleMouseEnter(e, item)}
+                          onMouseMove={handleMouseMove}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          <ProductContainer>
+                            <ProductImage src={item.image} alt={item.style} />
+                            <ProductStyle>{item.style}</ProductStyle>
+                          </ProductContainer>
+                        </StyledListGroupItem>
+                      ))
+                    )}
+                  </ListGroup>
                 </Card.Body>
               </StyledCard>
             </Col>
           ))}
-  
+
           <Col md="auto" className="d-flex align-items-center">
             <ControlButton
               variant="outline-light"
@@ -422,7 +426,7 @@ export default function Chaines() {
               }}
             />
           </Col>
-            
+
           {showPosition6 && (
             <Col xs={12} sm={6} md={2}>
               <StyledCard className="bg-dark text-white">
@@ -455,6 +459,7 @@ export default function Chaines() {
                           className="bg-secondary text-white"
                         >
                           <ProductContainer>
+                            <ProductImage src={item.image} alt={item.style} />
                             <ProductStyle>{item.style}</ProductStyle>
                           </ProductContainer>
                         </StyledListGroupItem>
@@ -467,14 +472,14 @@ export default function Chaines() {
           )}
         </MobileRow>
       </Container>
-  
+
       <Col
         md="auto"
         className="d-flex align-items-center justify-content-end p-4 m-auto"
       >
         <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
       </Col>
-  
+
       {hoveredItem && (
         <HoverCard
           x={hoverPosition.x}
@@ -558,4 +563,4 @@ export default function Chaines() {
       )}
     </>
   );
-}
+};
