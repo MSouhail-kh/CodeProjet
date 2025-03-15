@@ -31,7 +31,7 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
 
   const handleRefreshPage = async () => {
     try {
-      const response = await api.get("/Get/produits");
+      const response = await api.get("/process");
       const produits = Object.values(response.data);
       console.log("Produits récupérés avec succès :", produits);
       onRefresh(produits); 
