@@ -106,7 +106,6 @@ const ProductImage = styled.img`
   object-fit: cover;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 `;
-
 const ProductStyle = styled.span`
   font-size: 16px;
   font-weight: 500;
