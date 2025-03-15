@@ -94,13 +94,14 @@ const StyledList = styled.div`
 const ProductContainer = styled.div`
   display: flex;
   align-items: center;
+  flex-direction: row;
   padding: 10px;
   gap: 15px; 
 `;
 
 const ProductImage = styled.img`
-  width: 80px; 
-  height: 80px; 
+  width: 150px; 
+  height: 150px; 
   border-radius: 8px;
   object-fit: cover;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
