@@ -132,9 +132,9 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
               <IconButton onClick={handleShowSearchModal}>
                 <Search size={20} />
               </IconButton>
-              <IconButton onClick={handleShowProduit}>
+              {/* <IconButton onClick={handleShowProduit}>
                 <PlusCircle size={20} />
-              </IconButton>
+              </IconButton> */}
               <IconButton onClick={handleRefreshPage} disabled={isLoading}>
                 {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
               </IconButton>

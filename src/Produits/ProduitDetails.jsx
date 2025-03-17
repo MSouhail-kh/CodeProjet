@@ -321,7 +321,7 @@ const ProduitDetails = () => {
                   </Card.Title>
 
                   <div className="d-flex align-items-center gap-2">
-                    <Button
+                    {/* <Button
                       variant={isEditing ? 'success' : 'outline-primary'}
                       onClick={isEditing ? handleSave : () => setIsEditing(true)}
                       className="d-flex align-items-center gap-2 btn-sm"
@@ -337,7 +337,7 @@ const ProduitDetails = () => {
                           Modifier
                         </>
                       )}
-                    </Button>
+                    </Button> */}
 
                     {isEditing && (
                       <Button

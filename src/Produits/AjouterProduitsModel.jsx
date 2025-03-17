@@ -117,7 +117,6 @@ export const GradientButton = styled(Button)`
 const AjouterProduitsModel = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({
     style: '',
-    image: null,
     qty: 0,
     dossier_technique: null,
     dossier_serigraphie: null,
@@ -149,7 +148,6 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     e.preventDefault();
     const formDataToSend = new FormData();
     
-    // On ajoute toutes les paires clé/valeur au FormData, y compris les fichiers
     Object.entries(formData).forEach(([key, value]) => {
       if (value) {
         if (value instanceof File) {
@@ -166,7 +164,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
       });
       console.log('Réponse:', response.data);
       handleClose();
-      navigate(0); // actualise la page pour refléter les changements
+      navigate(0); 
     } catch (error) {
       console.error('Erreur:', error.response?.data || error.message);
     }
@@ -268,15 +266,6 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
             </Col>
 
             <Col md={6}>
-              <Form.Group controlId="formImage" className="mb-4">
-                <Form.Label>Image (PNG, JPG...)</Form.Label>
-                <StyledFileInput
-                  type="file"
-                  name="image"
-                  accept="image/png, image/jpeg"
-                  onChange={handleChange}
-                />
-              </Form.Group>
 
               <Form.Group controlId="formDossierTechnique" className="mb-4">
                 <Form.Label>Dossier Technique (PDF)</Form.Label>
@@ -289,7 +278,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
               </Form.Group>
 
               <Form.Group controlId="formDossierSerigraphie" className="mb-4">
-                <Form.Label>Dossier Sérigraphie (PDF, ZIP, RAR)</Form.Label>
+                <Form.Label>Dossier Sérigraphie (PDF)</Form.Label>
                 <StyledFileInput
                   type="file"
                   name="dossier_serigraphie"
@@ -309,7 +298,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
               </Form.Group>
 
               <Form.Group controlId="formPatronage" className="mb-4">
-                <Form.Label>Patronage (PDF, ZIP, RAR)</Form.Label>
+                <Form.Label>Patronage (PDF)</Form.Label>
                 <StyledFileInput
                   type="file"
                   name="patronage"
