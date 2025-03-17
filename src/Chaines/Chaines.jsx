@@ -3,7 +3,6 @@ import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
-import DeleteButton from "./DeleteButton";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
