@@ -1,123 +1,15 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import api from '../services/axios';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-
-
-export const AnimatedModal = styled(Modal)`
-  animation: fadeInUp 0.5s ease-out;
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-
-  .modal-content {
-    border: none;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-export const ModalBody = styled(Modal.Body)`
-  background: rgba(255, 255, 255, 0.95);
-  padding: 2rem;
-`;
-
-export const ModalHeader = styled(Modal.Header)`
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  border-bottom: none;
-  
-  .modal-title {
-    color: white;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-  
-  .btn-close {
-    filter: invert(1);
-  }
-`;
-
-export const StyledFormControl = styled(Form.Control)`
-  width: 100%;
-  height: 45px;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  transition: border-color 0.3s ease;
-
-  &:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-`;
-
-export const StyledTextArea = styled(Form.Control)`
-  width: 100%;
-  height: 120px;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  transition: border-color 0.3s ease;
-
-  &:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-`;
-
-export const StyledFileInput = styled(Form.Control)`
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  transition: border-color 0.3s ease;
-
-  &:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-`;
-
-export const GradientButton = styled(Button)`
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  border: none;
-  color: white;
-  padding: 2px 15px;
-  font-size: 15px;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(121, 3, 248, 0.56);
-    background: linear-gradient(135deg, #6a11cb);
-  }
-
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
-  }
-`;
-
+import { Modal, Form, Row, Col } from 'react-bootstrap';
+import AnimatedModal from 'components/AnimatedModal';
+import GradientButton from 'components/GradientButton';
+import { StyledFormControl, StyledFileInput } from 'components/StyledComponents';
+import api from 'services/api';
 
 const AjouterProduitsModel = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({
     style: '',
+    // Si vous ne gérez pas l'upload de l'image via Google Drive/Sheets, vous pouvez l'omettre ou le traiter séparément
     image: null,
     qty: 0,
     dossier_technique: null,
@@ -135,27 +27,22 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
     reference: '',
     type_de_produit: '',
   });
-  const navigate = useNavigate(); 
-  
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
-      setFormData({
-        ...formData,
-        [name]: files[0],
-      });
+      setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
-  
+    
+    // On ajoute toutes les paires clé/valeur au FormData, y compris les fichiers
     Object.entries(formData).forEach(([key, value]) => {
       if (value) {
         if (value instanceof File) {
@@ -165,26 +52,25 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
         }
       }
     });
-  
+
     try {
       const response = await api.post('/ajouter/produits', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-  
       console.log('Réponse:', response.data);
       handleClose();
-      navigate(0);
+      navigate(0); // actualise la page pour refléter les changements
     } catch (error) {
       console.error('Erreur:', error.response?.data || error.message);
     }
   };
-  
+
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
-      <ModalHeader closeButton>
+      <Modal.Header closeButton>
         <Modal.Title>✨ Ajouter un Style</Modal.Title>
-      </ModalHeader>
-      <ModalBody>
+      </Modal.Header>
+      <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>
@@ -240,7 +126,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
               </Form.Group>
 
               <Form.Group controlId="formTypeDeCommande" className="mb-4">
-                <Form.Label> Type de Commande</Form.Label>
+                <Form.Label>Type de Commande</Form.Label>
                 <StyledFormControl
                   as="select"
                   name="type_de_commande"
@@ -253,9 +139,8 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 </StyledFormControl>
               </Form.Group>
 
-
               <Form.Group controlId="formEtatDeCommande" className="mb-4">
-                <Form.Label> État de la Commande</Form.Label>
+                <Form.Label>État de la Commande</Form.Label>
                 <StyledFormControl
                   type="text"
                   name="etat_de_commande"
@@ -264,7 +149,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="formDateReceptionBonComment" className="mb-4">
+              <Form.Group controlId="formDateReception" className="mb-4">
                 <Form.Label>Date Réception Bon Commande</Form.Label>
                 <StyledFormControl
                   type="date"
@@ -296,15 +181,15 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 />
               </Form.Group>
 
-            <Form.Group controlId="formDossierSerigraphie" className="mb-4">
-              <Form.Label>Dossier Sérigraphie (PDF, ZIP, RAR)</Form.Label>
-              <StyledFileInput
-                type="file"
-                name="dossier_serigraphie"
-                accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
-                onChange={handleChange}
-              />
-            </Form.Group>
+              <Form.Group controlId="formDossierSerigraphie" className="mb-4">
+                <Form.Label>Dossier Sérigraphie (PDF, ZIP, RAR)</Form.Label>
+                <StyledFileInput
+                  type="file"
+                  name="dossier_serigraphie"
+                  accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
+                  onChange={handleChange}
+                />
+              </Form.Group>
 
               <Form.Group controlId="formBonDeCommande" className="mb-4">
                 <Form.Label>Bon de Commande (PDF)</Form.Label>
@@ -341,7 +226,6 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 </StyledFormControl>
               </Form.Group>
 
-
               <Form.Group controlId="formReference" className="mb-4">
                 <Form.Label>Référence</Form.Label>
                 <StyledFormControl
@@ -352,7 +236,7 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="formDateLivraisonComment" className="mb-4">
+              <Form.Group controlId="formDateLivraison" className="mb-4">
                 <Form.Label>Date Livraison Commande</Form.Label>
                 <StyledFormControl
                   type="date"
@@ -365,12 +249,12 @@ const AjouterProduitsModel = ({ show, handleClose }) => {
           </Row>
 
           <Modal.Footer>
-           <GradientButton type="submit" className="btn-sm">
-             🚀 Ajouter le Style
-           </GradientButton>
+            <GradientButton type="submit" className="btn-sm">
+              🚀 Ajouter le Style
+            </GradientButton>
           </Modal.Footer>
         </Form>
-      </ModalBody>
+      </Modal.Body>
     </AnimatedModal>
   );
 };
