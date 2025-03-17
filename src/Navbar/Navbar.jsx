@@ -55,15 +55,16 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            {/* Conteneur en flex avec répartition entre champ de saisie au centre et icônes à droite */}
             <div className="d-flex w-100 align-items-center justify-content-between">
-              <div className="d-none d-lg-block" ></div>
-              <Form className="d-flex mx-auto" >
-                <InputGroup className="mb-3">
-                  <InputGroup.Text id="basic-addon1">🔍</InputGroup.Text>
+              {/* Espace vide à gauche pour équilibrer (facultatif) */}
+              <div className="d-none d-lg-block" style={{ width: "150px" }}></div>
+              {/* Champ de saisie stylé au centre */}
+              <Form className="d-flex mx-auto" style={{ width: "40%" }}>
+                <InputGroup>
                   <Form.Control
+                    type="text"
                     placeholder="Saisir un texte"
-                    aria-label="Saisir un texte"
-                    aria-describedby="basic-addon1"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                   />
