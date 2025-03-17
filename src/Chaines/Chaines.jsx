@@ -15,7 +15,7 @@ const LoaderContainer = styled.div`
   justify-content: center;
   height: 100vh;
   width: 100%;
-  background: rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, #667eea, #764ba2);
 `;
 
 const pulseAnimation = keyframes`
@@ -25,11 +25,11 @@ const pulseAnimation = keyframes`
 `;
 
 const Dot = styled.div`
-  width: 20px;
-  height: 20px;
-  margin: 0 5px;
+  width: 24px;
+  height: 24px;
+  margin: 0 6px;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #f9c74f;
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
 `;
@@ -40,39 +40,42 @@ const BouncingLoader = styled.div`
   justify-content: center;
 `;
 
-/* Card & List Styles */
+/* Updated Card & List Styles */
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
-  min-height: 300px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-  border-radius: 12px;
+  min-height: 320px;
+  border: 2px solid #f9c74f;
+  border-radius: 16px;
   overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #fff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  border: 1px solid;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 2px solid #90be6d;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    color: white;
-    transform: scale(1.02);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #90be6d;
+    color: #fff;
+    transform: scale(1.03);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
   }
   &:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
 `;
 
@@ -81,68 +84,71 @@ const StyledList = styled.div`
   font-style: italic;
   background: transparent;
   border: none;
-  color: #888;
-  min-height: 100px;
+  color: #555;
+  min-height: 120px;
 
   @media (max-width: 768px) {
-    min-height: 50vh;
+    min-height: 60vh;
   }
 `;
 
-/* Product Styles */
+/* Updated Product Styles */
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
   padding: 10px;
 `;
 
 const ProductImage = styled.img`
-  width: 150px;
-  height: 150px;
-  border-radius: 8px;
+  width: 160px;
+  height: 160px;
+  border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 3px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 `;
 
 const ProductStyle = styled.span`
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 15ch;
+  max-width: 16ch;
 `;
 
-/* Hover Preview Card */
+/* Updated Hover Preview Card */
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 15 : x - 240 - 15)}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 20;
-    return calculatedBottom > viewportHeight ? y - cardHeight - 10 : y;
+    return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
   }}px;
-  z-index: 900;
-  width: 240px;
-  transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  z-index: 1000;
+  width: 260px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
-    show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-15px)"};
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
+    show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
   pointer-events: none;
 `;
 
-/* Control Button & Layout */
+/* Updated Control Button & Layout */
 const ControlButton = styled(Button)`
-  width: 25px;
+  width: 30px;
   height: 100vh;
-  background: none;
+  background: linear-gradient(45deg, #f9c74f, #f9844a);
   border: none;
-  opacity: 0;
+  opacity: 0.9;
   position: relative;
   cursor: pointer;
+  border-radius: 0;
 
   &:focus {
     outline: none;
@@ -150,7 +156,7 @@ const ControlButton = styled(Button)`
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 5vh;
+    height: 6vh;
   }
 `;
 
@@ -183,7 +189,7 @@ const ChainColumn = ({
             Chaine {chainNumber}
           </Card.Title>
           <ListGroup
-            variant="secondary"
+            variant="flush"
             onDragOver={handleDragOver}
             onDrop={(e) =>
               handleDrop(e, chainNumber, sortedProducts.length)
@@ -223,7 +229,6 @@ const ChainColumn = ({
   );
 };
 
-/** HoverPreview shows a dynamic card when hovering over a product */
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
   return (
@@ -232,21 +237,21 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
       y={hoverPosition.y}
       chain={chain}
       show={show}
-      cardHeight={240}
+      cardHeight={260}
     >
       <Card
         className="shadow-custom"
         style={{
-          borderRadius: "12px",
+          borderRadius: "16px",
           overflow: "hidden",
-          border: "none",
+          border: "2px solid #f9c74f",
         }}
       >
         <div
           style={{
             position: "relative",
-            height: "160px",
-            backgroundColor: "#f5f5f5",
+            height: "180px",
+            background: "#eee",
           }}
         >
           <img
@@ -273,7 +278,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
             <h3
               style={{
                 margin: 0,
-                fontSize: "1.1rem",
+                fontSize: "1.2rem",
                 fontWeight: 600,
                 color: "#2d3436",
               }}
@@ -433,7 +438,6 @@ export default function Chaines() {
 
       setData(newData);
 
-      // Prepare payload for the update API call
       let updates = [];
       if (transferData.from === targetPosition) {
         newData[targetPosition].forEach((item, index) => {
@@ -472,7 +476,6 @@ export default function Chaines() {
     }
   };
 
-  /** Mouse event handlers for the hover preview */
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
@@ -487,12 +490,10 @@ export default function Chaines() {
     setHoveredItem(null);
   };
 
-  /** Navigate to the product detail page */
   const handleItemClick = (item) => {
     navigate(`/produit/${item.id}`, { state: { produit: item } });
   };
 
-  /** Update state after a successful deletion */
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
       const newData = { ...prevData };
@@ -537,14 +538,12 @@ export default function Chaines() {
               filterAndSortProducts={filterAndSortProducts}
             />
           ))}
-
           <Col md="auto" className="d-flex align-items-center">
             <ControlButton
               variant="outline-light"
               onClick={() => setShowPosition6(!showPosition6)}
             />
           </Col>
-
           {showPosition6 && (
             <ChainColumn
               chainNumber={6}
@@ -562,11 +561,9 @@ export default function Chaines() {
           )}
         </MobileRow>
       </Container>
-
       <Col md="auto" className="d-flex align-items-center justify-content-end p-4 m-auto">
         <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
       </Col>
-
       <HoverPreview
         hoveredItem={hoveredItem}
         hoverPosition={hoverPosition}
