@@ -55,7 +55,6 @@ const SearchGroup = styled(InputGroup)`
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     transition: border-color 0.3s ease;
-
     &:focus {
       border-color: #7c4dff;
       outline: none;
