@@ -128,4 +128,5 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
   );
 };
 
+
 export default MyNavbar;
