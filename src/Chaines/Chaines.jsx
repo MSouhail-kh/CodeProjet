@@ -499,7 +499,7 @@ export default function Chaines() {
   };
 
   const handleItemClick = (item) => {
-    navigate(`/produit/${item.id}`, { state: { produit: item } });
+    navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
 
   const handleDeleteSuccess = (deletedItem) => {
