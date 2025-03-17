@@ -57,25 +57,21 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" className="hamburger" />
           
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
-            {/* Search Bar */}
-            <div className="d-flex justify-content-center flex-grow-1 mx-4">
-              <Form className="w-75">
-                <InputGroup className="search-group">
-                  <Form.Control
-                    type="text"
-                    placeholder="Rechercher un produit..."
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    className="search-input"
-                  />
-                  <InputGroup.Text className="search-icon">
-                    <Search className="icon-btn" size={20} />
-                  </InputGroup.Text>
-                </InputGroup>
-              </Form>
-            </div>
+                  <div className="d-flex justify-content-center flex-grow-1 ">
+                    <Form className="w-75">
+                    <InputGroup className="search-group">
+                      <Form.Control
+                      type="text"
+                      placeholder="Rechercher un produit..."
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      className="search-input"
+                      style={{ color: 'black' ,paddingTop: '10%',paddingBottom: '10%',paddingLeft: '10%',paddingRight: '10%'} }
+                      />
+                    </InputGroup>
+                    </Form>
+                  </div>
 
-            {/* Icons Group */}
             <Nav className="nav-icons-group">
               <Nav.Link className="nav-icon" onClick={handleShowSearchModal}>
                 <div className="icon-container">
