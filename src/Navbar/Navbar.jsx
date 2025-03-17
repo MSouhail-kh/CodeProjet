@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Container, Form, InputGroup } from 'react-bootstrap';
 import { PlusCircle, Search, ArrowClockwise } from 'react-bootstrap-icons';
-import ClipLoader from 'react-spinners/ClipLoader';
+import { BounceLoader } from 'react-spinners';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
 import SearchResultsModal from '../Produits/SearchResultsModal';
@@ -50,11 +50,8 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
     <>
       <Navbar expand="lg" variant="dark" className="custom-navbar">
         <Container fluid className="px-4">
-          <Navbar.Brand href="/Chaines" className="logo-container">
-            <div className="logo-gradient">
-              <span className="logo-text">Sigmatex</span>
-              <div className="logo-glow" />
-            </div>
+          <Navbar.Brand href="/Chaines" className="logo-text me-4">
+            <span className="gradient-text">Sigmatex</span>
           </Navbar.Brand>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" className="hamburger" />
@@ -83,14 +80,12 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
               <Nav.Link className="nav-icon" onClick={handleShowSearchModal}>
                 <div className="icon-container">
                   <Search className="icon" size={24} />
-                  <span className="icon-label">Recherche</span>
                 </div>
               </Nav.Link>
 
               <Nav.Link className="nav-icon" onClick={handleShowProduit}>
                 <div className="icon-container">
                   <PlusCircle className="icon" size={24} />
-                  <span className="icon-label">Ajouter</span>
                 </div>
               </Nav.Link>
 
@@ -101,16 +96,13 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
               >
                 <div className="icon-container">
                   {isLoading ? (
-                    <PropagateLoader 
-                      size={10}
-                      color="rgba(255,255,255,0.8)"
+                    <BounceLoader 
+                      size={28} 
+                      color="#fff" 
                       className="loader"
                     />
                   ) : (
-                    <>
-                      <ArrowClockwise className="icon" size={24} />
-                      <span className="icon-label">Rafraîchir</span>
-                    </>
+                    <ArrowClockwise className="icon" size={24} />
                   )}
                 </div>
               </Nav.Link>
@@ -124,15 +116,16 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      
-      <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
 
+      {/* Modals */}
+      <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
       <SearchResultsModal
         show={showSearchModal}
         handleClose={handleCloseSearchModal}
         results={searchResults}
         error={searchError}
-      />    </>
+      />
+    </>
   );
 };
 
