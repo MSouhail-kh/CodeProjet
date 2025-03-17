@@ -59,7 +59,7 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
                   <div className="d-flex justify-content-center flex-grow-1 ">
                     <Form className="w-75">
-                    <InputGroup className="search-group">
+                    <InputGroup className="search-group " style={{color: 'black', paddingTop: '1rem', paddingBottom: '1rem', paddingLeft: '1rem', paddingRight: '1rem',}}>
                       <Form.Control
                       type="text"
                       placeholder="Rechercher un produit..."
