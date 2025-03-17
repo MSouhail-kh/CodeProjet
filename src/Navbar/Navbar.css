@@ -10,8 +10,7 @@
   background: linear-gradient(45deg, #ff6f00, #ff4081); 
   -webkit-background-clip: text;
   background-clip: text;
-  color: linear-gradient(45deg, #ff6f00, #ff4081);; /* Le texte devient transparent pour laisser apparaître le dégradé */
-  font-weight: 700;
+  color: linear-gradient(45deg, #ff6f00, #ff4081);;
   font-size: 1.8rem;
   letter-spacing: 1px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Ombre portée pour améliorer la lisibilité */
@@ -47,13 +46,15 @@
 
 .search-icon {
   position: absolute;
+  left: 15px;
+  top: 35%;
   transform: translateY(-50%);
-  background: transparent !important;
   border: none !important;
   z-index: 5;
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Groupe d'icônes de navigation */
 .nav-icons-group {
   display: flex;
   align-items: center;
