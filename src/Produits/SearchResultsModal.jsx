@@ -103,8 +103,8 @@ const SearchResultsModal = ({ show, handleClose }) => {
     }
   };
 
-  const handleNavigation = (id) => {
-    navigate(`/produit/${id}`);
+  const handleNavigation = (po) => {
+    navigate(`/produit/${po}`);
   };
 
   return (

@@ -96,7 +96,8 @@ const ImageContainer = styled.div`
 `;
 
 export default function MySwiper() {
-  const { id: produitId } = useParams();
+  // Extraction du paramètre "po" depuis l'URL
+  const { po } = useParams();
   const navigate = useNavigate();
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -105,12 +106,10 @@ export default function MySwiper() {
   useEffect(() => {
     const fetchProduitsByPosition = async () => {
       try {
-        // 1. Récupérer les détails du produit actuel
-        const produitResponse = await api.get(`/produits/${produitId}`);
+        const produitResponse = await api.get(`/produits/${po}`);
         const produit = produitResponse.data;
         const positionId = produit.position_id;
 
-        // 2. Récupérer les produits ayant le même position_id
         const relatedProduitsResponse = await api.get(`/produits/position/${positionId}`);
         setProduits(relatedProduitsResponse.data);
       } catch (err) {
@@ -121,7 +120,7 @@ export default function MySwiper() {
     };
 
     fetchProduitsByPosition();
-  }, [produitId]);
+  }, [po]);
 
   if (loading) {
     return <div>Chargement...</div>;
@@ -131,8 +130,8 @@ export default function MySwiper() {
     return <div>{error}</div>;
   }
 
-  const handleCardClick = (id) => {
-    navigate(`/produit/${id}`);
+  const handleCardClick = (produitPo) => {
+    navigate(`/produit/${produitPo}`);
   };
 
   return (
@@ -155,8 +154,8 @@ export default function MySwiper() {
         }}
       >
         {produits.map((produit) => (
-          <SwiperSlide key={produit.id}>
-            <Card onClick={() => handleCardClick(produit.id)}>
+          <SwiperSlide key={produit.po}>
+            <Card onClick={() => handleCardClick(produit.po)}>
               <ImageContainer>
                 <img src={produit.image} alt={produit.style} />
               </ImageContainer>

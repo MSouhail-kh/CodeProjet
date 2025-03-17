@@ -169,7 +169,7 @@ const ProduitDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await api.get(`/produits/${id}`);
+        const response = await api.get(`/produits/${po}`);
         setProduct(response.data);
         setEditedData(response.data);
         setLoading(false); 
@@ -182,7 +182,7 @@ const ProduitDetails = () => {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [po]);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -234,7 +234,7 @@ const ProduitDetails = () => {
         }
       });
 
-      const response = await api.put(`/update/produits/${id}`, formData, {
+      const response = await api.put(`/update/produits/${po}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

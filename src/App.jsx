@@ -14,7 +14,7 @@ function App() {
                     <Route path="/" element={<LoginSignup />} />
                     <Route path="/Chaines" element={<Chaines />} />
                     <Route
-                        path="/produit/:id"
+                        path="/produit/:po"
                         element={<PrivateRoute
                                 element={
                                     <>
