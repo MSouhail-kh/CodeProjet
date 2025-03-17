@@ -17,11 +17,13 @@ const textColorAnimation = keyframes`
   100% { color: #7c4dff; }
 `;
 
-const StyledNavbar = styled(Navbar)`
-  background: linear-gradient(135deg, #8E2DE2, #4A00E0) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  padding: 0.8rem 0;
-`;
+
+  const StyledNavbar = styled(Navbar)`
+    background: linear-gradient(135deg, #7c4dff, #448aff) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 0.8rem 0;
+  `;
+
 
 const NavContainer = styled.div`
   display: flex;
