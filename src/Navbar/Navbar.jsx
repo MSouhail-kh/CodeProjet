@@ -8,11 +8,13 @@ import UserProfile from "../Authentification/User/UserProfile";
 import SearchResultsModal from "../Produits/SearchResultsModal";
 import api from "../services/axios";
 
-// Animation pour le dégradé
-const gradientAnimation = keyframes`
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+// Animation pour la couleur du texte
+const textColorAnimation = keyframes`
+  0% { color: #7c4dff; }
+  25% { color: #448aff; }
+  50% { color: #00bcd4; }
+  75% { color: #ff6f61; }
+  100% { color: #7c4dff; }
 `;
 
 const StyledNavbar = styled(Navbar)`
@@ -32,12 +34,9 @@ const NavContainer = styled.div`
 const LogoContainer = styled(Navbar.Brand)`
   font-size: 1.5rem;
   font-weight: bold;
-  color: white;
   padding: 0.5rem 1rem;
   border-radius: 12px;
-  background: linear-gradient(135deg, #7c4dff, #448aff, #00bcd4, #7c4dff);
-  background-size: 300% 300%;
-  animation: ${gradientAnimation} 5s ease infinite;
+  animation: ${textColorAnimation} 5s ease infinite; /* Animation sur la couleur du texte */
   transition: transform 0.3s ease;
 
   &:hover {
@@ -55,6 +54,7 @@ const SearchGroup = styled(InputGroup)`
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     transition: border-color 0.3s ease;
+
     &:focus {
       border-color: #7c4dff;
       outline: none;
@@ -114,7 +114,7 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
     <StyledNavbar expand="lg" variant="dark">
       <Container fluid>
         <NavContainer>
-          {/* Logo avec animation */}
+          {/* Logo avec animation sur la couleur du texte */}
           <LogoContainer href="/Chaines">Sigmatex</LogoContainer>
 
           {/* Search Input */}
