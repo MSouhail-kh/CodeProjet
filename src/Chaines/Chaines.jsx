@@ -63,7 +63,7 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
   border-radius: 5px;
   margin-bottom: 10px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   &:hover {
@@ -162,9 +162,6 @@ const MobileRow = styled(Row)`
   }
 `;
 
-/* --- Sub-components --- */
-
-/** ChainColumn displays each chain’s product list */
 const ChainColumn = ({
   chainNumber,
   products,
@@ -315,7 +312,6 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   );
 };
 
-/* --- Main Component --- */
 export default function Chaines() {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -329,7 +325,6 @@ export default function Chaines() {
   const isProcessing = useRef(false);
   const navigate = useNavigate();
 
-  /** Sorts products by order, adding default order values when needed */
   const filterAndSortProducts = (products, positionId) => {
     if (!products || products.length === 0) return [];
     const productsWithDefaultOrder = products.map((product, index) => ({
@@ -356,7 +351,6 @@ export default function Chaines() {
     return uniqueOrderProducts;
   };
 
-  /** Refreshes the product groups by chain */
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
@@ -381,14 +375,12 @@ export default function Chaines() {
 
   useEffect(() => {
     isMounted.current = true;
-    // Replace [] with an API call result if needed.
     handleRefresh([]);
     return () => {
       isMounted.current = false;
     };
   }, []);
 
-  /** Drag and drop handlers */
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
       "text/plain",
@@ -423,7 +415,6 @@ export default function Chaines() {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
-        // Remove placeholder if exists
         if (
           targetList.length === 1 &&
           targetList[0].id === `invisible-${targetPosition}`
