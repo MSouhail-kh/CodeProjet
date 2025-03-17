@@ -18,7 +18,7 @@ const textColorAnimation = keyframes`
 `;
 
 const StyledNavbar = styled(Navbar)`
-  background: linear-gradient(135deg, #7c4dff, #448aff) !important;
+  background: linear-gradient(135deg, #8E2DE2, #4A00E0) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   padding: 0.8rem 0;
 `;
@@ -74,18 +74,20 @@ const MessageContainer = styled(Container)`
   margin-top: 1rem;
 `;
 
+
+
+// Nouveau style pour le message
 const Message = styled.p`
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  color: ${({ type }) => (type === "success" ? "green" : "red")};
-  background: ${({ type }) => (type === "success" ? "#d4edda" : "#f8d7da")};
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  margin: 0.5rem auto 0;
   text-align: center;
-  width: fit-content;
+  font-weight: bold;
+  color: ${({ type }) => (type === "success" ? "#2ecc71" : "#e74c3c")};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 `;
+
 
 const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
@@ -105,8 +107,8 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
     try {
       const response = await api.get("/process");
       onRefresh(Object.values(response.data));
-      const durationSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
-      setRefreshMessage(`Processus terminé avec succès en ${durationSeconds} s.`);
+      const duration = (Date.now() - startTime) / 1000; // Conversion en secondes
+      setRefreshMessage(`Processus terminé avec succès en ${duration.toFixed(2)} s`);
       setRefreshMessageType("success");
     } catch (error) {
       console.error("Erreur de synchronisation :", error);
@@ -114,10 +116,7 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
       setRefreshMessageType("error");
     } finally {
       setIsLoading(false);
-      // Masquer le message après 5 secondes
-      setTimeout(() => {
-        setRefreshMessage("");
-      }, 5000);
+      setTimeout(() => setRefreshMessage(""), 5000);
     }
   };
 
@@ -143,18 +142,17 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
         </Container>
       </StyledNavbar>
 
-      {/* Message de synchronisation */}
       {refreshMessage && (
-        <MessageContainer>
+        <Container fluid className="d-flex justify-content-center">
           <Message type={refreshMessageType}>
             {refreshMessageType === "success" ? (
-              <CheckCircle size={20} style={{ marginRight: "8px" }} />
+              <CheckCircle size={20} />
             ) : (
-              <XCircle size={20} style={{ marginRight: "8px" }} />
+              <XCircle size={20} />
             )}
             {refreshMessage}
           </Message>
-        </MessageContainer>
+        </Container>
       )}
 
       {/* Modals */}
