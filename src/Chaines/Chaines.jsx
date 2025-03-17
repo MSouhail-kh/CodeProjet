@@ -103,7 +103,7 @@ const ProductContainer = styled.div`
 
 const ProductImage = styled.img`
   width: 160px;
-  height: 160px;
+  height: 180px;
   border-radius: 12px;
   object-fit: cover;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

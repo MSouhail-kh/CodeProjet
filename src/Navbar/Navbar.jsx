@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
-import { PlusCircle, FileEarmarkPlus, Search, ArrowClockwise } from 'react-bootstrap-icons';
+import { PlusCircle, Search, ArrowClockwise } from 'react-bootstrap-icons';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
-import ImporterProduitsModel from '../Produits/ImporterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
 import SearchResultsModal from '../Produits/SearchResultsModal';
 import './Navbar.css';
@@ -15,7 +14,8 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
   const [file, setFile] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [searchError, setSearchError] = useState(null);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleShowProduit = () => setShowProduitModal(true);
   const handleCloseProduit = () => setShowProduitModal(false);
@@ -31,13 +31,16 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
 
   const handleRefreshPage = async () => {
     try {
+      setIsLoading(true);
       const response = await api.get("/process");
       const produits = Object.values(response.data);
       console.log("Produits récupérés avec succès :", produits);
-      onRefresh(produits); 
+      onRefresh(produits);
+      setIsLoading(false);
     } catch (syncError) {
       console.error("Erreur de synchronisation :", syncError);
       setError("Problème de synchronisation avec Google Sheets");
+      setIsLoading(false);
     }
   };
 
@@ -53,17 +56,14 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
           <Navbar.Collapse id="basic-navbar-nav">
             <div className={`d-flex flex-grow-1 ${window.innerWidth <= 768 ? 'justify-content-center' : 'justify-content-end'} align-items-center flex-row`}>
               <Nav className="align-items-center">
-                <Nav.Link className='btn gradient-btn btn-lg me-2' onClick={handleShowSearchModal}>
-                  <Search className="icon-btn" size={28}/>
+                <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowSearchModal}>
+                  <Search className="icon-btn" size={28} />
                 </Nav.Link>
                 <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowProduit}>
                   <PlusCircle className="icon-btn" size={28} />
                 </Nav.Link>
-                <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowExcel}>
-                  <FileEarmarkPlus className="icon-btn" size={28} />
-                </Nav.Link>
                 <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleRefreshPage}>
-                  <ArrowClockwise className="icon-btn" size={28} />
+                  <ArrowClockwise className={`icon-btn ${isLoading ? 'rotate' : ''}`} size={28} />
                 </Nav.Link>
                 <Nav.Item className="btn gradient-btn btn-lg me-2">
                   <UserProfile />
@@ -75,13 +75,6 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
       </Navbar>
 
       <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
-
-      <ImporterProduitsModel
-        show={showExcelModal}
-        handleClose={handleCloseExcel}
-        file={file}
-        setFile={setFile}
-      />
 
       <SearchResultsModal
         show={showSearchModal}
