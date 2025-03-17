@@ -50,13 +50,17 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
     <>
       <Navbar expand="lg" variant="dark" className="custom-navbar">
         <Container fluid className="px-4">
-          <Navbar.Brand href="/Chaines" className="logo-text me-4">
-            <span className="gradient-text">Sigmatex</span>
+          <Navbar.Brand href="/Chaines" className="logo-container">
+            <div className="logo-gradient">
+              <span className="logo-text">Sigmatex</span>
+              <div className="logo-glow" />
+            </div>
           </Navbar.Brand>
 
-          <Navbar.Toggle aria-controls="basic-navbar-nav" className="border-0" />
+          <Navbar.Toggle aria-controls="basic-navbar-nav" className="hamburger" />
           
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
+            {/* Search Bar */}
             <div className="d-flex justify-content-center flex-grow-1 mx-4">
               <Form className="w-75">
                 <InputGroup className="search-group">
@@ -65,56 +69,53 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
                     placeholder="Rechercher un produit..."
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    className="search-input rounded-pill px-4"
+                    className="search-input"
                   />
-                  <InputGroup.Text className="search-icon-container rounded-pill">
+                  <InputGroup.Text className="search-icon">
                     <Search className="icon-btn" size={20} />
                   </InputGroup.Text>
                 </InputGroup>
               </Form>
             </div>
 
-            <Nav className="align-items-center gap-3">
-              <Nav.Link 
-                className="nav-icon" 
-                onClick={handleShowSearchModal}
-                title="Recherche avancée"
-              >
-                <div className="icon-wrapper">
-                  <Search className="icon-btn" size={24} />
+            {/* Icons Group */}
+            <Nav className="nav-icons-group">
+              <Nav.Link className="nav-icon" onClick={handleShowSearchModal}>
+                <div className="icon-container">
+                  <Search className="icon" size={24} />
+                  <span className="icon-label">Recherche</span>
                 </div>
               </Nav.Link>
 
-              <Nav.Link 
-                className="nav-icon" 
-                onClick={handleShowProduit}
-                title="Ajouter un produit"
-              >
-                <div className="icon-wrapper">
-                  <PlusCircle className="icon-btn" size={24} />
+              <Nav.Link className="nav-icon" onClick={handleShowProduit}>
+                <div className="icon-container">
+                  <PlusCircle className="icon" size={24} />
+                  <span className="icon-label">Ajouter</span>
                 </div>
               </Nav.Link>
 
               <Nav.Link 
                 className="nav-icon" 
                 onClick={handleRefreshPage}
-                title="Rafraîchir"
                 disabled={isLoading}
               >
-                <div className="icon-wrapper">
+                <div className="icon-container">
                   {isLoading ? (
-                    <BounceLoader 
-                      size={28} 
-                      color="#fff" 
+                    <PropagateLoader 
+                      size={10}
+                      color="rgba(255,255,255,0.8)"
                       className="loader"
                     />
                   ) : (
-                    <ArrowClockwise className="icon-btn" size={24} />
+                    <>
+                      <ArrowClockwise className="icon" size={24} />
+                      <span className="icon-label">Rafraîchir</span>
+                    </>
                   )}
                 </div>
               </Nav.Link>
 
-              <div className="vr mx-2" style={{ height: '2rem' }} />
+              <div className="separator" />
 
               <Nav.Item className="nav-icon">
                 <UserProfile />
@@ -123,7 +124,7 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
+      
       <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
 
       <SearchResultsModal
