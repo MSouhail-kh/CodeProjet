@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Container } from "react-bootstrap";
 import { PlusCircle, Search, ArrowClockwise, CheckCircle, XCircle } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
 import styled, { keyframes } from "styled-components";
@@ -68,12 +68,23 @@ const IconButton = styled.div`
   }
 `;
 
+const MessageContainer = styled(Container)`
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+`;
+
 const Message = styled.p`
   margin-top: 0.5rem;
   display: flex;
   align-items: center;
   font-weight: bold;
   color: ${({ type }) => (type === "success" ? "green" : "red")};
+  background: ${({ type }) => (type === "success" ? "#d4edda" : "#f8d7da")};
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+  width: fit-content;
 `;
 
 const MyNavbar = ({ produits = [], onRefresh }) => {
@@ -94,8 +105,8 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
     try {
       const response = await api.get("/process");
       onRefresh(Object.values(response.data));
-      const duration = Date.now() - startTime;
-      setRefreshMessage(`Processus terminé avec succès en ${duration} ms.`);
+      const durationSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
+      setRefreshMessage(`Processus terminé avec succès en ${durationSeconds} s.`);
       setRefreshMessageType("success");
     } catch (error) {
       console.error("Erreur de synchronisation :", error);
@@ -134,7 +145,7 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
 
       {/* Message de synchronisation */}
       {refreshMessage && (
-        <Container>
+        <MessageContainer>
           <Message type={refreshMessageType}>
             {refreshMessageType === "success" ? (
               <CheckCircle size={20} style={{ marginRight: "8px" }} />
@@ -143,7 +154,7 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
             )}
             {refreshMessage}
           </Message>
-        </Container>
+        </MessageContainer>
       )}
 
       {/* Modals */}
