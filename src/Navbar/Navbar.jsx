@@ -19,12 +19,12 @@ const NavContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  gap: 1.5rem;
 `;
 
 const SearchGroup = styled(InputGroup)`
-  max-width: 600px;
-  flex-grow: 1;
-  margin-right: 1.5rem;
+  width: 400px; /* Largeur fixe pour l'input */
+  margin: 0 auto; /* Centrer l'input dans l'espace disponible */
 
   .form-control {
     border-radius: 25px 0 0 25px;
@@ -45,18 +45,18 @@ const SearchGroup = styled(InputGroup)`
   }
 `;
 
-const NavIconsGroup = styled(Nav)`
+const IconsContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 `;
 
-const IconContainer = styled.div`
+const IconButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
@@ -64,8 +64,8 @@ const IconContainer = styled.div`
 
   &:hover {
     background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -96,41 +96,42 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
   return (
     <StyledNavbar expand="lg" variant="dark">
       <Container fluid>
-        <Navbar.Brand href="/Chaines">Sigmatex</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <NavContainer>
-            <SearchGroup>
-              <Form.Control
-                type="text"
-                placeholder="Rechercher un produit..."
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-              />
-              <Button variant="outline-light" onClick={handleShowSearchModal}>
-                <Search size={20} />
-              </Button>
-            </SearchGroup>
+        <NavContainer>
+          {/* Brand */}
+          <Navbar.Brand href="/Chaines">Sigmatex</Navbar.Brand>
 
-            <NavIconsGroup>
-              <Nav.Link onClick={handleShowProduit}>
-                <IconContainer>
-                  <PlusCircle size={24} />
-                </IconContainer>
-              </Nav.Link>
+          {/* Search Input */}
+          <SearchGroup>
+            <Form.Control
+              type="text"
+              placeholder="Rechercher un produit..."
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+            />
+            <Button variant="outline-light" onClick={handleShowSearchModal}>
+              <Search size={20} />
+            </Button>
+          </SearchGroup>
 
-              <Nav.Link onClick={handleRefreshPage} disabled={isLoading}>
-                <IconContainer>
-                  {isLoading ? <BounceLoader size={28} color="#fff" /> : <ArrowClockwise size={24} />}
-                </IconContainer>
-              </Nav.Link>
+          {/* Icons */}
+          <IconsContainer>
+            <IconButton onClick={handleShowSearchModal}>
+              <Search size={20} />
+            </IconButton>
+            <IconButton onClick={handleShowProduit}>
+              <PlusCircle size={20} />
+            </IconButton>
+            <IconButton onClick={handleRefreshPage} disabled={isLoading}>
+              {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
+            </IconButton>
+          </IconsContainer>
 
-              <UserProfile />
-            </NavIconsGroup>
-          </NavContainer>
-        </Navbar.Collapse>
+          {/* User Profile */}
+          <UserProfile />
+        </NavContainer>
       </Container>
 
+      {/* Modals */}
       <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
       <SearchResultsModal show={showSearchModal} handleClose={handleCloseSearchModal} />
     </StyledNavbar>
