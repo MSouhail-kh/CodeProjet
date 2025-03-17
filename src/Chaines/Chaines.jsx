@@ -94,7 +94,7 @@ const StyledList = styled.div`
 const ProductContainer = styled.div`
   display: flex;
   align-items: center;
-  flex-direction: row;
+  flex-direction: column;
   padding: 10px;
   gap: 15px; 
 `;
