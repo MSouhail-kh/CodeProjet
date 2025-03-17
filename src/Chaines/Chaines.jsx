@@ -571,7 +571,6 @@ export default function Chaines() {
         </MobileRow>
       </Container>
 
-
       <HoverPreview
         hoveredItem={hoveredItem}
         hoverPosition={hoverPosition}
