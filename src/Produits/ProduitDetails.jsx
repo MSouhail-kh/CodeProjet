@@ -197,13 +197,13 @@ const ProduitDetails = () => {
         case 'image':
           setImageFileName(files[0].name);
           break;
-        case 'dossier_technique':
+        case 'technique':
           setDossierTechniqueFileName(files[0].name);
           break;
-        case 'dossier_serigraphie':
+        case 'serigraphie':
           setDossierSerigraphieFileName(files[0].name);
           break;
-        case 'bon_de_commande':
+        case 'commande':
           setBonDeCommandeFileName(files[0].name);
           break;
         case 'patronage':
@@ -444,13 +444,13 @@ const ProduitDetails = () => {
                           {isEditing ? (
                             <StyledFormControl
                               type="date"
-                              name="date_reception_bon_commande"
-                              value={editedData.date_reception_bon_commande || ''}
+                              name="date_reception"
+                              value={editedData.date_reception || ''}
                               onChange={handleInputChange}
                             />
                           ) : (
                             <div className="text-muted">
-                              {formatDate(product.date_reception_bon_commande)}
+                              {formatDate(product.date_reception)}
                             </div>
                           )}
                         </Form.Group>
@@ -461,12 +461,12 @@ const ProduitDetails = () => {
                       {isEditing ? (
                         <StyledFormControl
                           type="date"
-                          name="date_livraison_commande"
-                          value={editedData.date_livraison_commande || ''}
+                          name="date_livraison"
+                          value={editedData.date_livraison || ''}
                           onChange={handleInputChange}
                         />
                       ) : (
-                        <div className="text-muted">{formatDate(product.date_livraison_commande)}</div>
+                        <div className="text-muted">{formatDate(product.date_livraison)}</div>
                       )}
                     </Form.Group>
                   </Col>
@@ -622,7 +622,7 @@ const ProduitDetails = () => {
                       <span>Changer le dossier technique (PDF) : </span>
                       <input
                         type="file"
-                        name="dossier_technique"
+                        name="technique"
                         onChange={handleInputChange}
                         accept="application/pdf"
                         style={{ display: 'none' }}
@@ -635,7 +635,7 @@ const ProduitDetails = () => {
                       <span>Changer le dossier de sérigraphie (PDF / ZIP / RAR) : </span>
                       <input
                         type="file"
-                        name="dossier_serigraphie"
+                        name="serigraphie"
                         onChange={handleInputChange}
                         accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
                         style={{ display: 'none' }}
@@ -648,7 +648,7 @@ const ProduitDetails = () => {
                       <span>Changer le bon de commande (PDF) : </span>
                       <input
                         type="file"
-                        name="bon_de_commande"
+                        name="commande"
                         onChange={handleInputChange}
                         accept="application/pdf"
                         style={{ display: 'none' }}
@@ -671,56 +671,56 @@ const ProduitDetails = () => {
                   </>
                 ) : (
                   <>
-                    {product.dossier_technique && (
+                    {product.documents.technique && (
                       <DownloadLink
-                        href={product.dossier_technique}
+                        href={product.documents.technique}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleFileClick(product.dossier_technique);
+                          handleFileClick(product.documents.technique);
                         }}
                       >
                         <FilePdf size={20} />
                         Télécharger le Dossier Technique PDF
                       </DownloadLink>
                     )}
-                    {product.dossier_serigraphie && (
+                    {product.documents.serigraphie && (
                       <DownloadLink
-                        href={product.dossier_serigraphie}
+                        href={product.documents.serigraphie}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleFileClick(product.dossier_serigraphie);
+                          handleFileClick(product.documents.serigraphie);
                         }}
                       >
                         <FilePdf size={20} />
                         Télécharger le Dossier de Sérigraphie
                       </DownloadLink>
                     )}
-                    {product.bon_de_commande && (
+                    {product.documents.commande && (
                       <DownloadLink
-                        href={product.bon_de_commande}
+                        href={product.documents.commande}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleFileClick(product.bon_de_commande);
+                          handleFileClick(product.documents.commande);
                         }}
                       >
                         <FilePdf size={20} />
                         Télécharger le Bon de Commande
                       </DownloadLink>
                     )}
-                    {product.patronage && (
+                    {product.documents.patronage && (
                       <DownloadLink
-                        href={product.patronage}
+                        href={product.documents.patronage}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleFileClick(product.patronage);
+                          handleFileClick(product.documents.patronage);
                         }}
                       >
                         <FilePdf size={20} />
