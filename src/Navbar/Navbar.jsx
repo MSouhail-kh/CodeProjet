@@ -2,11 +2,18 @@ import React, { useState } from "react";
 import { Navbar, Nav, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { PlusCircle, Search, ArrowClockwise } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import AjouterProduitsModel from "../Produits/AjouterProduitsModel";
 import UserProfile from "../Authentification/User/UserProfile";
 import SearchResultsModal from "../Produits/SearchResultsModal";
 import api from "../services/axios";
+
+// Animation pour le dégradé
+const gradientAnimation = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
 
 const StyledNavbar = styled(Navbar)`
   background: linear-gradient(135deg, #7c4dff, #448aff) !important;
@@ -22,20 +29,36 @@ const NavContainer = styled.div`
   gap: 1.5rem;
 `;
 
+const LogoContainer = styled(Navbar.Brand)`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7c4dff, #448aff, #00bcd4, #7c4dff);
+  background-size: 300% 300%;
+  animation: ${gradientAnimation} 5s ease infinite;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+`;
+
 const SearchGroup = styled(InputGroup)`
-  width: 35%; 
+  width: 55%; 
   margin: 0 auto;
 
   .form-control {
-    border: 1px solid #ccc; /* Bordure standard */
-    border-radius: 4px; /* Bordure légèrement arrondie */
-    padding: 0.375rem 0.75rem; /* Padding par défaut */
-    font-size: 1rem; /* Taille de police par défaut */
-    transition: border-color 0.3s ease; /* Transition pour l'effet de focus */
+    border: 1px solid #ccc;
+    border-radius: 28px;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
 
     &:focus {
-      border-color: #7c4dff; /* Changement de couleur au focus */
-      outline: none; /* Supprimer l'outline par défaut */
+      border-color: #7c4dff;
+      outline: none;
     }
   }
 `;
@@ -92,8 +115,10 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
     <StyledNavbar expand="lg" variant="dark">
       <Container fluid>
         <NavContainer>
-          <Navbar.Brand href="/Chaines">Sigmatex</Navbar.Brand>
+          {/* Logo avec animation */}
+          <LogoContainer href="/Chaines">Sigmatex</LogoContainer>
 
+          {/* Search Input */}
           <SearchGroup>
             <Form.Control
               type="text"
@@ -127,6 +152,5 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
     </StyledNavbar>
   );
 };
-
 
 export default MyNavbar;
