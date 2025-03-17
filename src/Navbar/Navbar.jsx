@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { PlusCircle, Search, ArrowClockwise } from 'react-bootstrap-icons';
+import ClipLoader from 'react-spinners/ClipLoader';
 import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
 import UserProfile from '../Authentification/User/UserProfile';
 import SearchResultsModal from '../Produits/SearchResultsModal';
@@ -63,7 +64,11 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
                   <PlusCircle className="icon-btn" size={28} />
                 </Nav.Link>
                 <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleRefreshPage}>
-                  <ArrowClockwise className={`icon-btn ${isLoading ? 'rotate' : ''}`} size={28} />
+                  {isLoading ? (
+                    <ClipLoader size={28} color="#ffffff" />
+                  ) : (
+                    <ArrowClockwise className="icon-btn" size={28} />
+                  )}
                 </Nav.Link>
                 <Nav.Item className="btn gradient-btn btn-lg me-2">
                   <UserProfile />
