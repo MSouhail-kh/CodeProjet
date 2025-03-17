@@ -44,23 +44,6 @@ const LogoContainer = styled(Navbar.Brand)`
   }
 `;
 
-const SearchGroup = styled(InputGroup)`
-  width: 55%; 
-  margin: 0 auto;
-
-  .form-control {
-    border: 1px solid #ccc;
-    border-radius: 28px;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-
-    &:focus {
-      border-color: #7c4dff;
-      outline: none;
-    }
-  }
-`;
 
 const IconsContainer = styled.div`
   display: flex;
@@ -116,16 +99,6 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
         <NavContainer>
           {/* Logo avec animation sur la couleur du texte */}
           <LogoContainer href="/Chaines">Sigmatex</LogoContainer>
-
-          {/* Search Input */}
-          <SearchGroup>
-            <Form.Control
-              type="text"
-              placeholder="Rechercher un produit..."
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-            />
-          </SearchGroup>
 
           {/* Icons */}
           <IconsContainer>
