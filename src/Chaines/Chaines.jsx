@@ -109,8 +109,8 @@ const ProductImage = styled.img`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    max-width: 100%; 
-    max-height: 200px; 
+    width: 100%; 
+    height: 200px; 
   }
 `;
 
@@ -154,7 +154,7 @@ const ControlButton = styled(Button)`
   transition: all 0.3s ease; 
 
   &:hover {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    background-color: transparent;
     opacity: 1; 
   }
 
