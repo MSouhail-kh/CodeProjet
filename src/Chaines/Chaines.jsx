@@ -570,9 +570,8 @@ export default function Chaines() {
           )}
         </MobileRow>
       </Container>
-      <Col md="auto" className="d-flex align-items-center justify-content-end p-4 m-auto">
-        <DeleteButton onDeleteSuccess={handleDeleteSuccess} />
-      </Col>
+
+
       <HoverPreview
         hoveredItem={hoveredItem}
         hoverPosition={hoverPosition}
