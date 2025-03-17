@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Form, InputGroup } from "react-bootstrap";
+import { Navbar, Nav, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { PlusCircle, Search, ArrowClockwise } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
 import styled from "styled-components";
@@ -25,6 +25,30 @@ const SearchGroup = styled(InputGroup)`
   max-width: 600px;
   flex-grow: 1;
   margin-right: 1.5rem;
+
+  .form-control {
+    border-radius: 25px;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  .btn {
+    border-radius: 25px;
+    margin-left: -50px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
 `;
 
 const NavIconsGroup = styled(Nav)`
@@ -78,7 +102,9 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
   return (
     <StyledNavbar expand="lg" variant="dark">
       <Container fluid>
-        <Navbar.Brand href="/Chaines">Sigmatex</Navbar.Brand>
+        <Navbar.Brand href="/Chaines" style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+          Sigmatex
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <NavContainer>
@@ -89,15 +115,12 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
               />
+              <Button onClick={handleShowSearchModal}>
+                <Search size={20} />
+              </Button>
             </SearchGroup>
 
             <NavIconsGroup>
-              <Nav.Link onClick={handleShowSearchModal}>
-                <IconContainer>
-                  <Search size={24} />
-                </IconContainer>
-              </Nav.Link>
-
               <Nav.Link onClick={handleShowProduit}>
                 <IconContainer>
                   <PlusCircle size={24} />
