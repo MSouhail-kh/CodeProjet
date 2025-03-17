@@ -1,119 +1,87 @@
-@media (max-width: 768px) {
-  .navbar-collapse .d-flex {
-    justify-content: center !important;
-  }
-}
-
-
 .custom-navbar {
-    background: linear-gradient(135deg, #6a11cb, #2575fc) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .navbar-brand {
-    color: white !important;
-    font-weight: bold;
-    font-size: 1.5rem !important;
-  }
-  
-  .nav-link {
-    color: rgba(255, 255, 255, 0.8) !important;
-    margin: 0 10px;
-    transition: all 0.3s ease;
-  }
-  
-  .nav-link:hover {
-    color: white !important;
-    transform: translateY(-2px);
-  }
-  
-  .navbar-toggler {
-    border-color: rgba(255, 255, 255, 0.5) !important;
-  }
-  
-  .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
-  }
-
-
-.btn-gradient {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
-    border: none !important;
-    color: white !important;
-    padding: 8px 25px;
-    border-radius: 25px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-  }
-  
-  .btn-gradient:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      120deg,
-      transparent,
-      rgba(255, 255, 255, 0.3),
-      transparent
-    );
-    transition: all 0.5s;
-  }
-  
-  .btn-gradient:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-  }
-  
-  .btn-gradient:hover:before {
-    left: 100%;
-  }
-  
-  .btn-gradient:active {
-    transform: translateY(0);
-    background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%) !important;
-  }
-
-.logo-text {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700 !important;
-  letter-spacing: 1.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  position: relative;
-  transition: all 0.3s ease;
+  background: rgba(25, 25, 25, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 0;
 }
 
-.logo-text:hover {
-  transform: scale(1.02);
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-.form-inline-row {
-  display: flex;
-  flex-direction: row; /* Already implied with flex-row, but explicit here */
-  flex-wrap: nowrap; /* 👈 Important to keep them on the same line */
-  align-items: center;
-  justify-content: center; /* Or space-between/space-around based on need */
-  width: 100%;
+.logo-text .gradient-text {
+  background: linear-gradient(45deg, #00ff88, #00b4ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
 }
 
 .search-group {
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  width: 100%;
+  position: relative;
   max-width: 600px;
 }
 
 .search-input {
-  flex-grow: 1; /* 👈 Allows the input to stretch */
-  min-width: 0;  /* 👈 Important to prevent overflow in flex container */
+  height: 45px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none !important;
+  color: #fff !important;
+  transition: all 0.3s ease;
 }
 
-button[type="submit"] {
-  white-space: nowrap; /* 👈 Prevent the button text from breaking */
+.search-input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 15px rgba(0, 180, 255, 0.3);
+}
+
+.search-icon-container {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent !important;
+  border: none !important;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.nav-icon .icon-wrapper {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-icon:hover .icon-wrapper {
+  background: rgba(0, 180, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 180, 255, 0.2);
+}
+
+.nav-icon:hover .icon-btn {
+  transform: scale(1.1);
+}
+
+.loader {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@media (max-width: 992px) {
+  .search-group {
+    width: 100% !important;
+    margin: 1rem 0;
+  }
+  
+  .nav-icon {
+    margin: 0.5rem 0;
+  }
 }
