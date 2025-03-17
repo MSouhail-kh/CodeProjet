@@ -23,8 +23,8 @@ const NavContainer = styled.div`
 `;
 
 const SearchGroup = styled(InputGroup)`
-  width: 400px; /* Largeur fixe pour l'input */
-  margin: 0 auto; /* Centrer l'input dans l'espace disponible */
+  width: 50ù; 
+  margin: 0 auto;
 
   .form-control {
     border-radius: 25px 0 0 25px;
@@ -97,10 +97,8 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
     <StyledNavbar expand="lg" variant="dark">
       <Container fluid>
         <NavContainer>
-          {/* Brand */}
           <Navbar.Brand href="/Chaines">Sigmatex</Navbar.Brand>
 
-          {/* Search Input */}
           <SearchGroup>
             <Form.Control
               type="text"
@@ -108,9 +106,6 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
             />
-            <Button variant="outline-light" onClick={handleShowSearchModal}>
-              <Search size={20} />
-            </Button>
           </SearchGroup>
 
           {/* Icons */}
