@@ -23,24 +23,19 @@ const NavContainer = styled.div`
 `;
 
 const SearchGroup = styled(InputGroup)`
-  width: 50ù; 
+  width: 35%; 
   margin: 0 auto;
 
   .form-control {
-    border-radius: 25px 0 0 25px;
-    border: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
+    border: 1px solid #ccc; /* Bordure standard */
+    border-radius: 4px; /* Bordure légèrement arrondie */
+    padding: 0.375rem 0.75rem; /* Padding par défaut */
+    font-size: 1rem; /* Taille de police par défaut */
+    transition: border-color 0.3s ease; /* Transition pour l'effet de focus */
 
-  .btn {
-    border-radius: 0 25px 25px 0;
-    border: none;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
+    &:focus {
+      border-color: #7c4dff; /* Changement de couleur au focus */
+      outline: none; /* Supprimer l'outline par défaut */
     }
   }
 `;
@@ -132,4 +127,5 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
     </StyledNavbar>
   );
 };
+
 export default MyNavbar;
