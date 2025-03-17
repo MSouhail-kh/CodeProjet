@@ -154,6 +154,7 @@ const ControlButton = styled(Button)`
   transition: all 0.3s ease; 
 
   &:hover {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
     opacity: 1; 
   }
 
