@@ -12,7 +12,9 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<LoginSignup />} />
-                    <Route path="/Chaines" element={<Chaines />} />
+                    <Route path="/Chaines"   
+                     element={<PrivateRoute element={<Chaines />} />}
+                    />
                     <Route
                         path="/produit/:po"
                         element={<PrivateRoute
