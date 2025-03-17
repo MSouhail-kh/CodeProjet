@@ -130,8 +130,8 @@ export default function MySwiper() {
     return <div>{error}</div>;
   }
 
-  const handleCardClick = (produitPo) => {
-    navigate(`/produit/${produitPo}`);
+  const handleCardClick = (po) => {
+    navigate(`/produit/${po}`);
   };
 
   return (

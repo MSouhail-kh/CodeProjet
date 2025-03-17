@@ -148,6 +148,7 @@ const ControlButton = styled(Button)`
   background: none; 
   border: none;
   opacity: 0.9;
+  background-color: transparent;
   position: relative;
   cursor: pointer;
   border-radius: 0;
