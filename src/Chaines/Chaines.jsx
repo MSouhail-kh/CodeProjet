@@ -102,10 +102,8 @@ const ProductContainer = styled.div`
 `;
 
 const ProductImage = styled.img`
-  width: 100%;
-  height: auto; 
-  max-width: 150px; 
-  max-height: 150px;
+  width: 160px;
+  height: 160px;
   border-radius: 12px;
   object-fit: cover;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -156,7 +154,6 @@ const ControlButton = styled(Button)`
   transition: all 0.3s ease; 
 
   &:hover {
-    background: linear-gradient(45deg, #f9c74f, #f9844a); 
     opacity: 1; 
   }
 
