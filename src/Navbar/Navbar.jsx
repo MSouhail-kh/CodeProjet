@@ -1,32 +1,64 @@
-import React, { useState } from 'react';
-import { Navbar, Nav, Container, Form, InputGroup } from 'react-bootstrap';
-import { PlusCircle, Search, ArrowClockwise } from 'react-bootstrap-icons';
-import { BounceLoader } from 'react-spinners';
-import AjouterProduitsModel from '../Produits/AjouterProduitsModel';
-import UserProfile from '../Authentification/User/UserProfile';
-import SearchResultsModal from '../Produits/SearchResultsModal';
-import './Navbar.css';
+import React, { useState } from "react";
+import { Navbar, Nav, Container, Form, InputGroup } from "react-bootstrap";
+import { PlusCircle, Search, ArrowClockwise } from "react-bootstrap-icons";
+import { BounceLoader } from "react-spinners";
+import styled from "styled-components";
+import AjouterProduitsModel from "../Produits/AjouterProduitsModel";
+import UserProfile from "../Authentification/User/UserProfile";
+import SearchResultsModal from "../Produits/SearchResultsModal";
 import api from "../services/axios";
 
-const MyNavbar = ({ darkMode, produits = [], onRefresh }) => { 
+const StyledNavbar = styled(Navbar)`
+  background: linear-gradient(135deg, #7c4dff, #448aff) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  padding: 0.8rem 0;
+`;
+
+const NavContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const SearchGroup = styled(InputGroup)`
+  max-width: 600px;
+  flex-grow: 1;
+  margin-right: 1.5rem;
+`;
+
+const NavIconsGroup = styled(Nav)`
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+`;
+
+const IconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
-  const [showExcelModal, setShowExcelModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
-  const [file, setFile] = useState(null);
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchError, setSearchError] = useState(null);
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [inputText, setInputText] = useState("");
 
   const handleShowProduit = () => setShowProduitModal(true);
   const handleCloseProduit = () => setShowProduitModal(false);
-
-  const handleShowExcel = () => setShowExcelModal(true);
-  const handleCloseExcel = () => {
-    setShowExcelModal(false);
-    setFile(null);
-  };
 
   const handleShowSearchModal = () => setShowSearchModal(true);
   const handleCloseSearchModal = () => setShowSearchModal(false);
@@ -35,93 +67,58 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
     try {
       setIsLoading(true);
       const response = await api.get("/process");
-      const produits = Object.values(response.data);
-      console.log("Produits récupérés avec succès :", produits);
-      onRefresh(produits);
+      onRefresh(Object.values(response.data));
       setIsLoading(false);
-    } catch (syncError) {
-      console.error("Erreur de synchronisation :", syncError);
-      setError("Problème de synchronisation avec Google Sheets");
+    } catch (error) {
+      console.error("Erreur de synchronisation :", error);
       setIsLoading(false);
     }
   };
 
   return (
-    <>
-      <Navbar expand="lg" variant="dark" className="custom-navbar">
-        <Container fluid className="px-4">
-          <Navbar.Brand href="/Chaines" className="logo-text me-4">
-            <span className="gradient-text">Sigmatex</span>
-          </Navbar.Brand>
+    <StyledNavbar expand="lg" variant="dark">
+      <Container fluid>
+        <Navbar.Brand href="/Chaines">Sigmatex</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <NavContainer>
+            <SearchGroup>
+              <Form.Control
+                type="text"
+                placeholder="Rechercher un produit..."
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+              />
+            </SearchGroup>
 
-          <Navbar.Toggle aria-controls="basic-navbar-nav" className="hamburger" />
-          
-          <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
-                  <div className="d-flex justify-content-center flex-grow-1 ">
-                    <Form className="w-75">
-                    <InputGroup className="search-group " style={{color: 'black', paddingTop: '1rem', paddingBottom: '1rem', paddingLeft: '1rem', paddingRight: '1rem',}}>
-                      <Form.Control
-                      type="text"
-                      placeholder="Rechercher un produit..."
-                      value={inputText}
-                      onChange={(e) => setInputText(e.target.value)}
-                      className="search-input"
-                      style={{ color: 'black' ,paddingTop: '10%',paddingBottom: '10%',paddingLeft: '10%',paddingRight: '10%'} }
-                      />
-                    </InputGroup>
-                    </Form>
-                  </div>
-
-            <Nav className="nav-icons-group">
-              <Nav.Link className="nav-icon" onClick={handleShowSearchModal}>
-                <div className="icon-container">
-                  <Search className="icon" size={24} />
-                </div>
+            <NavIconsGroup>
+              <Nav.Link onClick={handleShowSearchModal}>
+                <IconContainer>
+                  <Search size={24} />
+                </IconContainer>
               </Nav.Link>
 
-              <Nav.Link className="nav-icon" onClick={handleShowProduit}>
-                <div className="icon-container">
-                  <PlusCircle className="icon" size={24} />
-                </div>
+              <Nav.Link onClick={handleShowProduit}>
+                <IconContainer>
+                  <PlusCircle size={24} />
+                </IconContainer>
               </Nav.Link>
 
-              <Nav.Link 
-                className="nav-icon" 
-                onClick={handleRefreshPage}
-                disabled={isLoading}
-              >
-                <div className="icon-container">
-                  {isLoading ? (
-                    <BounceLoader 
-                      size={28} 
-                      color="#fff" 
-                      className="loader"
-                    />
-                  ) : (
-                    <ArrowClockwise className="icon" size={24} />
-                  )}
-                </div>
+              <Nav.Link onClick={handleRefreshPage} disabled={isLoading}>
+                <IconContainer>
+                  {isLoading ? <BounceLoader size={28} color="#fff" /> : <ArrowClockwise size={24} />}
+                </IconContainer>
               </Nav.Link>
 
-              <div className="separator" />
+              <UserProfile />
+            </NavIconsGroup>
+          </NavContainer>
+        </Navbar.Collapse>
+      </Container>
 
-              <Nav.Item className="nav-icon">
-                <UserProfile />
-              </Nav.Item>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-
-      {/* Modals */}
       <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
-      <SearchResultsModal
-        show={showSearchModal}
-        handleClose={handleCloseSearchModal}
-        results={searchResults}
-        error={searchError}
-      />
-    </>
+      <SearchResultsModal show={showSearchModal} handleClose={handleCloseSearchModal} />
+    </StyledNavbar>
   );
 };
 
