@@ -102,12 +102,18 @@ const ProductContainer = styled.div`
 `;
 
 const ProductImage = styled.img`
-  width: 160px;
-  height: 160px;
+  width: 100%;
+  height: auto; 
+  max-width: 150px; 
+  max-height: 150px;
   border-radius: 12px;
   object-fit: cover;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    max-width: 100%; 
+    max-height: 200px; 
+  }
 `;
 
 const ProductStyle = styled.span`
@@ -120,7 +126,6 @@ const ProductStyle = styled.span`
   max-width: 16ch;
 `;
 
-/* Updated Hover Preview Card */
 const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
@@ -139,16 +144,21 @@ const HoverCard = styled.div`
   pointer-events: none;
 `;
 
-/* Updated Control Button & Layout */
 const ControlButton = styled(Button)`
   width: 30px;
-  height: 100vh;
-  background: linear-gradient(45deg, #f9c74f, #f9844a);
+  height: 100%; 
+  background: none; 
   border: none;
   opacity: 0.9;
   position: relative;
   cursor: pointer;
   border-radius: 0;
+  transition: all 0.3s ease; 
+
+  &:hover {
+    background: linear-gradient(45deg, #f9c74f, #f9844a); 
+    opacity: 1; 
+  }
 
   &:focus {
     outline: none;
@@ -156,7 +166,7 @@ const ControlButton = styled(Button)`
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 6vh;
+    height: 6vh; /* Fixed height for mobile */
   }
 `;
 
