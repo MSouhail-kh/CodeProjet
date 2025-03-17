@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Form, InputGroup, Button } from "react-bootstrap";
-import { PlusCircle, Search, ArrowClockwise } from "react-bootstrap-icons";
+import { Navbar, Nav, Container } from "react-bootstrap";
+import { PlusCircle, Search, ArrowClockwise, CheckCircle, XCircle } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
 import styled, { keyframes } from "styled-components";
 import AjouterProduitsModel from "../Produits/AjouterProduitsModel";
@@ -36,14 +36,13 @@ const LogoContainer = styled(Navbar.Brand)`
   font-weight: bold;
   padding: 0.5rem 1rem;
   border-radius: 12px;
-  animation: ${textColorAnimation} 5s ease infinite; /* Animation sur la couleur du texte */
+  animation: ${textColorAnimation} 5s ease infinite;
   transition: transform 0.3s ease;
 
   &:hover {
     transform: scale(1.05);
   }
 `;
-
 
 const IconsContainer = styled.div`
   display: flex;
@@ -69,59 +68,88 @@ const IconButton = styled.div`
   }
 `;
 
+const Message = styled.p`
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  color: ${({ type }) => (type === "success" ? "green" : "red")};
+`;
+
 const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [inputText, setInputText] = useState("");
+  const [refreshMessage, setRefreshMessage] = useState("");
+  const [refreshMessageType, setRefreshMessageType] = useState("");
 
   const handleShowProduit = () => setShowProduitModal(true);
   const handleCloseProduit = () => setShowProduitModal(false);
-
   const handleShowSearchModal = () => setShowSearchModal(true);
   const handleCloseSearchModal = () => setShowSearchModal(false);
 
   const handleRefreshPage = async () => {
+    const startTime = Date.now();
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await api.get("/process");
       onRefresh(Object.values(response.data));
-      setIsLoading(false);
+      const duration = Date.now() - startTime;
+      setRefreshMessage(`Processus terminé avec succès en ${duration} ms.`);
+      setRefreshMessageType("success");
     } catch (error) {
       console.error("Erreur de synchronisation :", error);
+      setRefreshMessage("Échec du processus. Veuillez réessayer.");
+      setRefreshMessageType("error");
+    } finally {
       setIsLoading(false);
+      // Masquer le message après 5 secondes
+      setTimeout(() => {
+        setRefreshMessage("");
+      }, 5000);
     }
   };
 
   return (
-    <StyledNavbar expand="lg" variant="dark">
-      <Container fluid>
-        <NavContainer>
-          {/* Logo avec animation sur la couleur du texte */}
-          <LogoContainer href="/Chaines">Sigmatex</LogoContainer>
+    <>
+      <StyledNavbar expand="lg" variant="dark">
+        <Container fluid>
+          <NavContainer>
+            <LogoContainer href="/Chaines">Sigmatex</LogoContainer>
+            <IconsContainer>
+              <IconButton onClick={handleShowSearchModal}>
+                <Search size={20} />
+              </IconButton>
+              <IconButton onClick={handleShowProduit}>
+                <PlusCircle size={20} />
+              </IconButton>
+              <IconButton onClick={handleRefreshPage} disabled={isLoading}>
+                {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
+              </IconButton>
+            </IconsContainer>
+            <UserProfile />
+          </NavContainer>
+        </Container>
+      </StyledNavbar>
 
-          {/* Icons */}
-          <IconsContainer>
-            <IconButton onClick={handleShowSearchModal}>
-              <Search size={20} />
-            </IconButton>
-            <IconButton onClick={handleShowProduit}>
-              <PlusCircle size={20} />
-            </IconButton>
-            <IconButton onClick={handleRefreshPage} disabled={isLoading}>
-              {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
-            </IconButton>
-          </IconsContainer>
-
-          {/* User Profile */}
-          <UserProfile />
-        </NavContainer>
-      </Container>
+      {/* Message de synchronisation */}
+      {refreshMessage && (
+        <Container>
+          <Message type={refreshMessageType}>
+            {refreshMessageType === "success" ? (
+              <CheckCircle size={20} style={{ marginRight: "8px" }} />
+            ) : (
+              <XCircle size={20} style={{ marginRight: "8px" }} />
+            )}
+            {refreshMessage}
+          </Message>
+        </Container>
+      )}
 
       {/* Modals */}
       <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
       <SearchResultsModal show={showSearchModal} handleClose={handleCloseSearchModal} />
-    </StyledNavbar>
+    </>
   );
 };
 
