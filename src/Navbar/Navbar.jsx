@@ -137,5 +137,4 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
     </StyledNavbar>
   );
 };
-
 export default MyNavbar;
