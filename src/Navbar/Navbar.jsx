@@ -55,12 +55,8 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {/* Conteneur en flex avec répartition entre champ de saisie au centre et icônes à droite */}
-            <div className="d-flex w-100 align-items-center justify-content-between">
-              {/* Espace vide à gauche pour équilibrer (facultatif) */}
-              <div className="d-none d-lg-block" style={{ width: "150px" }}></div>
-              {/* Champ de saisie stylé au centre */}
-              <Form className="d-flex mx-auto" style={{ width: "40%" }}>
+          <Nav className="align-items-center">
+              <Form className="d-flex mx-auto" style={{ width: "50%" }}>
                 <InputGroup>
                   <Form.Control
                     type="text"
@@ -70,8 +66,6 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
                   />
                 </InputGroup>
               </Form>
-              {/* Icônes de navigation à droite */}
-              <Nav className="align-items-center">
                 <Nav.Link className="btn gradient-btn btn-lg me-2" onClick={handleShowSearchModal}>
                   <Search className="icon-btn" size={28} />
                 </Nav.Link>
@@ -89,7 +83,6 @@ const MyNavbar = ({ darkMode, produits = [], onRefresh }) => {
                   <UserProfile />
                 </Nav.Item>
               </Nav>
-            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>
