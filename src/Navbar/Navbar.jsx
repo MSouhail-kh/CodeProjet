@@ -17,11 +17,13 @@ const textColorAnimation = keyframes`
   100% { color: #7c4dff; }
 `;
 
-const StyledNavbar = styled(Navbar)`
-  background: linear-gradient(135deg, #7c4dff, #448aff) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  padding: 0.8rem 0;
-`;
+
+  const StyledNavbar = styled(Navbar)`
+    background: linear-gradient(135deg, #7c4dff, #448aff) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 0.8rem 0;
+  `;
+
 
 const NavContainer = styled.div`
   display: flex;
@@ -74,6 +76,8 @@ const MessageContainer = styled(Container)`
   margin-top: 1rem;
 `;
 
+
+
 // Nouveau style pour le message
 const Message = styled.p`
   margin: 0.5rem auto 0;
@@ -86,7 +90,8 @@ const Message = styled.p`
   gap: 8px;
 `;
 
-const MyNavbar = ({ onRefresh }) => {
+
+const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -104,7 +109,7 @@ const MyNavbar = ({ onRefresh }) => {
     try {
       const response = await api.get("/process");
       onRefresh(Object.values(response.data));
-      const duration = (Date.now() - startTime) / 1000;
+      const duration = (Date.now() - startTime) / 1000; 
       setRefreshMessage(`Processus terminé avec succès en ${duration.toFixed(2)} s`);
       setRefreshMessageType("success");
     } catch (error) {
@@ -127,6 +132,9 @@ const MyNavbar = ({ onRefresh }) => {
               <IconButton onClick={handleShowSearchModal}>
                 <Search size={20} />
               </IconButton>
+              {/* <IconButton onClick={handleShowProduit}>
+                <PlusCircle size={20} />
+              </IconButton> */}
               <IconButton onClick={handleRefreshPage} disabled={isLoading}>
                 {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
               </IconButton>
@@ -149,6 +157,7 @@ const MyNavbar = ({ onRefresh }) => {
         </Container>
       )}
 
+      {/* Modals */}
       <AjouterProduitsModel show={showProduitModal} handleClose={handleCloseProduit} />
       <SearchResultsModal show={showSearchModal} handleClose={handleCloseSearchModal} />
     </>
