@@ -326,11 +326,17 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
 };
 
 export default function Chaines({ produits = [] }) {
+  const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const isMounted = useRef(false);
   const navigate = useNavigate();
+
+  const [hoveredItem, setHoveredItem] = useState(null);
+  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
+  const [chain, setChain] = useState(null);
+  const isProcessing = useRef(false);
 
   const filterAndSortProducts = (products, positionId) => {
     if (!products || products.length === 0) return [];
