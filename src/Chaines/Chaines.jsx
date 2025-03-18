@@ -326,16 +326,10 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
 };
 
 export default function Chaines({ produits = [] }) {
-  const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
-  const [hoveredItem, setHoveredItem] = useState(null);
-  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
-  const [chain, setChain] = useState(null);
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [error, setError] = useState(null);
   const isMounted = useRef(false);
-  const isProcessing = useRef(false);
   const navigate = useNavigate();
 
   const filterAndSortProducts = (products, positionId) => {
@@ -350,7 +344,6 @@ export default function Chaines({ produits = [] }) {
     const sortedProducts = productsWithDefaultOrder.sort((a, b) => a.order - b.order);
     const uniqueOrderProducts = [];
     const usedOrders = new Set();
-
     for (const product of sortedProducts) {
       let order = product.order;
       while (usedOrders.has(order)) {
@@ -371,11 +364,9 @@ export default function Chaines({ produits = [] }) {
           groupedData[produit.position_id].push(produit);
         }
       });
-
       Object.keys(groupedData).forEach((key) => {
         groupedData[key] = filterAndSortProducts(groupedData[key], key);
       });
-
       setData(groupedData);
       localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
       setError(null);
@@ -386,20 +377,6 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    const socket = io('https://gestion-planning-back-end-1.onrender.com', { transports: ['websocket'] }); 
-    socket.on('connect', () => {
-      console.log('Connecté au serveur Socket.IO');
-    });
-    socket.on('productsUpdate', (newProducts) => {
-      console.log('Mise à jour en temps réel reçue :', newProducts);
-      handleRefresh(newProducts);
-    });
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     isMounted.current = true;
@@ -422,11 +399,99 @@ export default function Chaines({ produits = [] }) {
     };
   }, []);
 
+  
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem('cachedProducts', JSON.stringify(data));
     }
   }, [data]);
+
+  useEffect(() => {
+    const socket = io('https://gestion-planning-back-end-1.onrender.com', { transports: ['websocket'] });
+    socket.on('connect', () => {
+      console.log('Connecté au serveur Socket.IO');
+    });
+    socket.on('productsUpdate', (newProducts) => {
+      console.log('Mise à jour en temps réel reçue :', newProducts);
+      handleRefresh(newProducts);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const handleManualRefresh = async () => {
+    try {
+      const response = await api.get("/process");
+      // On met à jour les données avec la réponse de l'API
+      handleRefresh(Object.values(response.data));
+    } catch (error) {
+      console.error("Erreur de rafraîchissement manuel:", error);
+    }
+  };
+
+  
+  // // const handleRefresh = (produits) => {
+  // //   setIsLoading(true);
+  // //   try {
+  // //     const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+  // //     produits.forEach((produit) => {
+  // //       if (groupedData[produit.position_id]) {
+  // //         groupedData[produit.position_id].push(produit);
+  // //       }
+  // //     });
+
+  // //     Object.keys(groupedData).forEach((key) => {
+  // //       groupedData[key] = filterAndSortProducts(groupedData[key], key);
+  // //     });
+
+  // //     setData(groupedData);
+  // //     localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
+  // //     setError(null);
+  // //   } catch (err) {
+  // //     console.error("Erreur :", err);
+  // //     setError("Échec de la récupération des données.");
+  // //   } finally {
+  // //     setIsLoading(false);
+  // //   }
+  // // };
+
+  // useEffect(() => {
+  //   const socket = io('https://gestion-planning-back-end-1.onrender.com', { transports: ['websocket'] }); 
+  //   socket.on('connect', () => {
+  //     console.log('Connecté au serveur Socket.IO');
+  //   });
+  //   socket.on('productsUpdate', (newProducts) => {
+  //     console.log('Mise à jour en temps réel reçue :', newProducts);
+  //     handleRefresh(newProducts);
+  //   });
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+    
+  // }, []);
+
+  // useEffect(() => {
+  //   isMounted.current = true;
+  //   const cachedData = localStorage.getItem('cachedProducts');
+  //   if (cachedData) {
+  //     try {
+  //       const parsedData = JSON.parse(cachedData);
+  //       setData(parsedData);
+  //       setIsLoading(false);
+  //     } catch (error) {
+  //       console.error('Erreur de parsing du cache:', error);
+  //       localStorage.removeItem('cachedProducts');
+  //       handleRefresh(produits);
+  //     }
+  //   } else {
+  //     handleRefresh(produits);
+  //   }
+  //   return () => {
+  //     isMounted.current = false;
+  //   };
+  // }, []);
+
 
 
   const handleDragStart = (e, sourcePosition, item, index) => {
@@ -564,7 +629,7 @@ export default function Chaines({ produits = [] }) {
 
   return (
     <>
-      <MyNavbar onRefresh={handleRefresh} />
+      <MyNavbar onRefresh={handleManualRefresh} />
       <Container fluid className="p-4">
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
