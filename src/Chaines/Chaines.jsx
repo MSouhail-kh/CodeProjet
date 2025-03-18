@@ -388,50 +388,51 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
-useEffect(() => {
-  isMounted.current = true;
-  const cachedData = localStorage.getItem('cachedProducts');
-  if (cachedData) {
-    try {
-      const parsedData = JSON.parse(cachedData);
-      setData(parsedData);
-      setIsLoading(false); 
-    } catch (error) {
-      console.error('Erreur de parsing du cache:', error);
-      localStorage.removeItem('cachedProducts');
+  useEffect(() => {
+    // Marquer le composant comme monté
+    isMounted.current = true;
+    
+    // Lecture du cache local
+    const cachedData = localStorage.getItem('cachedProducts');
+    if (cachedData) {
+      try {
+        const parsedData = JSON.parse(cachedData);
+        setData(parsedData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Erreur de parsing du cache:', error);
+        localStorage.removeItem('cachedProducts');
+        handleRefresh(produits);
+      }
+    } else {
       handleRefresh(produits);
     }
-  } else {
-    handleRefresh(produits);
-  }
-  return () => {
-    isMounted.current = false;
-  };
-}, []);
-
+    
+    // Établir la connexion Socket.IO pour la mise à jour en temps réel
+    const socket = io("https://gestion-planning-back-end-1.onrender.com", {
+      transports: ["websocket", "polling"],
+    });
+    
+    socket.on("connect", () => {
+      console.log("Connecté au serveur Socket.IO");
+    });
+    
+    socket.on("productsUpdate", (newProducts) => {
+      console.log("Mise à jour en temps réel reçue :", newProducts);
+      handleRefresh(newProducts);
+    });
+    
+    return () => {
+      isMounted.current = false;
+      socket.disconnect();
+    };
+  }, []);
+  
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem('cachedProducts', JSON.stringify(data));
     }
   }, [data]);
-
-  
-// useEffect(() => {
-//   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
-//     transports: ["websocket", "polling"],
-//   });
-//   socket.on("connect", () => {
-//     console.log("Connecté au serveur Socket.IO");
-//   });
-//   socket.on("productsUpdate", (newProducts) => {
-//     console.log("Mise à jour en temps réel reçue :", newProducts);
-//     handleRefresh(newProducts);
-//   });
-//   return () => {
-//     socket.disconnect();
-//   };
-// }, []);
-
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
