@@ -417,7 +417,7 @@ export default function Chaines({ produits = [] }) {
   }, [data]);
 
   useEffect(() => {
-    const socket = io('http://localhost:5000'); 
+    const socket = io('https://gestion-planning-back-end-1.onrender.com'); 
     socket.on('connect', () => {
       console.log('Connecté au serveur Socket.IO');
     });
