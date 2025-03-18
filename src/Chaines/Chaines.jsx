@@ -387,6 +387,7 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
+
 useEffect(() => {
   isMounted.current = true;
   const cachedData = localStorage.getItem('cachedProducts');
@@ -394,8 +395,7 @@ useEffect(() => {
     try {
       const parsedData = JSON.parse(cachedData);
       setData(parsedData);
-      setIsLoading(false); 
-      handleRefresh(produits);
+      setIsLoading(false); // On indique que le chargement est terminé
     } catch (error) {
       console.error('Erreur de parsing du cache:', error);
       localStorage.removeItem('cachedProducts');
@@ -408,7 +408,8 @@ useEffect(() => {
     isMounted.current = false;
   };
 }, []);
-  
+
+  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem('cachedProducts', JSON.stringify(data));
