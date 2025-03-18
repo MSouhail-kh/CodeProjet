@@ -387,35 +387,33 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    isMounted.current = true;
-    const cachedData = localStorage.getItem('cachedProducts');
-    if (cachedData) {
-      try {
-        const parsedData = JSON.parse(cachedData);
-        setData(parsedData);
-        setIsLoading(false); // Fin du chargement avec les données en cache
-        // Ensuite, on vérifie en arrière-plan si de nouvelles données existent
-        handleRefresh(produits);
-      } catch (error) {
-        console.error('Erreur de parsing du cache:', error);
-        localStorage.removeItem('cachedProducts');
-        handleRefresh(produits);
-      }
-    } else {
+useEffect(() => {
+  isMounted.current = true;
+  const cachedData = localStorage.getItem('cachedProducts');
+  if (cachedData) {
+    try {
+      const parsedData = JSON.parse(cachedData);
+      setData(parsedData);
+      setIsLoading(false); 
+      handleRefresh(produits);
+    } catch (error) {
+      console.error('Erreur de parsing du cache:', error);
+      localStorage.removeItem('cachedProducts');
       handleRefresh(produits);
     }
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
+  } else {
+    handleRefresh(produits);
+  }
+  return () => {
+    isMounted.current = false;
+  };
+}, []);
   
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem('cachedProducts', JSON.stringify(data));
     }
   }, [data]);
-  
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
