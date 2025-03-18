@@ -333,7 +333,7 @@ export default function Chaines() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isMounted = useRef(true);
+  const isMounted = useRef(false);
   const isProcessing = useRef(false);
   const navigate = useNavigate();
 
@@ -362,12 +362,11 @@ export default function Chaines() {
     }
     return uniqueOrderProducts;
   };
-
+  
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-      
       produits.forEach((produit) => {
         if (groupedData[produit.position_id]) {
           groupedData[produit.position_id].push(produit);
@@ -381,7 +380,6 @@ export default function Chaines() {
       setData(groupedData);
       localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
       setError(null);
-
     } catch (err) {
       console.error("Erreur :", err);
       setError("Échec de la récupération des données.");
@@ -392,7 +390,7 @@ export default function Chaines() {
 
   useEffect(() => {
     isMounted.current = true;
-  
+
     const cachedData = localStorage.getItem('cachedProducts');
     if (cachedData) {
       try {
@@ -402,12 +400,14 @@ export default function Chaines() {
         console.error('Erreur de parsing du cache:', error);
         localStorage.removeItem('cachedProducts');
       }
+    } else {
+      handleRefresh(produits);
     }
+
     return () => {
       isMounted.current = false;
     };
-  }, []);
-
+  }, [produits]);
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
