@@ -323,7 +323,6 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
-
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -378,6 +377,7 @@ export default function Chaines({ produits = [] }) {
       });
 
       setData(groupedData);
+      // Mise à jour immédiate du cache lors d'un refresh manuel
       localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
       setError(null);
     } catch (err) {
@@ -388,9 +388,9 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
+  // Ce useEffect se lance uniquement au montage du composant.
   useEffect(() => {
     isMounted.current = true;
-
     const cachedData = localStorage.getItem('cachedProducts');
     if (cachedData) {
       try {
@@ -399,6 +399,8 @@ export default function Chaines({ produits = [] }) {
       } catch (error) {
         console.error('Erreur de parsing du cache:', error);
         localStorage.removeItem('cachedProducts');
+        // En cas d'erreur de parsing, on rafraîchit les données.
+        handleRefresh(produits);
       }
     } else {
       handleRefresh(produits);
@@ -407,7 +409,14 @@ export default function Chaines({ produits = [] }) {
     return () => {
       isMounted.current = false;
     };
-  }, [produits]);
+  }, []); // Ne dépend plus de "produits" pour éviter de recharger à chaque mise à jour.
+
+  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
+  useEffect(() => {
+    if (Object.keys(data).length) {
+      localStorage.setItem('cachedProducts', JSON.stringify(data));
+    }
+  }, [data]);
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
