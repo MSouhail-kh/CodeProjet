@@ -91,7 +91,7 @@ const Message = styled.p`
 `;
 
 
-const MyNavbar = ({ onRefresh }) => {
+const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -109,7 +109,7 @@ const MyNavbar = ({ onRefresh }) => {
     try {
       const response = await api.get("/process");
       onRefresh(Object.values(response.data));
-      const duration = (Date.now() - startTime) / 1000;
+      const duration = (Date.now() - startTime) / 1000; // Conversion en secondes
       setRefreshMessage(`Processus terminé avec succès en ${duration.toFixed(2)} s`);
       setRefreshMessageType("success");
     } catch (error) {
@@ -121,6 +121,7 @@ const MyNavbar = ({ onRefresh }) => {
       setTimeout(() => setRefreshMessage(""), 5000);
     }
   };
+
   return (
     <>
       <StyledNavbar expand="lg" variant="dark">
