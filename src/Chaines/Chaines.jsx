@@ -5,7 +5,6 @@ import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
-import io from 'socket.io-client';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 /* Loader Styles */
@@ -324,21 +323,19 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
-
 export default function Chaines({ produits = [] }) {
+  const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chain, setChain] = useState(null);
-  const [showPosition6, setShowPosition6] = useState(true);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
   const navigate = useNavigate();
 
-  // Fonction utilitaire : filtre et trie les produits pour chaque position
   const filterAndSortProducts = (products, positionId) => {
     if (!products || products.length === 0) return [];
     const productsWithDefaultOrder = products.map((product, index) => ({
@@ -348,9 +345,12 @@ export default function Chaines({ produits = [] }) {
           ? product.order
           : index + 1,
     }));
-    const sortedProducts = productsWithDefaultOrder.sort((a, b) => a.order - b.order);
+    const sortedProducts = productsWithDefaultOrder.sort(
+      (a, b) => a.order - b.order
+    );
     const uniqueOrderProducts = [];
     const usedOrders = new Set();
+
     for (const product of sortedProducts) {
       let order = product.order;
       while (usedOrders.has(order)) {
@@ -362,8 +362,7 @@ export default function Chaines({ produits = [] }) {
     return uniqueOrderProducts;
   };
 
-  // Fonction qui met à jour l'état et le cache local à partir d'un tableau de produits
-  const updateData = (produits) => {
+  const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
@@ -372,11 +371,13 @@ export default function Chaines({ produits = [] }) {
           groupedData[produit.position_id].push(produit);
         }
       });
+
       Object.keys(groupedData).forEach((key) => {
         groupedData[key] = filterAndSortProducts(groupedData[key], key);
       });
-      // Forcer une nouvelle référence pour assurer le re-render
-      setData({ ...groupedData });
+
+      setData(groupedData);
+      // Mise à jour immédiate du cache lors d'un refresh manuel
       localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
       setError(null);
     } catch (err) {
@@ -387,59 +388,54 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
-  // Chargement initial : lecture du cache s'il existe, sinon appel manuel
-  useEffect(() => {
-    isMounted.current = true;
-    const cachedData = localStorage.getItem('cachedProducts');
-    if (cachedData) {
-      try {
-        const parsedData = JSON.parse(cachedData);
-        setData(parsedData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Erreur de parsing du cache:', error);
-        localStorage.removeItem('cachedProducts');
-        manualRefresh();
-      }
-    } else {
-      manualRefresh();
-    }
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  // Mise à jour en temps réel via Socket.IO
-  useEffect(() => {
-    const socket = io('https://gestion-planning-back-end-1.onrender.com', { transports: ['websocket'] });
-    socket.on('connect', () => {
-      console.log('Connecté au serveur Socket.IO');
-    });
-    socket.on('productsUpdate', (newProducts) => {
-      console.log('Mise à jour en temps réel reçue :', newProducts);
-      updateData(newProducts);
-    });
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  const manualRefresh = async () => {
-    setIsLoading(true);
+useEffect(() => {
+  isMounted.current = true;
+  const cachedData = localStorage.getItem('cachedProducts');
+  if (cachedData) {
     try {
-      const response = await api.get("/process");
-      updateData(Object.values(response.data));
+      const parsedData = JSON.parse(cachedData);
+      setData(parsedData);
+      setIsLoading(false); 
     } catch (error) {
-      console.error("Erreur de rafraîchissement manuel:", error);
-      setError("Échec du rafraîchissement manuel.");
-    } finally {
-      setIsLoading(false);
+      console.error('Erreur de parsing du cache:', error);
+      localStorage.removeItem('cachedProducts');
+      handleRefresh(produits);
     }
+  } else {
+    handleRefresh(produits);
+  }
+  return () => {
+    isMounted.current = false;
   };
+}, []);
 
-  // --- Gestion du Drag & Drop et autres interactions ---
+useEffect(() => {
+  const socket = io("https://gestion-planning-back-end-1.onrender.com", {
+    transports: ["websocket",'polling'],
+  });
+  socket.on("connect", () => {
+    console.log("Connecté au serveur Socket.IO");
+  });
+  socket.on("productsUpdate", (newProducts) => {
+    console.log("Mise à jour en temps réel reçue :", newProducts);
+    updateData(newProducts);
+  });
+  return () => {
+    socket.disconnect();
+  };
+}, []);
+
+  useEffect(() => {
+    if (Object.keys(data).length) {
+      localStorage.setItem('cachedProducts', JSON.stringify(data));
+    }
+  }, [data]);
+
   const handleDragStart = (e, sourcePosition, item, index) => {
-    e.dataTransfer.setData("text/plain", JSON.stringify({ from: sourcePosition, item, index }));
+    e.dataTransfer.setData(
+      "text/plain",
+      JSON.stringify({ from: sourcePosition, item, index })
+    );
   };
 
   const handleDragOver = (e) => {
@@ -450,43 +446,74 @@ export default function Chaines({ produits = [] }) {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
+
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
     const newData = { ...data };
     if (!newData[targetPosition]) newData[targetPosition] = [];
     if (!newData[transferData.from]) newData[transferData.from] = [];
+
     try {
       if (transferData.from === targetPosition) {
         const list = [...newData[targetPosition]];
         const [movedItem] = list.splice(transferData.index, 1);
         list.splice(dropIndex, 0, movedItem);
-        newData[targetPosition] = list.map((item, index) => ({ ...item, order: index + 1 }));
+        newData[targetPosition] = list.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
       } else {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
-        if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
+        if (
+          targetList.length === 1 &&
+          targetList[0].id === `invisible-${targetPosition}`
+        ) {
           targetList.pop();
         }
         targetList.splice(dropIndex, 0, movedItem);
-        newData[transferData.from] = sourceList.map((item, index) => ({ ...item, order: index + 1 }));
-        newData[targetPosition] = targetList.map((item, index) => ({ ...item, order: index + 1 }));
+        newData[transferData.from] = sourceList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+        newData[targetPosition] = targetList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
       }
+
       setData(newData);
+
       let updates = [];
       if (transferData.from === targetPosition) {
         newData[targetPosition].forEach((item, index) => {
-          updates.push({ produit: item, newPosition: targetPosition, newOrder: index + 1 });
+          updates.push({
+            produit: item,
+            newPosition: targetPosition,
+            newOrder: index + 1,
+          });
         });
       } else {
         newData[targetPosition].forEach((item, index) => {
-          updates.push({ produit: item, newPosition: targetPosition, newOrder: index + 1 });
+          updates.push({
+            produit: item,
+            newPosition: targetPosition,
+            newOrder: index + 1,
+          });
         });
         newData[transferData.from].forEach((item, index) => {
-          updates.push({ produit: item, newPosition: transferData.from, newOrder: index + 1 });
+          updates.push({
+            produit: item,
+            newPosition: transferData.from,
+            newOrder: index + 1,
+          });
         });
       }
+
       const dragPayload = { multipleUpdates: updates };
-      await api.post("/update_drag", dragPayload, { headers: { "Content-Type": "application/json" } });
+      await api.post("/update_drag", dragPayload, {
+        headers: { "Content-Type": "application/json" },
+      });
     } catch (err) {
       console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
@@ -539,7 +566,7 @@ export default function Chaines({ produits = [] }) {
 
   return (
     <>
-      <MyNavbar onRefresh={manualRefresh} />
+      <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
