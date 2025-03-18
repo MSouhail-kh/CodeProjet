@@ -324,7 +324,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   );
 };
 
-export default function Chaines() {
+export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
   const [hoveredItem, setHoveredItem] = useState(null);
@@ -362,7 +362,7 @@ export default function Chaines() {
     }
     return uniqueOrderProducts;
   };
-  
+
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
