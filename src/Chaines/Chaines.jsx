@@ -362,20 +362,26 @@ export default function Chaines() {
     }
     return uniqueOrderProducts;
   };
-
+  
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
-      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-      produits.forEach((produit) => {
-        if (groupedData[produit.position_id]) {
-          groupedData[produit.position_id].push(produit);
-        }
-      });
-      Object.keys(groupedData).forEach((key) => {
-        groupedData[key] = filterAndSortProducts(groupedData[key], key);
-      });
-      setData(groupedData);
+      const cachedData = localStorage.getItem("groupedData");
+      if (cachedData) {
+        setData(JSON.parse(cachedData));
+      } else {
+        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        produits.forEach((produit) => {
+          if (groupedData[produit.position_id]) {
+            groupedData[produit.position_id].push(produit);
+          }
+        });
+        Object.keys(groupedData).forEach((key) => {
+          groupedData[key] = filterAndSortProducts(groupedData[key], key);
+        });
+        localStorage.setItem("groupedData", JSON.stringify(groupedData));
+        setData(groupedData);
+      }
       setError(null);
     } catch (err) {
       console.error("Erreur :", err);
@@ -384,7 +390,7 @@ export default function Chaines() {
       setIsLoading(false);
     }
   };
-
+  
   useEffect(() => {
     isMounted.current = true;
     handleRefresh([]);
@@ -392,6 +398,7 @@ export default function Chaines() {
       isMounted.current = false;
     };
   }, []);
+  
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
