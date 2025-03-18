@@ -363,25 +363,6 @@ export default function Chaines() {
     return uniqueOrderProducts;
   };
 
-  useEffect(() => {
-    isMounted.current = true;
-  
-    const cachedData = localStorage.getItem('cachedProducts');
-    if (cachedData) {
-      try {
-        const parsedData = JSON.parse(cachedData);
-        setData(parsedData);
-      } catch (error) {
-        console.error('Erreur de parsing du cache:', error);
-        localStorage.removeItem('cachedProducts');
-      }
-    }
-
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
@@ -408,6 +389,25 @@ export default function Chaines() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    isMounted.current = true;
+  
+    const cachedData = localStorage.getItem('cachedProducts');
+    if (cachedData) {
+      try {
+        const parsedData = JSON.parse(cachedData);
+        setData(parsedData);
+      } catch (error) {
+        console.error('Erreur de parsing du cache:', error);
+        localStorage.removeItem('cachedProducts');
+      }
+    }
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
