@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { io } from "socket.io-client";
 
 /* Loader Styles */
 const LoaderContainer = styled.div`
