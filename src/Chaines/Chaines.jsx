@@ -387,7 +387,6 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     isMounted.current = true;
     const cachedData = localStorage.getItem('cachedProducts');
@@ -395,7 +394,9 @@ export default function Chaines({ produits = [] }) {
       try {
         const parsedData = JSON.parse(cachedData);
         setData(parsedData);
-        setIsLoading(false); // On indique que le chargement est terminé
+        setIsLoading(false); // Fin du chargement avec les données en cache
+        // Ensuite, on vérifie en arrière-plan si de nouvelles données existent
+        handleRefresh(produits);
       } catch (error) {
         console.error('Erreur de parsing du cache:', error);
         localStorage.removeItem('cachedProducts');
@@ -409,12 +410,12 @@ export default function Chaines({ produits = [] }) {
     };
   }, []);
   
-  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem('cachedProducts', JSON.stringify(data));
     }
   }, [data]);
+  
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
