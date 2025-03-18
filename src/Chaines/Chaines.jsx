@@ -8,7 +8,6 @@ import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { io } from "socket.io-client";
 
-/* Loader Styles */
 const LoaderContainer = styled.div`
   display: flex;
   align-items: center;
@@ -324,7 +323,6 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
-
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -397,7 +395,7 @@ useEffect(() => {
     try {
       const parsedData = JSON.parse(cachedData);
       setData(parsedData);
-      setIsLoading(false); 
+      setIsLoading(false); // On indique que le chargement est terminé
     } catch (error) {
       console.error('Erreur de parsing du cache:', error);
       localStorage.removeItem('cachedProducts');
@@ -411,6 +409,13 @@ useEffect(() => {
   };
 }, []);
 
+  useEffect(() => {
+    if (Object.keys(data).length) {
+      localStorage.setItem('cachedProducts', JSON.stringify(data));
+    }
+  }, [data]);
+
+  
 useEffect(() => {
   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
     transports: ["websocket", "polling"],
@@ -427,12 +432,6 @@ useEffect(() => {
   };
 }, []);
 
-
-  useEffect(() => {
-    if (Object.keys(data).length) {
-      localStorage.setItem('cachedProducts', JSON.stringify(data));
-    }
-  }, [data]);
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
