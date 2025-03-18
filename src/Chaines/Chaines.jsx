@@ -324,6 +324,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
+
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -412,19 +413,20 @@ useEffect(() => {
 
 useEffect(() => {
   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
-    transports: ["websocket",'polling'],
+    transports: ["websocket", "polling"],
   });
   socket.on("connect", () => {
     console.log("Connecté au serveur Socket.IO");
   });
   socket.on("productsUpdate", (newProducts) => {
     console.log("Mise à jour en temps réel reçue :", newProducts);
-    updateData(newProducts);
+    handleRefresh(newProducts);
   });
   return () => {
     socket.disconnect();
   };
 }, []);
+
 
   useEffect(() => {
     if (Object.keys(data).length) {
