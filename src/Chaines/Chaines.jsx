@@ -347,9 +347,7 @@ export default function Chaines({ produits = [] }) {
           ? product.order
           : index + 1,
     }));
-    const sortedProducts = productsWithDefaultOrder.sort(
-      (a, b) => a.order - b.order
-    );
+    const sortedProducts = productsWithDefaultOrder.sort((a, b) => a.order - b.order);
     const uniqueOrderProducts = [];
     const usedOrders = new Set();
 
@@ -390,6 +388,20 @@ export default function Chaines({ produits = [] }) {
   };
 
   useEffect(() => {
+    const socket = io('https://gestion-planning-back-end-1.onrender.com', { transports: ['websocket'] }); 
+    socket.on('connect', () => {
+      console.log('Connecté au serveur Socket.IO');
+    });
+    socket.on('productsUpdate', (newProducts) => {
+      console.log('Mise à jour en temps réel reçue :', newProducts);
+      handleRefresh(newProducts);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     isMounted.current = true;
     const cachedData = localStorage.getItem('cachedProducts');
     if (cachedData) {
@@ -416,21 +428,7 @@ export default function Chaines({ produits = [] }) {
     }
   }, [data]);
 
-  useEffect(() => {
-    const socket = io('https://gestion-planning-back-end-1.onrender.com'); 
-    socket.on('connect', () => {
-      console.log('Connecté au serveur Socket.IO');
-    });
-    socket.on('productsUpdate', (newProducts) => {
-      console.log('Mise à jour en temps réel reçue', newProducts);
-      handleRefresh(newProducts);
-    });
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
-  // Gestion du drag & drop
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
       "text/plain",
