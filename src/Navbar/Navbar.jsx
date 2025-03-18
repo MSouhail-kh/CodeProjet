@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, Container } from "react-bootstrap";
 import { PlusCircle, Search, ArrowClockwise, CheckCircle, XCircle } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
@@ -6,7 +6,7 @@ import styled, { keyframes } from "styled-components";
 import AjouterProduitsModel from "../Produits/AjouterProduitsModel";
 import UserProfile from "../Authentification/User/UserProfile";
 import SearchResultsModal from "../Produits/SearchResultsModal";
-import api from "../services/axios";
+import { io } from "socket.io-client";
 
 // Animation pour la couleur du texte
 const textColorAnimation = keyframes`
@@ -17,13 +17,11 @@ const textColorAnimation = keyframes`
   100% { color: #7c4dff; }
 `;
 
-
-  const StyledNavbar = styled(Navbar)`
-    background: linear-gradient(135deg, #7c4dff, #448aff) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    padding: 0.8rem 0;
-  `;
-
+const StyledNavbar = styled(Navbar)`
+  background: linear-gradient(135deg, #7c4dff, #448aff) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  padding: 0.8rem 0;
+`;
 
 const NavContainer = styled.div`
   display: flex;
@@ -70,15 +68,6 @@ const IconButton = styled.div`
   }
 `;
 
-const MessageContainer = styled(Container)`
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-`;
-
-
-
-// Nouveau style pour le message
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -90,11 +79,9 @@ const Message = styled.p`
   gap: 8px;
 `;
 
-
 const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [refreshMessage, setRefreshMessage] = useState("");
   const [refreshMessageType, setRefreshMessageType] = useState("");
 
@@ -103,24 +90,27 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
   const handleShowSearchModal = () => setShowSearchModal(true);
   const handleCloseSearchModal = () => setShowSearchModal(false);
 
-  const handleRefreshPage = async () => {
-    const startTime = Date.now();
-    setIsLoading(true);
-    try {
-      const response = await api.get("/process");
-      onRefresh(Object.values(response.data));
-      const duration = (Date.now() - startTime) / 1000; 
-      setRefreshMessage(`Processus terminé avec succès en ${duration.toFixed(2)} s`);
+  useEffect(() => {
+    const socket = io("https://gestion-planning-back-end-1.onrender.com", {
+      transports: ["websocket", "polling"],
+    });
+
+    socket.on("connect", () => {
+      console.log("Connecté au serveur Socket.IO");
+    });
+
+    socket.on("productsUpdate", (newProducts) => {
+      console.log("Mise à jour en temps réel reçue :", newProducts);
+      onRefresh(newProducts);
+      setRefreshMessage("Produits mis à jour en temps réel.");
       setRefreshMessageType("success");
-    } catch (error) {
-      console.error("Erreur de synchronisation :", error);
-      setRefreshMessage("Échec du processus. Veuillez réessayer.");
-      setRefreshMessageType("error");
-    } finally {
-      setIsLoading(false);
       setTimeout(() => setRefreshMessage(""), 5000);
-    }
-  };
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [onRefresh]);
 
   return (
     <>
@@ -135,8 +125,8 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
               {/* <IconButton onClick={handleShowProduit}>
                 <PlusCircle size={20} />
               </IconButton> */}
-              <IconButton onClick={handleRefreshPage} disabled={isLoading}>
-                {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
+              <IconButton>
+                <ArrowClockwise size={20} />
               </IconButton>
             </IconsContainer>
             <UserProfile />
@@ -147,11 +137,7 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
       {refreshMessage && (
         <Container fluid className="d-flex justify-content-center">
           <Message type={refreshMessageType}>
-            {refreshMessageType === "success" ? (
-              <CheckCircle size={20} />
-            ) : (
-              <XCircle size={20} />
-            )}
+            {refreshMessageType === "success" ? <CheckCircle size={20} /> : <XCircle size={20} />}
             {refreshMessage}
           </Message>
         </Container>

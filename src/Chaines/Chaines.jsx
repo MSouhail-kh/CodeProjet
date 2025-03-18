@@ -395,7 +395,7 @@ useEffect(() => {
     try {
       const parsedData = JSON.parse(cachedData);
       setData(parsedData);
-      setIsLoading(false); // On indique que le chargement est terminé
+      setIsLoading(false); 
     } catch (error) {
       console.error('Erreur de parsing du cache:', error);
       localStorage.removeItem('cachedProducts');
@@ -416,21 +416,21 @@ useEffect(() => {
   }, [data]);
 
   
-useEffect(() => {
-  const socket = io("https://gestion-planning-back-end-1.onrender.com", {
-    transports: ["websocket", "polling"],
-  });
-  socket.on("connect", () => {
-    console.log("Connecté au serveur Socket.IO");
-  });
-  socket.on("productsUpdate", (newProducts) => {
-    console.log("Mise à jour en temps réel reçue :", newProducts);
-    handleRefresh(newProducts);
-  });
-  return () => {
-    socket.disconnect();
-  };
-}, []);
+// useEffect(() => {
+//   const socket = io("https://gestion-planning-back-end-1.onrender.com", {
+//     transports: ["websocket", "polling"],
+//   });
+//   socket.on("connect", () => {
+//     console.log("Connecté au serveur Socket.IO");
+//   });
+//   socket.on("productsUpdate", (newProducts) => {
+//     console.log("Mise à jour en temps réel reçue :", newProducts);
+//     handleRefresh(newProducts);
+//   });
+//   return () => {
+//     socket.disconnect();
+//   };
+// }, []);
 
 
   const handleDragStart = (e, sourcePosition, item, index) => {
