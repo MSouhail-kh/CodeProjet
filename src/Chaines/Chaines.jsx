@@ -361,28 +361,65 @@ export default function Chaines({ produits = [] }) {
     return uniqueOrderProducts;
   };
 
-  const handleRefresh = (produits) => {
-    setIsLoading(true);
-    try {
-      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-      produits.forEach((produit) => {
-        if (groupedData[produit.position_id]) {
-          groupedData[produit.position_id].push(produit);
-        }
-      });
-      Object.keys(groupedData).forEach((key) => {
-        groupedData[key] = filterAndSortProducts(groupedData[key], key);
-      });
-      setData(groupedData);
-      localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
-      setError(null);
-    } catch (err) {
-      console.error("Erreur :", err);
-      setError("Échec de la récupération des données.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const handleRefresh = (produits) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+  //     produits.forEach((produit) => {
+  //       if (groupedData[produit.position_id]) {
+  //         groupedData[produit.position_id].push(produit);
+  //       }
+  //     });
+  //     Object.keys(groupedData).forEach((key) => {
+  //       groupedData[key] = filterAndSortProducts(groupedData[key], key);
+  //     });
+  //     setData(groupedData);
+  //     localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
+  //     setError(null);
+  //   } catch (err) {
+  //     console.error("Erreur :", err);
+  //     setError("Échec de la récupération des données.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  useEffect(() => {
+    const socket = io('https://gestion-planning-back-end-1.onrender.com', { transports: ['websocket' , 'polling'] });
+    socket.on('connect', () => {
+      console.log('Connecté au serveur Socket.IO');
+    });
+    socket.on('productsUpdate', (newProducts) => {
+      console.log('Mise à jour en temps réel reçue :', newProducts);
+      // Appel de la fonction de mise à jour avec débogage
+      try {
+        setIsLoading(true);
+        const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        newProducts.forEach((produit) => {
+          if (groupedData[produit.position_id]) {
+            groupedData[produit.position_id].push(produit);
+          }
+        });
+        Object.keys(groupedData).forEach((key) => {
+          groupedData[key] = filterAndSortProducts(groupedData[key], key);
+        });
+        console.log('Données regroupées et triées :', groupedData);
+        // Créer une nouvelle référence pour forcer le re-render
+        setData({ ...groupedData });
+        localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
+        setError(null);
+      } catch (err) {
+        console.error("Erreur lors de la mise à jour via Socket.IO :", err);
+        setError("Échec de la récupération des données.");
+      } finally {
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+  
 
   useEffect(() => {
     isMounted.current = true;
@@ -412,24 +449,23 @@ export default function Chaines({ produits = [] }) {
     }
   }, [data]);
 
-  useEffect(() => {
-    const socket = io('https://gestion-planning-back-end-1.onrender.com', { transports: ['websocket'] });
-    socket.on('connect', () => {
-      console.log('Connecté au serveur Socket.IO');
-    });
-    socket.on('productsUpdate', (newProducts) => {
-      console.log('Mise à jour en temps réel reçue :', newProducts);
-      handleRefresh(newProducts);
-    });
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const socket = io('https://gestion-planning-back-end-1.onrender.com', { transports: ['websocket' , 'polling'] });
+  //   socket.on('connect', () => {
+  //     console.log('Connecté au serveur Socket.IO');
+  //   });
+  //   socket.on('productsUpdate', (newProducts) => {
+  //     console.log('Mise à jour en temps réel reçue :', newProducts);
+  //     handleRefresh(newProducts);
+  //   });
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   const handleManualRefresh = async () => {
     try {
       const response = await api.get("/process");
-      // On met à jour les données avec la réponse de l'API
       handleRefresh(Object.values(response.data));
     } catch (error) {
       console.error("Erreur de rafraîchissement manuel:", error);
