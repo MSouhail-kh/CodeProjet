@@ -5,6 +5,7 @@ import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
+import io from 'socket.io-client';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 /* Loader Styles */
@@ -323,6 +324,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
+
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -377,7 +379,6 @@ export default function Chaines({ produits = [] }) {
       });
 
       setData(groupedData);
-      // Mise à jour immédiate du cache lors d'un refresh manuel
       localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
       setError(null);
     } catch (err) {
@@ -388,34 +389,48 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
-useEffect(() => {
-  isMounted.current = true;
-  const cachedData = localStorage.getItem('cachedProducts');
-  if (cachedData) {
-    try {
-      const parsedData = JSON.parse(cachedData);
-      setData(parsedData);
-      setIsLoading(false); // On indique que le chargement est terminé
-    } catch (error) {
-      console.error('Erreur de parsing du cache:', error);
-      localStorage.removeItem('cachedProducts');
+  useEffect(() => {
+    isMounted.current = true;
+    const cachedData = localStorage.getItem('cachedProducts');
+    if (cachedData) {
+      try {
+        const parsedData = JSON.parse(cachedData);
+        setData(parsedData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Erreur de parsing du cache:', error);
+        localStorage.removeItem('cachedProducts');
+        handleRefresh(produits);
+      }
+    } else {
       handleRefresh(produits);
     }
-  } else {
-    handleRefresh(produits);
-  }
-  return () => {
-    isMounted.current = false;
-  };
-}, []);
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
-  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem('cachedProducts', JSON.stringify(data));
     }
   }, [data]);
 
+  useEffect(() => {
+    const socket = io('http://localhost:5000'); 
+    socket.on('connect', () => {
+      console.log('Connecté au serveur Socket.IO');
+    });
+    socket.on('productsUpdate', (newProducts) => {
+      console.log('Mise à jour en temps réel reçue', newProducts);
+      handleRefresh(newProducts);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Gestion du drag & drop
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
       "text/plain",
