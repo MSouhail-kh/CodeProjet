@@ -720,8 +720,8 @@ export default function Chaines({ produits = [] }) {
               handleMouseLeave={handleMouseLeave}
               filterAndSortProducts={filterAndSortProducts}
               darkMode
-              style={{color: ''}}
-            />
+              style={{ color: 'white' }}
+              />
           )}
         </MobileRow>
       </Container>
