@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
-import { CheckCircle } from "react-bootstrap-icons";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
-import NoImage from "../assets/NoImage.png";
+import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -176,17 +175,6 @@ const MobileRow = styled(Row)`
   }
 `;
 
-const Message = styled.p`
-  margin: 0.5rem auto 0;
-  text-align: center;
-  font-weight: bold;
-  color: ${({ type }) => (type === "success" ? "#2ecc71" : "#e74c3c")};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-`;
-
 const ChainColumn = ({
   chainNumber,
   products,
@@ -223,7 +211,7 @@ const ChainColumn = ({
             ) : (
               sortedProducts.map((item, index) => (
                 <StyledListGroupItem
-                  key={`${item.id}-${item.position_id}`}
+                  key={item.id}
                   draggable
                   onDragStart={(e) =>
                     handleDragStart(e, chainNumber, item, index)
@@ -236,12 +224,7 @@ const ChainColumn = ({
                   onMouseLeave={handleMouseLeave}
                 >
                   <ProductContainer>
-                    <ProductImage   src={item.image || NoImage}
-                        alt={item.style}
-                        onError={(e) => {
-                          e.target.src = NoImage; 
-                        }} 
-                    />
+                    <ProductImage src={item.image} alt={item.style} />
                     <ProductStyle>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
@@ -348,13 +331,12 @@ export default function Chaines({ produits = [] }) {
   const [chain, setChain] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState("");
-
+  
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
   const navigate = useNavigate();
 
-  const filterAndSortProducts = (products) => {
+  const filterAndSortProducts = (products, positionId) => {
     if (!products || products.length === 0) return [];
     const productsWithDefaultOrder = products.map((product, index) => ({
       ...product,
@@ -394,15 +376,9 @@ export default function Chaines({ produits = [] }) {
         groupedData[key] = filterAndSortProducts(groupedData[key], key);
       });
 
-      const now = new Date();
-      const updateTime = now.toLocaleString();
-      setLastUpdate(updateTime);
-
       setData(groupedData);
-      localStorage.setItem(
-        "cachedProducts",
-        JSON.stringify({ data: groupedData, lastUpdate: updateTime })
-      );
+      // Mise à jour immédiate du cache lors d'un refresh manuel
+      localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
       setError(null);
     } catch (err) {
       console.error("Erreur :", err);
@@ -412,40 +388,33 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
-  useEffect(() => {
-    isMounted.current = true;
-    const cachedData = localStorage.getItem("cachedProducts");
-    if (cachedData) {
-      try {
-        const parsedData = JSON.parse(cachedData);
-        if (parsedData.data) {
-          setData(parsedData.data);
-          setLastUpdate(parsedData.lastUpdate);
-          setIsLoading(false);
-        } else {
-          handleRefresh(produits);
-        }
-      } catch (error) {
-        console.error("Erreur de parsing du cache:", error);
-        localStorage.removeItem("cachedProducts");
-        handleRefresh(produits);
-      }
-    } else {
+useEffect(() => {
+  isMounted.current = true;
+  const cachedData = localStorage.getItem('cachedProducts');
+  if (cachedData) {
+    try {
+      const parsedData = JSON.parse(cachedData);
+      setData(parsedData);
+      setIsLoading(false); // On indique que le chargement est terminé
+    } catch (error) {
+      console.error('Erreur de parsing du cache:', error);
+      localStorage.removeItem('cachedProducts');
       handleRefresh(produits);
     }
-    return () => {
-      isMounted.current = false;
-    };
-  }, [produits]);
+  } else {
+    handleRefresh(produits);
+  }
+  return () => {
+    isMounted.current = false;
+  };
+}, []);
 
+  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
   useEffect(() => {
     if (Object.keys(data).length) {
-      localStorage.setItem(
-        "cachedProducts",
-        JSON.stringify({ data, lastUpdate })
-      );
+      localStorage.setItem('cachedProducts', JSON.stringify(data));
     }
-  }, [data, lastUpdate]);
+  }, [data]);
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -457,23 +426,22 @@ export default function Chaines({ produits = [] }) {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
-  
+
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
     const newData = { ...data };
-  
     if (!newData[targetPosition]) newData[targetPosition] = [];
     if (!newData[transferData.from]) newData[transferData.from] = [];
-  
+
     try {
       if (transferData.from === targetPosition) {
         const list = [...newData[targetPosition]];
         const [movedItem] = list.splice(transferData.index, 1);
         list.splice(dropIndex, 0, movedItem);
-  
         newData[targetPosition] = list.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -482,9 +450,13 @@ export default function Chaines({ produits = [] }) {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
-  
+        if (
+          targetList.length === 1 &&
+          targetList[0].id === `invisible-${targetPosition}`
+        ) {
+          targetList.pop();
+        }
         targetList.splice(dropIndex, 0, movedItem);
-  
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -492,23 +464,37 @@ export default function Chaines({ produits = [] }) {
         newData[targetPosition] = targetList.map((item, index) => ({
           ...item,
           order: index + 1,
-          position_id: targetPosition, 
         }));
       }
-  
+
       setData(newData);
-  
-      const updates = [];
-      Object.keys(newData).forEach((position) => {
-        newData[position].forEach((item, index) => {
+
+      let updates = [];
+      if (transferData.from === targetPosition) {
+        newData[targetPosition].forEach((item, index) => {
           updates.push({
             produit: item,
-            newPosition: parseInt(position, 10),
+            newPosition: targetPosition,
             newOrder: index + 1,
           });
         });
-      });
-  
+      } else {
+        newData[targetPosition].forEach((item, index) => {
+          updates.push({
+            produit: item,
+            newPosition: targetPosition,
+            newOrder: index + 1,
+          });
+        });
+        newData[transferData.from].forEach((item, index) => {
+          updates.push({
+            produit: item,
+            newPosition: transferData.from,
+            newOrder: index + 1,
+          });
+        });
+      }
+
       const dragPayload = { multipleUpdates: updates };
       await api.post("/update_drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
@@ -566,14 +552,6 @@ export default function Chaines({ produits = [] }) {
   return (
     <>
       <MyNavbar onRefresh={handleRefresh} />
-      {lastUpdate && (
-        <Container fluid className="d-flex justify-content-center">
-          <Message type="success">
-            <CheckCircle size={20} />
-            Mise à jour le : {lastUpdate}
-          </Message>
-        </Container>
-      )}
       <Container fluid className="p-4">
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
