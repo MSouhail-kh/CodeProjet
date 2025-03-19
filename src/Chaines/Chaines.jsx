@@ -85,12 +85,12 @@ const StyledCard = styled(Card)`
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 12px;
-  border: 2px solid #90be6d;
+  margin-bottom: 12px;  
   padding: 10px;
 
   &:hover {
     background: linear-gradient(145deg, #90be6d, #7aa95c);
+    width: 150px;
     color: #fff;
     transform: scale(1.03);
   }
@@ -121,27 +121,22 @@ const ProductContainer = styled.div`
   gap: 10px;
   padding: 10px;
 `;
+
 const ProductImage = styled.img`
-  width: 25vw;
-  height: 350px;
-  max-width: 400px;
-  border-radius: 16px;
+  width: 150px;
+  height: 200px;
+  border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 
   &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
   }
 
   @media (max-width: 768px) {
-    width: 95%;
-    height: 250px;
-    max-width: none;
-    object-fit: cover;
-    object-position: center;
-    margin: 0 auto;
+    width: 100%;
+    height: 200px;
   }
 `;
 
