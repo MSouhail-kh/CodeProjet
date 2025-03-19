@@ -26,6 +26,13 @@ const LoaderContainer = styled.div`
   height: 100vh;
   width: 100%;
   background: linear-gradient(135deg, #667eea, #764ba2);
+  animation: gradientAnimation 10s ease infinite;
+
+  @keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 `;
 
 const pulseAnimation = keyframes`
@@ -33,7 +40,6 @@ const pulseAnimation = keyframes`
   50% { transform: scale(1.2); opacity: 1; }
   100% { transform: scale(0.8); opacity: 0.7; }
 `;
-
 const Dot = styled.div`
   width: 24px;
   height: 24px;
@@ -42,6 +48,7 @@ const Dot = styled.div`
   background-color: #f9c74f;
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
+  box-shadow: 0 0 12px rgba(249, 199, 79, 0.8);
 `;
 
 const BouncingLoader = styled.div`
@@ -49,8 +56,6 @@ const BouncingLoader = styled.div`
   align-items: center;
   justify-content: center;
 `;
-
-/* Message Styles */
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -60,37 +65,44 @@ const Message = styled.p`
   justify-content: center;
   align-items: center;
   gap: 8px;
+  transition: opacity 0.3s ease;
+
+  &::before {
+    content: ${({ type }) => (type === "success" ? "'\\2713'" : "'\\26A0'")};
+    font-size: 1.2em;
+  }
 `;
 
-/* Card & List Styles */
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
   min-height: 320px;
-  border: 2px solid #f9c74f;
+  border: 1px solid rgba(249, 199, 79, 0.3);
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   background: #fff;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
+  height: 100%;
+  width: 100%;  
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 12px;  
+  margin-bottom: 12px;
   padding: 10px;
+  background: linear-gradient(145deg, rgba(144, 190, 109, 0.1), rgba(122, 169, 92, 0.1));
 
   &:hover {
-    background: linear-gradient(145deg, #90be6d, #7aa95c);
-    width: 150px;
+    background: linear-gradient(145deg, rgba(144, 190, 109, 0.2), rgba(122, 169, 92, 0.2));
     color: #fff;
     transform: scale(1.03);
   }
@@ -121,22 +133,23 @@ const ProductContainer = styled.div`
   gap: 10px;
   padding: 10px;
 `;
-
 const ProductImage = styled.img`
   width: 150px;
   height: 200px;
   border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(249, 199, 79, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
 
   &:hover {
     transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   }
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 200px;
+    height: 210px;
   }
 `;
 
@@ -149,7 +162,6 @@ const ProductStyle = styled.span`
   text-overflow: ellipsis;
   max-width: 16ch;
 `;
-
 const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
@@ -166,8 +178,9 @@ const HoverCard = styled.div`
     show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
   pointer-events: none;
+  border: 1px solid rgba(249, 199, 79, 0.2);
+  border-radius: 12px;
 `;
-
 const ControlButton = styled(Button)`
   width: 30px;
   height: 100%;
@@ -183,6 +196,7 @@ const ControlButton = styled(Button)`
   &:hover {
     background-color: transparent;
     opacity: 1;
+    transform: scale(1.1);
   }
 
   &:focus {
@@ -194,14 +208,13 @@ const ControlButton = styled(Button)`
     height: 6vh;
   }
 `;
-
 const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
+    padding: 0 1rem;
   }
 `;
-
 const ChainColumn = ({
   chainNumber,
   products,
