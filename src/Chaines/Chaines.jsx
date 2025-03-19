@@ -570,7 +570,6 @@ export default function Chaines({ produits = [] }) {
           <Dot delay="0.2s" />
           <Dot delay="0.4s" />
         </BouncingLoader>
-        {/* <LoaderMessage>Chargement des produits...</LoaderMessage> */}
       </LoaderContainer>
     );
   }
