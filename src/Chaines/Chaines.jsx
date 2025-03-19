@@ -214,8 +214,6 @@ const ControlButton = styled(Button)`
   background: transparent;
   position: relative;
   cursor: pointer;
-  transition: all 0.3s ease;
-
   &:hover {
     background-color: transparent;
   }
@@ -242,7 +240,7 @@ const ChainColumn = ({
   handleMouseMove,
   handleMouseLeave,
   filterAndSortProducts,
-  darkMode = false,
+  darkMode = true,
 }) => {
   const sortedProducts = filterAndSortProducts(products, chainNumber);
   return (
@@ -638,12 +636,12 @@ export default function Chaines({ produits = [] }) {
           ))}
           <Col md="auto" className="d-flex align-items-center">
             <ControlButton
-              variant="outline-light"
               onClick={() => setShowPosition6(!showPosition6)}
             />
           </Col>
           {showPosition6 && (
             <ChainColumn
+              className='text-light '
               chainNumber={6}
               products={data[6]}
               handleDragOver={handleDragOver}
@@ -655,7 +653,6 @@ export default function Chaines({ produits = [] }) {
               handleMouseLeave={handleMouseLeave}
               filterAndSortProducts={filterAndSortProducts}
               darkMode
-              style={{ color: 'white' }} 
               />
           )}
         </MobileRow>
