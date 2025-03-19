@@ -19,7 +19,8 @@ const formatTimestamp = (timestamp) => {
   return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
 };
 
-const LoaderContainer = styled.div`
+// Loader Styles (inchangés)
+export const LoaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,13 +29,13 @@ const LoaderContainer = styled.div`
   background: linear-gradient(135deg, #667eea, #764ba2);
 `;
 
-const pulseAnimation = keyframes`
+export const pulseAnimation = keyframes`
   0% { transform: scale(0.8); opacity: 0.7; }
   50% { transform: scale(1.2); opacity: 1; }
   100% { transform: scale(0.8); opacity: 0.7; }
 `;
 
-const Dot = styled.div`
+export const Dot = styled.div`
   width: 24px;
   height: 24px;
   margin: 0 6px;
@@ -44,14 +45,14 @@ const Dot = styled.div`
   animation-delay: ${(props) => props.delay || "0s"};
 `;
 
-const BouncingLoader = styled.div`
+export const BouncingLoader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 /* Message Styles */
-const Message = styled.p`
+export const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
   font-weight: bold;
@@ -63,7 +64,7 @@ const Message = styled.p`
 `;
 
 /* Card & List Styles */
-const StyledCard = styled(Card)`
+export const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -72,17 +73,18 @@ const StyledCard = styled(Card)`
   border: 2px solid #f9c74f;
   border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   background: #fff;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    border-color: #fbc531;
   }
 `;
 
-const StyledListGroupItem = styled(ListGroup.Item)`
+export const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 8px;
@@ -91,7 +93,8 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background-color: #90be6d;
+    /* Couleur de hover modifiée */
+    background-color: #78c2ad;
     color: #fff;
     transform: scale(1.03);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
@@ -101,7 +104,7 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   }
 `;
 
-const StyledList = styled.div`
+export const StyledList = styled.div`
   text-align: center;
   font-style: italic;
   background: transparent;
@@ -115,7 +118,7 @@ const StyledList = styled.div`
 `;
 
 /* Product Styles */
-const ProductContainer = styled.div`
+export const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -123,20 +126,21 @@ const ProductContainer = styled.div`
   padding: 10px;
 `;
 
-const ProductImage = styled.img`
-  width: 160px;
-  height: 180px;
+/* Pour afficher l'image plus grande et claire sur grand écran */
+export const ProductImage = styled.img`
+  width: 200px;
+  height: 220px;
   border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 
   @media (max-width: 768px) {
-    width: 100%; 
-    height: 200px; 
+    width: 100%;
+    height: auto;
   }
 `;
 
-const ProductStyle = styled.span`
+export const ProductStyle = styled.span`
   font-size: 18px;
   font-weight: 600;
   color: #333;
@@ -146,16 +150,17 @@ const ProductStyle = styled.span`
   max-width: 16ch;
 `;
 
-const HoverCard = styled.div`
+/* Hover Preview Card */
+export const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 300 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 20;
     return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
   }}px;
   z-index: 1000;
-  width: 260px;
+  width: 300px;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
@@ -164,21 +169,22 @@ const HoverCard = styled.div`
   pointer-events: none;
 `;
 
-const ControlButton = styled(Button)`
+/* Bouton de contrôle */
+export const ControlButton = styled(Button)`
   width: 30px;
-  height: 100%; 
-  background: none; 
+  height: 100%;
+  background: none;
   border: none;
   opacity: 0.9;
   background-color: transparent;
   position: relative;
   cursor: pointer;
   border-radius: 0;
-  transition: all 0.3s ease; 
+  transition: all 0.3s ease;
 
   &:hover {
     background-color: transparent;
-    opacity: 1; 
+    opacity: 1;
   }
 
   &:focus {
@@ -191,14 +197,15 @@ const ControlButton = styled(Button)`
   }
 `;
 
-const MobileRow = styled(Row)`
+export const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 1rem;
   }
 `;
 
-const ChainColumn = ({
+/* Composant ChainColumn */
+export const ChainColumn = ({
   chainNumber,
   products,
   handleDragOver,
@@ -222,9 +229,7 @@ const ChainColumn = ({
           <ListGroup
             variant="flush"
             onDragOver={handleDragOver}
-            onDrop={(e) =>
-              handleDrop(e, chainNumber, sortedProducts.length)
-            }
+            onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
           >
             {sortedProducts.length === 0 ? (
               <StyledList>
@@ -236,9 +241,7 @@ const ChainColumn = ({
                 <StyledListGroupItem
                   key={item.id}
                   draggable
-                  onDragStart={(e) =>
-                    handleDragStart(e, chainNumber, item, index)
-                  }
+                  onDragStart={(e) => handleDragStart(e, chainNumber, item, index)}
                   onDrop={(e) => handleDrop(e, chainNumber, index)}
                   onDragOver={handleDragOver}
                   onClick={() => handleItemClick(item)}
@@ -247,7 +250,7 @@ const ChainColumn = ({
                   onMouseLeave={handleMouseLeave}
                 >
                   <ProductContainer>
-                    <ProductImage src={item.image || NoImage} alt={item.style} />
+                    <ProductImage src={item.image || "/path/to/NoImage.png"} alt={item.style} />
                     <ProductStyle>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
@@ -260,7 +263,8 @@ const ChainColumn = ({
   );
 };
 
-const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
+/* Composant HoverPreview */
+export const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
   return (
     <HoverCard
@@ -278,15 +282,9 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
           border: "2px solid #f9c74f",
         }}
       >
-        <div
-          style={{
-            position: "relative",
-            height: "180px",
-            background: "#eee",
-          }}
-        >
+        <div style={{ position: "relative", height: "180px", background: "#eee" }}>
           <img
-            src={hoveredItem.image || NoImage}
+            src={hoveredItem.image || "/path/to/NoImage.png"}
             alt={hoveredItem.style}
             style={{
               width: "100%",
@@ -306,14 +304,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
               marginBottom: "8px",
             }}
           >
-            <h3
-              style={{
-                margin: 0,
-                fontSize: "1.2rem",
-                fontWeight: 600,
-                color: "#2d3436",
-              }}
-            >
+            <h3 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 600, color: "#2d3436" }}>
               {hoveredItem.style}
             </h3>
             <span
@@ -329,15 +320,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
             </span>
           </div>
           {hoveredItem.details && (
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "#636e72",
-                lineHeight: 1.4,
-                maxHeight: "100px",
-                overflowY: "auto",
-              }}
-            >
+            <div style={{ fontSize: "0.875rem", color: "#636e72", lineHeight: 1.4, maxHeight: "100px", overflowY: "auto" }}>
               {hoveredItem.details}
             </div>
           )}
@@ -346,6 +329,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
+
 
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
