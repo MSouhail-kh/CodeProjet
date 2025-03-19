@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
+import { CheckCircle } from "react-bootstrap-icons";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
-import NoImage from "../assets/No+Image.png";
+import NoImage from "../assets/NoImage.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -175,6 +176,17 @@ const MobileRow = styled(Row)`
   }
 `;
 
+const Message = styled.p`
+  margin: 0.5rem auto 0;
+  text-align: center;
+  font-weight: bold;
+  color: ${({ type }) => (type === "success" ? "#2ecc71" : "#e74c3c")};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+`;
+
 const ChainColumn = ({
   chainNumber,
   products,
@@ -331,6 +343,7 @@ export default function Chaines({ produits = [] }) {
   const [chain, setChain] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState(""); // Ajout de l'état lastUpdate
 
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
@@ -377,8 +390,13 @@ export default function Chaines({ produits = [] }) {
       });
 
       setData(groupedData);
-      // Mise à jour immédiate du cache lors d'un refresh manuel
-      localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
+      const now = new Date();
+      const updateTime = now.toLocaleString();
+      setLastUpdate(updateTime);
+      localStorage.setItem(
+        "cachedProducts",
+        JSON.stringify({ data: groupedData, lastUpdate: updateTime })
+      );
       setError(null);
     } catch (err) {
       console.error("Erreur :", err);
@@ -388,33 +406,40 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
-useEffect(() => {
-  isMounted.current = true;
-  const cachedData = localStorage.getItem('cachedProducts');
-  if (cachedData) {
-    try {
-      const parsedData = JSON.parse(cachedData);
-      setData(parsedData);
-      setIsLoading(false); // On indique que le chargement est terminé
-    } catch (error) {
-      console.error('Erreur de parsing du cache:', error);
-      localStorage.removeItem('cachedProducts');
+  useEffect(() => {
+    isMounted.current = true;
+    const cachedData = localStorage.getItem("cachedProducts");
+    if (cachedData) {
+      try {
+        const parsedData = JSON.parse(cachedData);
+        if (parsedData.data) {
+          setData(parsedData.data);
+          setLastUpdate(parsedData.lastUpdate);
+          setIsLoading(false);
+        } else {
+          handleRefresh(produits);
+        }
+      } catch (error) {
+        console.error("Erreur de parsing du cache:", error);
+        localStorage.removeItem("cachedProducts");
+        handleRefresh(produits);
+      }
+    } else {
       handleRefresh(produits);
     }
-  } else {
-    handleRefresh(produits);
-  }
-  return () => {
-    isMounted.current = false;
-  };
-}, []);
+    return () => {
+      isMounted.current = false;
+    };
+  }, [produits]);
 
-  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
   useEffect(() => {
     if (Object.keys(data).length) {
-      localStorage.setItem('cachedProducts', JSON.stringify(data));
+      localStorage.setItem(
+        "cachedProducts",
+        JSON.stringify({ data, lastUpdate })
+      );
     }
-  }, [data]);
+  }, [data, lastUpdate]);
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -548,11 +573,17 @@ useEffect(() => {
       </LoaderContainer>
     );
   }
-
+  retu
   return (
     <>
       <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
+        {lastUpdate && (
+          <Message type="success">
+            <CheckCircle size={20} />
+            <span>Dernière mise à jour: {lastUpdate}</span>
+          </Message>
+        )}
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
             <ChainColumn
