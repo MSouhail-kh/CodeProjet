@@ -34,39 +34,81 @@ const NavContainer = styled.div`
 `;
 
 const LogoContainer = styled(Navbar.Brand)`
-  font-size: 1.5rem;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
-  animation: ${textColorAnimation} 5s ease infinite;
-  transition: transform 0.3s ease;
+  font-size: 1.8rem;
+  font-weight: 800;
+  padding: 0.5rem 1.5rem;
+  border-radius: 15px;
+  background: linear-gradient(45deg, #fff, #e0e0e0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    transition: 0.6s;
+  }
 
   &:hover {
     transform: scale(1.05);
+    &::before {
+      left: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+    padding: 0.4rem 1rem;
   }
 `;
 
 const IconsContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
+  padding-right: 1rem;
+
+  @media (max-width: 768px) {
+    gap: 0.8rem;
+    padding-right: 0.5rem;
+  }
 `;
 
 const IconButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.navIconBg};
+  backdrop-filter: blur(4px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
   }
 `;
 
@@ -125,21 +167,44 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
   return (
     <>
       <StyledNavbar expand="lg" variant="dark">
-        <Container fluid>
-          <NavContainer>
-            <LogoContainer href="/Chaines">Sigmatex</LogoContainer>
-              <div style={{ display: "flex", alignItems: "end", gap: "1rem" }}>
-                    <IconButton onClick={handleShowSearchModal}>
-                      <Search size={20} />
-                    </IconButton>
-                    <IconButton onClick={handleRefreshPage} disabled={isLoading}>
-                      {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
-                    </IconButton>
-                  <UserProfile />
-              </div>
-          </NavContainer>
-        </Container>
-      </StyledNavbar>
+          <Container fluid>
+            <NavContainer>
+              <LogoContainer href="/Chaines">
+                <img 
+                  src="/chemin/vers/logo.png" 
+                  alt="Sigmatex Logo"
+                  style={{ height: '32px', marginRight: '12px' }}
+                />
+                Sigmatex
+              </LogoContainer>
+              
+              <IconsContainer>
+                <IconButton onClick={handleShowSearchModal}>
+                  <Search size={22} style={{ strokeWidth: '1.5' }} />
+                </IconButton>
+                
+                <IconButton 
+                  onClick={handleRefreshPage} 
+                  disabled={isLoading}
+                  style={{ position: 'relative' }}
+                >
+                  {isLoading ? (
+                    <BounceLoader 
+                      size={26} 
+                      color="#fff" 
+                      css="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+                    />
+                  ) : (
+                    <ArrowClockwise size={22} />
+                  )}
+                </IconButton>
+                
+                <UserProfile />
+              </IconsContainer>
+            </NavContainer>
+          </Container>
+        </StyledNavbar>
+
 
       {refreshMessage && (
         <Container fluid className="d-flex justify-content-center">
