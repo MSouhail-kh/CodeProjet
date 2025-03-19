@@ -138,7 +138,13 @@ const ProductStyle = styled.span`
   }
 `;
 
-/* Conteneur principal responsive */
+const BouncingLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+
 const StyledContainer = styled(Container)`
   max-width: 1800px;
   padding: 2rem 4rem;
