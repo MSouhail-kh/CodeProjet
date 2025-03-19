@@ -56,6 +56,7 @@ const BouncingLoader = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -88,7 +89,6 @@ const StyledCard = styled(Card)`
       : "linear-gradient(135deg, #ffffff, #f8f9fa)"};
   color: ${({ darkMode }) => (darkMode ? "white" : "black")};
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
@@ -212,13 +212,9 @@ export const HoverCard = styled.div`
 const ControlButton = styled(Button)`
   width: 30px;
   height: 100%;
-  background: none;
-  border: none;
-  opacity: 0.9;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: transparent;
   position: relative;
   cursor: pointer;
-  border-radius: 0;
   transition: all 0.3s ease;
 
   &:hover {
