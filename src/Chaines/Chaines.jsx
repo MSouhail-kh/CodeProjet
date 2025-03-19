@@ -26,13 +26,6 @@ const LoaderContainer = styled.div`
   height: 100vh;
   width: 100%;
   background: linear-gradient(135deg, #667eea, #764ba2);
-  animation: gradientAnimation 10s ease infinite;
-
-  @keyframes gradientAnimation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
 `;
 
 const pulseAnimation = keyframes`
@@ -40,6 +33,7 @@ const pulseAnimation = keyframes`
   50% { transform: scale(1.2); opacity: 1; }
   100% { transform: scale(0.8); opacity: 0.7; }
 `;
+
 const Dot = styled.div`
   width: 24px;
   height: 24px;
@@ -48,7 +42,6 @@ const Dot = styled.div`
   background-color: #f9c74f;
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
-  box-shadow: 0 0 12px rgba(249, 199, 79, 0.8);
 `;
 
 const BouncingLoader = styled.div`
@@ -56,6 +49,8 @@ const BouncingLoader = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
+/* Message Styles */
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -65,12 +60,6 @@ const Message = styled.p`
   justify-content: center;
   align-items: center;
   gap: 8px;
-  transition: opacity 0.3s ease;
-
-  &::before {
-    content: ${({ type }) => (type === "success" ? "'\\2713'" : "'\\26A0'")};
-    font-size: 1.2em;
-  }
 `;
 
 const StyledCard = styled(Card)`
@@ -156,12 +145,16 @@ const ProductImage = styled.img`
 const ProductStyle = styled.span`
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: ${({ darkMode }) =>
+    darkMode
+      ? "white" 
+      : "black"};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 16ch;
 `;
+
 const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
@@ -178,8 +171,6 @@ const HoverCard = styled.div`
     show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
   pointer-events: none;
-  border: 1px solid rgba(249, 199, 79, 0.2);
-  border-radius: 12px;
 `;
 
 const ControlButton = styled(Button)`
@@ -197,7 +188,6 @@ const ControlButton = styled(Button)`
   &:hover {
     background-color: transparent;
     opacity: 1;
-    transform: scale(1.1);
   }
 
   &:focus {
@@ -209,13 +199,14 @@ const ControlButton = styled(Button)`
     height: 6vh;
   }
 `;
+
 const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 1.5rem;
-    padding: 0 1rem;
+    gap: 1rem;
   }
 `;
+
 const ChainColumn = ({
   chainNumber,
   products,
