@@ -25,13 +25,13 @@ const LoaderContainer = styled.div`
   justify-content: center;
   height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
 `;
 
 const pulseAnimation = keyframes`
-  0% { transform: scale(0.8); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.8); opacity: 0.7; }
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
 `;
 
 const Dot = styled.div`
@@ -62,44 +62,43 @@ const Message = styled.p`
   gap: 8px;
 `;
 
+/* Card & List Styles */
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
-  min-height: 340px; /* Augmenté pour un design plus moderne */
-  border: none;
+  min-height: 320px;
+  border: 2px solid #f9c74f;
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: linear-gradient(135deg, #ffffff, #f8f9fa);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 12px;
+  background: #ffffff;
+  border: none;
+  border-radius: 10px;
   margin-bottom: 12px;
-  border: 2px solid #e0e0e0;
-  background: linear-gradient(135deg, #f9f9f9, #ffffff);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  padding: 12px;
+  cursor: pointer;
 
   &:hover {
-    background: linear-gradient(135deg, #6c63ff, #3f3d56);
-    color: #fff;
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: #f1f1f1;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
-
   &:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    box-shadow: none;
   }
 `;
 
@@ -121,26 +120,25 @@ const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   padding: 10px;
 `;
 
 const ProductImage = styled.img`
-  width: 180px; /* Augmenté pour des images plus grandes */
-  height: 200px; /* Augmenté pour des images plus grandes */
+  width: 220px;
+  height: 260px;
   border-radius: 16px;
   object-fit: cover;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease;
 
   &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
   }
 
   @media (max-width: 768px) {
-    width: 100%;
-    height: 220px; /* Ajusté pour les écrans mobiles */
+    width: 100%; 
+    height: auto; 
   }
 `;
 
@@ -156,24 +154,20 @@ const ProductStyle = styled.span`
 
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 280 - 20)}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 20;
     return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
   }}px;
   z-index: 1000;
-  width: 280px; /* Augmenté pour un aperçu plus grand */
+  width: 260px;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
     show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
   pointer-events: none;
-  background: #ffffff;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 `;
 
 const ControlButton = styled(Button)`
@@ -415,7 +409,6 @@ export default function Chaines({ produits = [] }) {
 
       setData(groupedData);
       localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
-      // Enregistrement de la date de dernière mise à jour
       const now = new Date().toISOString();
       localStorage.setItem("lastUpdate", JSON.stringify(now));
       setLastUpdate(now);
@@ -571,7 +564,6 @@ export default function Chaines({ produits = [] }) {
     navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
 
-
   if (isLoading) {
     return (
       <LoaderContainer>
@@ -593,7 +585,7 @@ export default function Chaines({ produits = [] }) {
             {lastUpdate && (
               <Message type="success">
                 <CheckCircle size={20} />
-                  Dernière mise à jour : {formatTimestamp(lastUpdate)}
+                Dernière mise à jour : {formatTimestamp(lastUpdate)}
               </Message>
             )}
           </Col>
