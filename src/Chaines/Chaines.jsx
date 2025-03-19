@@ -139,7 +139,7 @@ const ProductStyle = styled.span`
 `;
 
 /* Conteneur principal responsive */
-const Container = styled(Container)`
+const StyledContainer = styled(Container)`
   max-width: 1800px;
   padding: 2rem 4rem;
 
@@ -147,6 +147,7 @@ const Container = styled(Container)`
     padding: 3rem 6rem;
   }
 `;
+
 const ChainColumn = ({
   chainNumber,
   products,
@@ -524,7 +525,7 @@ export default function Chaines({ produits = [] }) {
   return (
     <>
       <MyNavbar onRefresh={handleRefresh} />
-      <Container fluid className="p-4">
+      <StyledContainer fluid className="p-4">
         <Row className="mb-3">
           <Col className="text-end">
             {lastUpdate && (
@@ -573,7 +574,7 @@ export default function Chaines({ produits = [] }) {
             />
           )}
         </MobileRow>
-      </Container>
+      </StyledContainer>
 
       <HoverPreview
         hoveredItem={hoveredItem}
