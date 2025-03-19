@@ -75,11 +75,16 @@ const StyledCard = styled(Card)`
   flex-direction: column;
   flex: 1;
   height: 100%;
-  min-height: 300px; 
+  min-height: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 16px;
   overflow: hidden;
+  background: ${({ darkMode }) =>
+    darkMode
+      ? "linear-gradient(135deg, #2c3e50, #34495e)"
+      : "linear-gradient(135deg, #ffffff, #f8f9fa)"};
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
 
   &:hover {
     transform: translateY(-5px);
@@ -89,14 +94,22 @@ const StyledCard = styled(Card)`
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  border: 1px solid #e0e0e0;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid ${({ darkMode }) => (darkMode ? "#34495e" : "#e0e0e0")};
+  background: ${({ darkMode }) =>
+    darkMode
+      ? "linear-gradient(135deg, #2c3e50, #34495e)"
+      : "linear-gradient(135deg, #f9f9f9, #ffffff)"};
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    background: ${({ darkMode }) =>
+      darkMode
+        ? "linear-gradient(135deg, #1abc9c, #16a085)"
+        : "linear-gradient(135deg, #6a11cb, #2575fc)"};
     color: white;
     transform: scale(1.02);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -104,24 +117,29 @@ const StyledListGroupItem = styled(ListGroup.Item)`
 
   &:active {
     transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
 const StyledList = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   font-style: italic;
   background: transparent;
   border: none;
   color: #888;
-  height: auto;           
-  min-height: 100px;    
+  min-height: 150px; 
+  height: auto;
+  padding: 20px;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
-    height: auto;         
-    min-height: 50vh;    
+    min-height: 50vh;
   }
 `;
-
 
 const ProductContainer = styled.div`
   display: flex;
