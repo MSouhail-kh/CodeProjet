@@ -128,13 +128,15 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
         <Container fluid>
           <NavContainer>
             <LogoContainer href="/Chaines">Sigmatex</LogoContainer>
-              <IconButton onClick={handleShowSearchModal}>
-                <Search size={20} />
-              </IconButton>
-              <IconButton onClick={handleRefreshPage} disabled={isLoading}>
-                {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
-              </IconButton>
-            <UserProfile />
+              <div style={{ display: "flex", alignItems: "end", gap: "1rem" }}>
+                    <IconButton onClick={handleShowSearchModal}>
+                      <Search size={20} />
+                    </IconButton>
+                    <IconButton onClick={handleRefreshPage} disabled={isLoading}>
+                      {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
+                    </IconButton>
+                  <UserProfile />
+              </div>
           </NavContainer>
         </Container>
       </StyledNavbar>
