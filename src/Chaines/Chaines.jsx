@@ -68,7 +68,10 @@ const Message = styled.p`
   gap: 8px;
   transition: opacity 0.3s ease;
 
-
+  &::before {
+    content: ${({ type }) => (type === "success" ? "'\\2713'" : "'\\26A0'")};
+    font-size: 1.2em;
+  }
 `;
 const StyledCard = styled(Card)`
   display: flex;
@@ -94,15 +97,14 @@ const StyledCard = styled(Card)`
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
-  min-height: 300px; 
-  height: 100%;  
+  height: 100%;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 12px;
   margin-bottom: 12px;
   border: 2px solid ${({ darkMode }) => (darkMode ? "#34495e" : "#e0e0e0")};
   background: ${({ darkMode }) =>
     darkMode
-      ? "linear-gradient(135deg, #2c3e50, #34495e)" 
+      ? "linear-gradient(135deg, #2c3e50, #34495e)" // Fond sombre pour la chaîne 6
       : "linear-gradient(135deg, #f9f9f9, #ffffff)"};
   color: ${({ darkMode }) => (darkMode ? "white" : "black")}; // Texte blanc pour le mode sombre
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -128,8 +130,7 @@ const StyledList = styled.div`
   background: transparent;
   border: none;
   color: #555;
-  height: 100%
-  min-height: 200px;
+  min-height: 120px;
 
   @media (max-width: 768px) {
     min-height: 60vh;
@@ -166,7 +167,10 @@ const ProductImage = styled.img`
 const ProductStyle = styled.span`
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: ${({ darkMode }) =>
+    darkMode
+      ? "white" 
+      : "black"};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -228,7 +232,6 @@ const MobileRow = styled(Row)`
     padding: 0 1rem;
   }
 `;
-
 const ChainColumn = ({
   chainNumber,
   products,
@@ -240,6 +243,7 @@ const ChainColumn = ({
   handleMouseMove,
   handleMouseLeave,
   filterAndSortProducts,
+  
   darkMode = false,
 }) => {
   const sortedProducts = filterAndSortProducts(products, chainNumber);
@@ -247,14 +251,16 @@ const ChainColumn = ({
     <Col xs={12} sm={6} md={2}>
       <StyledCard darkMode={darkMode}>
         <Card.Body>
-          <Card.Title className={`text-center fw-bold ${darkMode ? "text-light" : ""}`}>
+          <Card.Title>
             Chaine {chainNumber}
           </Card.Title>
           <ListGroup
-            style={{ height: "100%" }}
+            style={{height:'100px'}}
             variant="flush"
             onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
+            onDrop={(e) =>
+              handleDrop(e, chainNumber, sortedProducts.length)
+            }
           >
             {sortedProducts.length === 0 ? (
               <StyledList>
@@ -267,7 +273,9 @@ const ChainColumn = ({
                   key={item.id}
                   draggable
                   darkMode={darkMode}
-                  onDragStart={(e) => handleDragStart(e, chainNumber, item, index)}
+                  onDragStart={(e) =>
+                    handleDragStart(e, chainNumber, item, index)
+                  }
                   onDrop={(e) => handleDrop(e, chainNumber, index)}
                   onDragOver={handleDragOver}
                   onClick={() => handleItemClick(item)}
@@ -277,7 +285,7 @@ const ChainColumn = ({
                 >
                   <ProductContainer>
                     <ProductImage src={item.image || NoImage} alt={item.style} />
-                    <ProductStyle>{item.style}</ProductStyle>
+                    <ProductStyle  className={`text-center fw-bold ${darkMode ? "text-light" : ""}`} >{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
               ))
@@ -288,7 +296,6 @@ const ChainColumn = ({
     </Col>
   );
 };
-
 
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
@@ -640,8 +647,6 @@ export default function Chaines({ produits = [] }) {
           {showPosition6 && (
             <ChainColumn
               chainNumber={6}
-              
-              className='text-light '
               products={data[6]}
               handleDragOver={handleDragOver}
               handleDrop={handleDrop}
@@ -652,7 +657,6 @@ export default function Chaines({ produits = [] }) {
               handleMouseLeave={handleMouseLeave}
               filterAndSortProducts={filterAndSortProducts}
               darkMode
-              style={{ color: 'white' }} 
               />
           )}
         </MobileRow>
