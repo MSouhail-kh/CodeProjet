@@ -236,7 +236,7 @@ const ChainColumn = ({
                   onMouseLeave={handleMouseLeave}
                 >
                   <ProductContainer>
-                    <ProductImage src={hoveredItem.image || NoImage} alt={item.style} />
+                    <ProductImage src={item.image || NoImage} alt={item.style} />
                     <ProductStyle>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
