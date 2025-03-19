@@ -236,7 +236,7 @@ const ChainColumn = ({
             }
           >
             {sortedProducts.length === 0 ? (
-              <StyledList>
+              <StyledList style={{height: "100%"}}>
                 <br />
                 <br />
               </StyledList>
@@ -257,7 +257,7 @@ const ChainColumn = ({
                 >
                   <ProductContainer>
                     <ProductImage src={item.image || NoImage} alt={item.style} />
-                    <ProductStyle>{item.style}</ProductStyle>
+                    <ProductStyle className={darkMode ? "bg-dark text-white" : ""}>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
               ))
