@@ -88,15 +88,12 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   border-radius: 12px;
   margin-bottom: 12px;
   border: 2px solid #90be6d;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(145deg, #ffffff, #f9f9f9);
-  padding: 12px;
+  padding: 10px;
 
   &:hover {
     background: linear-gradient(145deg, #90be6d, #7aa95c);
     color: #fff;
     transform: scale(1.03);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
   }
 
   &:active {
@@ -127,7 +124,7 @@ const ProductContainer = styled.div`
 `;
 
 const ProductImage = styled.img`
-  width: 180px;
+  width: 150px;
   height: 200px;
   border-radius: 12px;
   object-fit: cover;
@@ -140,7 +137,7 @@ const ProductImage = styled.img`
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 220px;
+    height: 210px;
   }
 `;
 
