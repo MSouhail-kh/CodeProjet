@@ -19,164 +19,29 @@ const formatTimestamp = (timestamp) => {
   return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
 };
 
-/* Loader amélioré avec effet de flottement */
-const floatingAnimation = keyframes`
-  0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(10deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
-`;
-
 const LoaderContainer = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, hsl(240, 76%, 62%), hsl(268, 47%, 44%));
-  backdrop-filter: blur(10px);
+  width: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+`;
+
+const pulseAnimation = keyframes`
+  0% { transform: scale(0.8); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.7; }
 `;
 
 const Dot = styled.div`
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(45deg, #ff6b6b, #ff9f43);
-  border-radius: 16px;
-  animation: ${floatingAnimation} 2s ease-in-out infinite;
-  box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
-  transform-style: preserve-3d;
-  &::after {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    background: linear-gradient(45deg, #ff9f43, #ff6b6b);
-    filter: blur(15px);
-    opacity: 0.5;
-    border-radius: inherit;
-  }
-`;
-
-// const LoaderMessage = styled.p`
-//   color: white;
-//   font-size: 1.2rem;
-//   margin-top: 2rem;
-//   letter-spacing: 2px;
-//   text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-// `;
-
-/* Cartes redimensionnées avec effet verre */
-const StyledCard = styled(Card)`
-  min-height: 480px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 24px;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-  
-  &:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
-  }
-
-  @media (min-width: 1600px) {
-    min-height: 600px;
-    width: 380px;
-  }
-`;
-
-/* Élément de liste amélioré */
-const StyledListGroupItem = styled(ListGroup.Item)`
-  background: rgba(255, 255, 255, 0.7);
-  border: 2px solid rgba(144, 190, 109, 0.3);
-  backdrop-filter: blur(6px);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: linear-gradient(135deg, rgba(144, 190, 109, 0.9), rgba(67, 170, 139, 0.9));
-    transform: perspective(500px) translateZ(20px);
-    box-shadow: 0 10px 25px rgba(67, 170, 139, 0.3);
-  }
-`;
-
-/* Image produit améliorée */
-const ProductImage = styled.img`
-  width: 240px;
-  height: 280px;
-  border-radius: 20px;
-  object-fit: contain;
-  padding: 15px;
-  background: white;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  
-  ${StyledListGroupItem}:hover & {
-    transform: scale(1.05) rotate(1deg);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-  }
-
-  @media (min-width: 1600px) {
-    width: 320px;
-    height: 360px;
-  }
-`;
-
-/* Prévisualisation hover améliorée */
-const HoverCard = styled.div`
-  width: 340px;
-  border-radius: 24px;
-  background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(245,245,245,0.98));
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-  overflow: hidden;
-  transform-style: preserve-3d;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(45deg, #90be6d, #43aa8b);
-    z-index: -1;
-    filter: blur(20px);
-  }
-
-  img {
-    height: 240px;
-    object-fit: contain;
-    background: linear-gradient(145deg, #f8f9fa, #ffffff);
-    transition: transform 0.3s ease;
-  }
-
-  @media (min-width: 1600px) {
-    width: 420px;
-    
-    img {
-      height: 320px;
-    }
-  }
-`;
-
-/* Typographie améliorée */
-const ProductStyle = styled.span`
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: hsl(210, 12%, 25%);
-  font-family: 'Inter', sans-serif;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  
-  @media (min-width: 1600px) {
-    font-size: 1.8rem;
-  }
-`;
-
-/* Conteneur principal */
-const StyledContainer = styled(Container)`
-  max-width: 1800px;
-  padding: 3rem 5rem;
-  background: rgba(248, 249, 250, 0.8);
-  backdrop-filter: blur(15px);
-
-  @media (min-width: 1600px) {
-    padding: 4rem 8rem;
-  }
+  width: 24px;
+  height: 24px;
+  margin: 0 6px;
+  border-radius: 50%;
+  background-color: #f9c74f;
+  animation: ${pulseAnimation} 1.4s infinite ease-in-out;
+  animation-delay: ${(props) => props.delay || "0s"};
 `;
 
 const BouncingLoader = styled.div`
@@ -185,19 +50,151 @@ const BouncingLoader = styled.div`
   justify-content: center;
 `;
 
-/* Message de mise à jour */
-const UpdateMessage = styled.p`
-  font-size: 1.1rem;
-  padding: 12px 24px;
-  border-radius: 50px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  animation: slideIn 0.6s ease-out;
+/* Message Styles */
+const Message = styled.p`
+  margin: 0.5rem auto 0;
+  text-align: center;
+  font-weight: bold;
+  color: ${({ type }) => (type === "success" ? "#2ecc71" : "#e74c3c")};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+`;
 
-  @keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+/* Card & List Styles */
+const StyledCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-height: 320px;
+  border: 2px solid #f9c74f;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #fff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const StyledListGroupItem = styled(ListGroup.Item)`
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 2px solid #90be6d;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #90be6d;
+    color: #fff;
+    transform: scale(1.03);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+  }
+  &:active {
+    transform: scale(0.97);
+  }
+`;
+
+const StyledList = styled.div`
+  text-align: center;
+  font-style: italic;
+  background: transparent;
+  border: none;
+  color: #555;
+  min-height: 120px;
+
+  @media (max-width: 768px) {
+    min-height: 60vh;
+  }
+`;
+
+/* Product Styles */
+const ProductContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+`;
+
+const ProductImage = styled.img`
+  width: 160px;
+  height: 180px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    width: 100%; 
+    height: 200px; 
+  }
+`;
+
+const ProductStyle = styled.span`
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 16ch;
+`;
+
+const HoverCard = styled.div`
+  position: fixed;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
+  top: ${({ y, cardHeight }) => {
+    const viewportHeight = window.innerHeight;
+    const calculatedBottom = y + cardHeight + 20;
+    return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
+  }}px;
+  z-index: 1000;
+  width: 260px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  transform: ${({ show }) =>
+    show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+  pointer-events: none;
+`;
+
+const ControlButton = styled(Button)`
+  width: 30px;
+  height: 100%; 
+  background: none; 
+  border: none;
+  opacity: 0.9;
+  background-color: transparent;
+  position: relative;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.3s ease; 
+
+  &:hover {
+    background-color: transparent;
+    opacity: 1; 
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 6vh;
+  }
+`;
+
+const MobileRow = styled(Row)`
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
   }
 `;
 
@@ -562,6 +559,7 @@ export default function Chaines({ produits = [] }) {
     navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
 
+
   if (isLoading) {
     return (
       <LoaderContainer>
@@ -577,14 +575,14 @@ export default function Chaines({ produits = [] }) {
   return (
     <>
       <MyNavbar onRefresh={handleRefresh} />
-      <StyledContainer fluid className="p-4">
+      <Container fluid className="p-4">
         <Row className="mb-3">
           <Col className="text-end">
             {lastUpdate && (
-              <UpdateMessage type="success">
-                <CheckCircle size={24} />
-                Dernière mise à jour : {formatTimestamp(lastUpdate)}
-              </UpdateMessage>
+              <Message type="success">
+                <CheckCircle size={20} />
+                  Dernière mise à jour : {formatTimestamp(lastUpdate)}
+              </Message>
             )}
           </Col>
         </Row>
@@ -626,7 +624,7 @@ export default function Chaines({ produits = [] }) {
             />
           )}
         </MobileRow>
-      </StyledContainer>
+      </Container>
 
       <HoverPreview
         hoveredItem={hoveredItem}
