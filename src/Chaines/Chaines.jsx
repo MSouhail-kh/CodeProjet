@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FiCheckCircle as CheckCircle } from "react-icons/fi";
-
+import { CheckCircle } from "react-bootstrap-icons";
 /* Loader Styles */
 const LoaderContainer = styled.div`
   display: flex;
