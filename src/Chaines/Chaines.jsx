@@ -75,44 +75,45 @@ const StyledCard = styled(Card)`
   flex-direction: column;
   flex: 1;
   height: 100%;
-  min-height: 300px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 340px;
+  border: none;
   border-radius: 16px;
   overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   background: ${({ darkMode }) =>
     darkMode
       ? "linear-gradient(135deg, #2c3e50, #34495e)"
       : "linear-gradient(135deg, #ffffff, #f8f9fa)"};
   color: ${({ darkMode }) => (darkMode ? "white" : "black")};
-
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   }
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
+  min-height: 300px; 
+  height: 100%;  
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 12px;
-  border: 1px solid ${({ darkMode }) => (darkMode ? "#34495e" : "#e0e0e0")};
+  border: 2px solid ${({ darkMode }) => (darkMode ? "#34495e" : "#e0e0e0")};
   background: ${({ darkMode }) =>
     darkMode
-      ? "linear-gradient(135deg, #2c3e50, #34495e)"
+      ? "linear-gradient(135deg, #2c3e50, #34495e)" 
       : "linear-gradient(135deg, #f9f9f9, #ffffff)"};
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")}; // Texte blanc pour le mode sombre
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
     background: ${({ darkMode }) =>
       darkMode
-        ? "linear-gradient(135deg, #1abc9c, #16a085)"
+        ? "linear-gradient(135deg, #6a11cb, #2575fc)" // Couleur de survol pour le mode sombre
         : "linear-gradient(135deg, #6a11cb, #2575fc)"};
-    color: white;
-    transform: scale(1.02);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 
   &:active {
@@ -122,22 +123,16 @@ const StyledListGroupItem = styled(ListGroup.Item)`
 `;
 
 const StyledList = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   text-align: center;
   font-style: italic;
   background: transparent;
   border: none;
-  color: #888;
-  min-height: 150px; 
-  height: auto;
-  padding: 20px;
-  box-sizing: border-box;
+  color: #555;
+  height: 100%
+  min-height: 200px;
 
   @media (max-width: 768px) {
-    min-height: 50vh;
+    min-height: 60vh;
   }
 `;
 
@@ -233,6 +228,7 @@ const MobileRow = styled(Row)`
     padding: 0 1rem;
   }
 `;
+
 const ChainColumn = ({
   chainNumber,
   products,
@@ -244,7 +240,6 @@ const ChainColumn = ({
   handleMouseMove,
   handleMouseLeave,
   filterAndSortProducts,
-  
   darkMode = false,
 }) => {
   const sortedProducts = filterAndSortProducts(products, chainNumber);
@@ -252,16 +247,14 @@ const ChainColumn = ({
     <Col xs={12} sm={6} md={2}>
       <StyledCard darkMode={darkMode}>
         <Card.Body>
-          <Card.Title className="text-center fw-bold">
+          <Card.Title className={`text-center fw-bold ${darkMode ? "text-light" : ""}`}>
             Chaine {chainNumber}
           </Card.Title>
-          <ListGroup 
-            style={{height:'100%'}}
+          <ListGroup
+            style={{ height: "100%" }}
             variant="flush"
             onDragOver={handleDragOver}
-            onDrop={(e) =>
-              handleDrop(e, chainNumber, sortedProducts.length)
-            }
+            onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
           >
             {sortedProducts.length === 0 ? (
               <StyledList>
@@ -274,9 +267,7 @@ const ChainColumn = ({
                   key={item.id}
                   draggable
                   darkMode={darkMode}
-                  onDragStart={(e) =>
-                    handleDragStart(e, chainNumber, item, index)
-                  }
+                  onDragStart={(e) => handleDragStart(e, chainNumber, item, index)}
                   onDrop={(e) => handleDrop(e, chainNumber, index)}
                   onDragOver={handleDragOver}
                   onClick={() => handleItemClick(item)}
@@ -297,6 +288,7 @@ const ChainColumn = ({
     </Col>
   );
 };
+
 
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
