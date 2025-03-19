@@ -121,24 +121,23 @@ const ProductContainer = styled.div`
   gap: 10px;
   padding: 10px;
 `;
-
 const ProductImage = styled.img`
-  width: 15vw;
-  height: auto;
-  max-width: 250px;
+  width: 25vw;
+  height: 350px;
+  max-width: 400px;
   border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: scale(1.1);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   }
 
   @media (max-width: 768px) {
-    width: 90%;
-    height: auto;
+    width: 95%;
+    height: 250px;
     max-width: none;
     object-fit: cover;
     object-position: center;
