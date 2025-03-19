@@ -56,7 +56,6 @@ const BouncingLoader = styled.div`
   align-items: center;
   justify-content: center;
 `;
-
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -73,54 +72,43 @@ const Message = styled.p`
     font-size: 1.2em;
   }
 `;
+
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
-  min-height: 340px;
-  border: none;
+  min-height: 320px;
+  border: 1px solid rgba(249, 199, 79, 0.3);
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: ${({ darkMode }) =>
-    darkMode
-      ? "linear-gradient(135deg, #2c3e50, #34495e)"
-      : "linear-gradient(135deg, #ffffff, #f8f9fa)"};
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
-  cursor: pointer;
   height: 100%;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 12px;
+  width: 100%;  
+  cursor: pointer;
+  transition: all 0.3s ease;
   margin-bottom: 12px;
-  border: 2px solid ${({ darkMode }) => (darkMode ? "#34495e" : "#e0e0e0")};
-  background: ${({ darkMode }) =>
-    darkMode
-      ? "linear-gradient(135deg, #2c3e50, #34495e)" // Fond sombre pour la chaîne 6
-      : "linear-gradient(135deg, #f9f9f9, #ffffff)"};
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")}; // Texte blanc pour le mode sombre
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  background: linear-gradient(145deg, rgba(144, 190, 109, 0.1), rgba(122, 169, 92, 0.1));
 
   &:hover {
-    background: ${({ darkMode }) =>
-      darkMode
-        ? "linear-gradient(135deg, #6a11cb, #2575fc)" // Couleur de survol pour le mode sombre
-        : "linear-gradient(135deg, #6a11cb, #2575fc)"};
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(145deg, rgba(144, 190, 109, 0.2), rgba(122, 169, 92, 0.2));
+    color: #fff;
+    transform: scale(1.03);
   }
 
   &:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: scale(0.97);
   }
 `;
 
@@ -137,6 +125,7 @@ const StyledList = styled.div`
   }
 `;
 
+/* Product Styles */
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -167,59 +156,54 @@ const ProductImage = styled.img`
 const ProductStyle = styled.span`
   font-size: 18px;
   font-weight: 600;
-  color: ${({ darkMode }) =>
-    darkMode
-      ? "white" 
-      : "black"};
+  color: #333;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 16ch;
 `;
-
-export const HoverCard = styled.div`
+const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 30 : x - 280 - 30)}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 30;
-    return calculatedBottom > viewportHeight ? y - cardHeight - 20 : y;
+    const calculatedBottom = y + cardHeight + 20;
+    return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
   }}px;
   z-index: 1000;
-  width: 280px;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(20px);
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 260px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
-    show ? "scale(1) translateY(0)" : "scale(0.9) translateY(10px)"};
-
-  &::before {
-    content: '';
-    position: absolute;
-    ${({ chain }) => (chain === 1 ? 'right: -10px;' : 'left: -10px;')}
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border: 10px solid transparent;
-    border-${({ chain }) => (chain === 1 ? 'left' : 'right')}-color: rgba(255, 255, 255, 0.96);
-  }
+    show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+  pointer-events: none;
+  border: 1px solid rgba(249, 199, 79, 0.2);
+  border-radius: 12px;
 `;
 
 const ControlButton = styled(Button)`
   width: 30px;
   height: 100%;
-  background: transparent;
+  background: none;
+  border: none;
+  opacity: 0.9;
+  background-color: transparent;
   position: relative;
   cursor: pointer;
+  border-radius: 0;
+  transition: all 0.3s ease;
+
   &:hover {
     background-color: transparent;
+    opacity: 1;
+    transform: scale(1.1);
   }
+
+  &:focus {
+    outline: none;
+  }
+
   @media (max-width: 768px) {
     width: 100%;
     height: 6vh;
@@ -243,19 +227,17 @@ const ChainColumn = ({
   handleMouseMove,
   handleMouseLeave,
   filterAndSortProducts,
-  
   darkMode = false,
 }) => {
   const sortedProducts = filterAndSortProducts(products, chainNumber);
   return (
     <Col xs={12} sm={6} md={2}>
-      <StyledCard darkMode={darkMode}>
+      <StyledCard className={darkMode ? "bg-dark text-white" : ""}>
         <Card.Body>
-          <Card.Title>
+          <Card.Title className="text-center fw-bold">
             Chaine {chainNumber}
           </Card.Title>
           <ListGroup
-            style={{height:'100px'}}
             variant="flush"
             onDragOver={handleDragOver}
             onDrop={(e) =>
@@ -272,7 +254,6 @@ const ChainColumn = ({
                 <StyledListGroupItem
                   key={item.id}
                   draggable
-                  darkMode={darkMode}
                   onDragStart={(e) =>
                     handleDragStart(e, chainNumber, item, index)
                   }
@@ -285,7 +266,7 @@ const ChainColumn = ({
                 >
                   <ProductContainer>
                     <ProductImage src={item.image || NoImage} alt={item.style} />
-                    <ProductStyle  className={`text-center fw-bold ${darkMode ? "text-light" : ""}`} >{item.style}</ProductStyle>
+                    <ProductStyle>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
               ))
@@ -641,6 +622,7 @@ export default function Chaines({ produits = [] }) {
           ))}
           <Col md="auto" className="d-flex align-items-center">
             <ControlButton
+              variant="outline-light"
               onClick={() => setShowPosition6(!showPosition6)}
             />
           </Col>
@@ -657,7 +639,7 @@ export default function Chaines({ produits = [] }) {
               handleMouseLeave={handleMouseLeave}
               filterAndSortProducts={filterAndSortProducts}
               darkMode
-              />
+            />
           )}
         </MobileRow>
       </Container>
