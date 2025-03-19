@@ -343,7 +343,6 @@ export default function Chaines({ produits = [] }) {
   const [chain, setChain] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState(""); // Ajout de l'état lastUpdate
 
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
@@ -390,12 +389,9 @@ export default function Chaines({ produits = [] }) {
       });
 
       setData(groupedData);
-      const now = new Date();
-      const updateTime = now.toLocaleString();
-      setLastUpdate(updateTime);
       localStorage.setItem(
         "cachedProducts",
-        JSON.stringify({ data: groupedData, lastUpdate: updateTime })
+        JSON.stringify({ data: groupedData })
       );
       setError(null);
     } catch (err) {
@@ -414,7 +410,6 @@ export default function Chaines({ produits = [] }) {
         const parsedData = JSON.parse(cachedData);
         if (parsedData.data) {
           setData(parsedData.data);
-          setLastUpdate(parsedData.lastUpdate);
           setIsLoading(false);
         } else {
           handleRefresh(produits);
@@ -436,10 +431,10 @@ export default function Chaines({ produits = [] }) {
     if (Object.keys(data).length) {
       localStorage.setItem(
         "cachedProducts",
-        JSON.stringify({ data, lastUpdate })
+        JSON.stringify({ data })
       );
     }
-  }, [data, lastUpdate]);
+  }, [data]);
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
@@ -578,12 +573,7 @@ export default function Chaines({ produits = [] }) {
     <>
       <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
-        {lastUpdate && (
-          <Message type="success">
-            <CheckCircle size={20} />
-            <span>Dernière mise à jour: {lastUpdate}</span>
-          </Message>
-        )}
+
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
             <ChainColumn
