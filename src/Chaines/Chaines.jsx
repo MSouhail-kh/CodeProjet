@@ -97,14 +97,15 @@ const StyledCard = styled(Card)`
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
-  height: 100%;
+  min-height: 300px; 
+  height: 100%;  
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 12px;
   margin-bottom: 12px;
   border: 2px solid ${({ darkMode }) => (darkMode ? "#34495e" : "#e0e0e0")};
   background: ${({ darkMode }) =>
     darkMode
-      ? "linear-gradient(135deg, #2c3e50, #34495e)" // Fond sombre pour la chaîne 6
+      ? "linear-gradient(135deg, #2c3e50, #34495e)" 
       : "linear-gradient(135deg, #f9f9f9, #ffffff)"};
   color: ${({ darkMode }) => (darkMode ? "white" : "black")}; // Texte blanc pour le mode sombre
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -130,7 +131,8 @@ const StyledList = styled.div`
   background: transparent;
   border: none;
   color: #555;
-  min-height: 120px;
+  height: 100%
+  min-height: 200px;
 
   @media (max-width: 768px) {
     min-height: 60vh;
