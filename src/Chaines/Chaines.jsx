@@ -19,193 +19,135 @@ const formatTimestamp = (timestamp) => {
   return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
 };
 
-// Loader Styles (inchangés)
-export const LoaderContainer = styled.div`
+/* Loader amélioré avec effet de flottaison */
+const LoaderContainer = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 `;
 
-export const pulseAnimation = keyframes`
-  0% { transform: scale(0.8); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.8); opacity: 0.7; }
+const floatingAnimation = keyframes`
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
 `;
 
-export const Dot = styled.div`
-  width: 24px;
-  height: 24px;
-  margin: 0 6px;
+const Dot = styled.div`
+  width: 40px;
+  height: 40px;
+  margin: 0 10px;
   border-radius: 50%;
-  background-color: #f9c74f;
-  animation: ${pulseAnimation} 1.4s infinite ease-in-out;
-  animation-delay: ${(props) => props.delay || "0s"};
+  background: linear-gradient(45deg, #f9c74f, #ff9a5a);
+  animation: ${floatingAnimation} 1.8s ease-in-out infinite;
+  box-shadow: 0 8px 24px rgba(249, 199, 79, 0.4);
 `;
 
-export const BouncingLoader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-/* Message Styles */
-export const Message = styled.p`
-  margin: 0.5rem auto 0;
-  text-align: center;
-  font-weight: bold;
-  color: ${({ type }) => (type === "success" ? "#2ecc71" : "#e74c3c")};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-`;
-
-/* Card & List Styles */
-export const StyledCard = styled(Card)`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  height: 100%;
-  min-height: 320px;
-  border: 2px solid #f9c74f;
-  border-radius: 16px;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  background: #fff;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+/* Cartes redimensionnées pour grands écrans */
+const StyledCard = styled(Card)`
+  min-height: 480px;
+  border: 3px solid rgba(144, 190, 109, 0.3);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-    border-color: #fbc531;
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (min-width: 1600px) {
+    min-height: 600px;
+    width: 380px !important;
   }
 `;
 
-export const StyledListGroupItem = styled(ListGroup.Item)`
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  border: 2px solid #90be6d;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-
-  &:hover {
-    /* Couleur de hover modifiée */
-    background-color: #78c2ad;
-    color: #fff;
-    transform: scale(1.03);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
-  }
-  &:active {
-    transform: scale(0.97);
-  }
-`;
-
-export const StyledList = styled.div`
-  text-align: center;
-  font-style: italic;
-  background: transparent;
-  border: none;
-  color: #555;
-  min-height: 120px;
-
-  @media (max-width: 768px) {
-    min-height: 60vh;
-  }
-`;
-
-/* Product Styles */
-export const ProductContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-`;
-
-/* Pour afficher l'image plus grande et claire sur grand écran */
-export const ProductImage = styled.img`
-  width: 200px;
-  height: 220px;
-  border-radius: 12px;
-  object-fit: cover;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: auto;
-  }
-`;
-
-export const ProductStyle = styled.span`
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 16ch;
-`;
-
-/* Hover Preview Card */
-export const HoverCard = styled.div`
-  position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 300 - 20)}px;
-  top: ${({ y, cardHeight }) => {
-    const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 20;
-    return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
-  }}px;
-  z-index: 1000;
-  width: 300px;
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  opacity: ${({ show }) => (show ? 1 : 0)};
-  transform: ${({ show }) =>
-    show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
-  pointer-events: none;
-`;
-
-/* Bouton de contrôle */
-export const ControlButton = styled(Button)`
-  width: 30px;
-  height: 100%;
-  background: none;
-  border: none;
-  opacity: 0.9;
-  background-color: transparent;
-  position: relative;
-  cursor: pointer;
-  border-radius: 0;
+/* Nouvel effet hover avec gradient */
+const StyledListGroupItem = styled(ListGroup.Item)`
+  border: 2px solid rgba(144, 190, 109, 0.2);
+  background: white;
+  margin-bottom: 16px;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: transparent;
-    opacity: 1;
-  }
-
-  &:focus {
-    outline: none;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 6vh;
+    background: linear-gradient(135deg, #90be6d 0%, #43aa8b 100%);
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(67, 170, 139, 0.3);
+    color: white;
   }
 `;
 
-export const MobileRow = styled(Row)`
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
+/* Images plus grandes et qualite HD */
+const ProductImage = styled.img`
+  width: 240px;
+  height: 280px;
+  border-radius: 16px;
+  object-fit: contain;
+  padding: 12px;
+  background: white;
+  transition: transform 0.3s ease;
+
+  @media (min-width: 1600px) {
+    width: 320px;
+    height: 360px;
+  }
+
+  ${StyledListGroupItem}:hover & {
+    transform: scale(1.08);
   }
 `;
 
-/* Composant ChainColumn */
-export const ChainColumn = ({
+/* Preview card pour TV */
+const HoverCard = styled.div`
+  width: 340px;
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+
+  img {
+    height: 240px;
+    object-fit: contain;
+    background: #f8f9fa;
+  }
+
+  @media (min-width: 1600px) {
+    width: 420px;
+    
+    img {
+      height: 320px;
+    }
+  }
+`;
+
+/* Typographie améliorée */
+const ProductStyle = styled.span`
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2d3436;
+  letter-spacing: -0.5px;
+  max-width: 24ch;
+  font-family: 'Inter', sans-serif;
+
+  @media (min-width: 1600px) {
+    font-size: 1.8rem;
+  }
+`;
+
+/* Conteneur principal responsive */
+const Container = styled(Container)`
+  max-width: 1800px;
+  padding: 2rem 4rem;
+
+  @media (min-width: 1600px) {
+    padding: 3rem 6rem;
+  }
+`;
+const ChainColumn = ({
   chainNumber,
   products,
   handleDragOver,
@@ -229,7 +171,9 @@ export const ChainColumn = ({
           <ListGroup
             variant="flush"
             onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
+            onDrop={(e) =>
+              handleDrop(e, chainNumber, sortedProducts.length)
+            }
           >
             {sortedProducts.length === 0 ? (
               <StyledList>
@@ -241,7 +185,9 @@ export const ChainColumn = ({
                 <StyledListGroupItem
                   key={item.id}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, chainNumber, item, index)}
+                  onDragStart={(e) =>
+                    handleDragStart(e, chainNumber, item, index)
+                  }
                   onDrop={(e) => handleDrop(e, chainNumber, index)}
                   onDragOver={handleDragOver}
                   onClick={() => handleItemClick(item)}
@@ -250,7 +196,7 @@ export const ChainColumn = ({
                   onMouseLeave={handleMouseLeave}
                 >
                   <ProductContainer>
-                    <ProductImage src={item.image || "/path/to/NoImage.png"} alt={item.style} />
+                    <ProductImage src={item.image || NoImage} alt={item.style} />
                     <ProductStyle>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
@@ -263,8 +209,7 @@ export const ChainColumn = ({
   );
 };
 
-/* Composant HoverPreview */
-export const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
+const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
   return (
     <HoverCard
@@ -282,9 +227,15 @@ export const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
           border: "2px solid #f9c74f",
         }}
       >
-        <div style={{ position: "relative", height: "180px", background: "#eee" }}>
+        <div
+          style={{
+            position: "relative",
+            height: "180px",
+            background: "#eee",
+          }}
+        >
           <img
-            src={hoveredItem.image || "/path/to/NoImage.png"}
+            src={hoveredItem.image || NoImage}
             alt={hoveredItem.style}
             style={{
               width: "100%",
@@ -304,7 +255,14 @@ export const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
               marginBottom: "8px",
             }}
           >
-            <h3 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 600, color: "#2d3436" }}>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: "1.2rem",
+                fontWeight: 600,
+                color: "#2d3436",
+              }}
+            >
               {hoveredItem.style}
             </h3>
             <span
@@ -320,7 +278,15 @@ export const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
             </span>
           </div>
           {hoveredItem.details && (
-            <div style={{ fontSize: "0.875rem", color: "#636e72", lineHeight: 1.4, maxHeight: "100px", overflowY: "auto" }}>
+            <div
+              style={{
+                fontSize: "0.875rem",
+                color: "#636e72",
+                lineHeight: 1.4,
+                maxHeight: "100px",
+                overflowY: "auto",
+              }}
+            >
               {hoveredItem.details}
             </div>
           )}
@@ -329,7 +295,6 @@ export const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
-
 
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
