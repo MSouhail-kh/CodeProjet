@@ -72,43 +72,55 @@ const Message = styled.p`
     font-size: 1.2em;
   }
 `;
-
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
-  min-height: 320px;
-  border: 1px solid rgba(249, 199, 79, 0.3);
+  min-height: 340px;
+  border: none;
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: ${({ darkMode }) =>
+    darkMode
+      ? "linear-gradient(135deg, #2c3e50, #34495e)" // Fond sombre pour la chaîne 6
+      : "linear-gradient(135deg, #ffffff, #f8f9fa)"};
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")}; // Texte blanc pour le mode sombre
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   }
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
-  height: 100%;
-  width: 100%;  
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
   margin-bottom: 12px;
-  padding: 10px;
-  background: linear-gradient(145deg, rgba(144, 190, 109, 0.1), rgba(122, 169, 92, 0.1));
+  border: 2px solid ${({ darkMode }) => (darkMode ? "#34495e" : "#e0e0e0")};
+  background: ${({ darkMode }) =>
+    darkMode
+      ? "linear-gradient(135deg, #2c3e50, #34495e)" // Fond sombre pour la chaîne 6
+      : "linear-gradient(135deg, #f9f9f9, #ffffff)"};
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")}; // Texte blanc pour le mode sombre
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background: linear-gradient(145deg, rgba(144, 190, 109, 0.2), rgba(122, 169, 92, 0.2));
+    background: ${({ darkMode }) =>
+      darkMode
+        ? "linear-gradient(135deg, #1abc9c, #16a085)" // Couleur de survol pour le mode sombre
+        : "linear-gradient(135deg, #6c63ff, #3f3d56)"};
     color: #fff;
-    transform: scale(1.03);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -211,8 +223,6 @@ const ControlButton = styled(Button)`
 
   &:hover {
     background-color: transparent;
-    opacity: 1;
-    transform: scale(1.1);
   }
 
   &:focus {
@@ -247,7 +257,7 @@ const ChainColumn = ({
   const sortedProducts = filterAndSortProducts(products, chainNumber);
   return (
     <Col xs={12} sm={6} md={2}>
-      <StyledCard className={darkMode ? "bg-dark text-white" : ""}>
+      <StyledCard darkMode={darkMode}>
         <Card.Body>
           <Card.Title className="text-center fw-bold">
             Chaine {chainNumber}
@@ -269,6 +279,7 @@ const ChainColumn = ({
                 <StyledListGroupItem
                   key={item.id}
                   draggable
+                  darkMode={darkMode}
                   onDragStart={(e) =>
                     handleDragStart(e, chainNumber, item, index)
                   }
