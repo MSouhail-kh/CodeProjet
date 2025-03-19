@@ -438,7 +438,7 @@ export default function Chaines({ produits = [] }) {
     if (Object.keys(data).length) {
       localStorage.setItem(
         "cachedProducts",
-        JSON.stringify({ data, lastUpdate })
+        JSON.stringify({ data })
       );
     }
   }, [data, lastUpdate]);
