@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { io } from "socket.io-client";
 
+/* Loader Styles */
 const LoaderContainer = styled.div`
   display: flex;
   align-items: center;
@@ -388,46 +388,28 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
-  useEffect(() => {
-    // Marquer le composant comme monté
-    isMounted.current = true;
-    
-    // Lecture du cache local
-    const cachedData = localStorage.getItem('cachedProducts');
-    if (cachedData) {
-      try {
-        const parsedData = JSON.parse(cachedData);
-        setData(parsedData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Erreur de parsing du cache:', error);
-        localStorage.removeItem('cachedProducts');
-        handleRefresh(produits);
-      }
-    } else {
+useEffect(() => {
+  isMounted.current = true;
+  const cachedData = localStorage.getItem('cachedProducts');
+  if (cachedData) {
+    try {
+      const parsedData = JSON.parse(cachedData);
+      setData(parsedData);
+      setIsLoading(false); // On indique que le chargement est terminé
+    } catch (error) {
+      console.error('Erreur de parsing du cache:', error);
+      localStorage.removeItem('cachedProducts');
       handleRefresh(produits);
     }
-    
-    // Établir la connexion Socket.IO pour la mise à jour en temps réel
-    const socket = io("https://gestion-planning-back-end-1.onrender.com", {
-      transports: ["websocket", "polling"],
-    });
-    
-    socket.on("connect", () => {
-      console.log("Connecté au serveur Socket.IO");
-    });
-    
-    socket.on("productsUpdate", (newProducts) => {
-      console.log("Mise à jour en temps réel reçue :", newProducts);
-      handleRefresh(newProducts);
-    });
-    
-    return () => {
-      isMounted.current = false;
-      socket.disconnect();
-    };
-  }, []);
-  
+  } else {
+    handleRefresh(produits);
+  }
+  return () => {
+    isMounted.current = false;
+  };
+}, []);
+
+  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem('cachedProducts', JSON.stringify(data));
