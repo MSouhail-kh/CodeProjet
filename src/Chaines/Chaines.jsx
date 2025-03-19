@@ -85,7 +85,6 @@ const StyledCard = styled(Card)`
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: all 0.3s ease;
-  border-radius: 12px;
   margin-bottom: 12px;
   border: 2px solid #90be6d;
   padding: 10px;
@@ -124,8 +123,10 @@ const ProductContainer = styled.div`
 `;
 
 const ProductImage = styled.img`
-  width: 150px;
-  height: 200px;
+  width : 10vw;
+  height : 10vh;
+  max-width : 200px;
+  max-height : 150px;
   border-radius: 12px;
   object-fit: cover;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -136,8 +137,10 @@ const ProductImage = styled.img`
   }
 
   @media (max-width: 768px) {
-    width: 100%;
-    height: 210px;
+        width: 100%;
+        height: 250px;
+        object-fit: fill;
+        object-position: center;
   }
 `;
 
