@@ -187,15 +187,6 @@ const Message = styled.p`
   gap: 8px;
 `;
 
-/**
- * Fonction de tri simple (ne réattribue pas l'ordre).
- * On suppose que l'`order` est déjà correctement
- * géré côté serveur et/ou dans handleDrop.
- */
-const sortProducts = (products = []) => {
-  return [...products].sort((a, b) => (a.order || 0) - (b.order || 0));
-};
-
 const ChainColumn = ({
   chainNumber,
   products,
@@ -206,11 +197,10 @@ const ChainColumn = ({
   handleMouseEnter,
   handleMouseMove,
   handleMouseLeave,
+  filterAndSortProducts,
   darkMode = false,
 }) => {
-  // On se contente de trier par ordre :
-  const sortedProducts = sortProducts(products);
-
+  const sortedProducts = filterAndSortProducts(products, chainNumber);
   return (
     <Col xs={12} sm={6} md={2}>
       <StyledCard className={darkMode ? "bg-dark text-white" : ""}>
@@ -221,7 +211,9 @@ const ChainColumn = ({
           <ListGroup
             variant="flush"
             onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
+            onDrop={(e) =>
+              handleDrop(e, chainNumber, sortedProducts.length)
+            }
           >
             {sortedProducts.length === 0 ? (
               <StyledList>
@@ -231,7 +223,7 @@ const ChainColumn = ({
             ) : (
               sortedProducts.map((item, index) => (
                 <StyledListGroupItem
-                  key={item.id}
+                  key={`${item.id}-${item.position_id}`}
                   draggable
                   onDragStart={(e) =>
                     handleDragStart(e, chainNumber, item, index)
@@ -244,13 +236,11 @@ const ChainColumn = ({
                   onMouseLeave={handleMouseLeave}
                 >
                   <ProductContainer>
-                    <ProductImage
-                      src={item.image || NoImage}
-                      alt={item.style}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = NoImage; // fallback si l'image est introuvable
-                      }}
+                    <ProductImage   src={item.image || NoImage}
+                        alt={item.style}
+                        onError={(e) => {
+                          e.target.src = NoImage; 
+                        }} 
                     />
                     <ProductStyle>{item.style}</ProductStyle>
                   </ProductContainer>
@@ -298,10 +288,6 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
               objectFit: hoveredItem.image ? "cover" : "contain",
               objectPosition: "center",
               padding: hoveredItem.image ? 0 : "20px",
-            }}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = NoImage;
             }}
           />
         </div>
@@ -354,7 +340,6 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
-
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -369,37 +354,54 @@ export default function Chaines({ produits = [] }) {
   const isProcessing = useRef(false);
   const navigate = useNavigate();
 
-  /**
-   * Fonction de regroupement des produits par position.
-   * On trie simplement par `order` (sans réassigner).
-   */
-  const groupByPositionAndSort = (produits) => {
-    const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-    produits.forEach((produit) => {
-      if (groupedData[produit.position_id]) {
-        groupedData[produit.position_id].push(produit);
+  const filterAndSortProducts = (products) => {
+    if (!products || products.length === 0) return [];
+    const productsWithDefaultOrder = products.map((product, index) => ({
+      ...product,
+      order:
+        product.order !== undefined && product.order !== null
+          ? product.order
+          : index + 1,
+    }));
+    const sortedProducts = productsWithDefaultOrder.sort(
+      (a, b) => a.order - b.order
+    );
+    const uniqueOrderProducts = [];
+    const usedOrders = new Set();
+
+    for (const product of sortedProducts) {
+      let order = product.order;
+      while (usedOrders.has(order)) {
+        order++;
       }
-    });
-    // On trie chaque tableau par son champ order
-    Object.keys(groupedData).forEach((key) => {
-      groupedData[key] = sortProducts(groupedData[key]);
-    });
-    return groupedData;
+      usedOrders.add(order);
+      uniqueOrderProducts.push({ ...product, order });
+    }
+    return uniqueOrderProducts;
   };
 
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
-      const newGrouped = groupByPositionAndSort(produits);
+      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      produits.forEach((produit) => {
+        if (groupedData[produit.position_id]) {
+          groupedData[produit.position_id].push(produit);
+        }
+      });
+
+      Object.keys(groupedData).forEach((key) => {
+        groupedData[key] = filterAndSortProducts(groupedData[key], key);
+      });
 
       const now = new Date();
       const updateTime = now.toLocaleString();
-
-      setData(newGrouped);
       setLastUpdate(updateTime);
+
+      setData(groupedData);
       localStorage.setItem(
         "cachedProducts",
-        JSON.stringify({ data: newGrouped, lastUpdate: updateTime })
+        JSON.stringify({ data: groupedData, lastUpdate: updateTime })
       );
       setError(null);
     } catch (err) {
@@ -436,7 +438,6 @@ export default function Chaines({ produits = [] }) {
     };
   }, [produits]);
 
-  // Met à jour le cache local à chaque modification
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem(
@@ -456,40 +457,34 @@ export default function Chaines({ produits = [] }) {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
-
+  
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
     const newData = { ...data };
-
-    // Initialisation au cas où
+  
     if (!newData[targetPosition]) newData[targetPosition] = [];
     if (!newData[transferData.from]) newData[transferData.from] = [];
-
+  
     try {
       if (transferData.from === targetPosition) {
-        // Déplacement au sein de la même colonne
         const list = [...newData[targetPosition]];
         const [movedItem] = list.splice(transferData.index, 1);
         list.splice(dropIndex, 0, movedItem);
-
-        // On réattribue l'ordre pour la colonne cible
+  
         newData[targetPosition] = list.map((item, index) => ({
           ...item,
           order: index + 1,
         }));
       } else {
-        // Déplacement entre deux colonnes
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
-
+  
         targetList.splice(dropIndex, 0, movedItem);
-
-        // On réattribue l'ordre dans les deux colonnes
+  
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -497,13 +492,12 @@ export default function Chaines({ produits = [] }) {
         newData[targetPosition] = targetList.map((item, index) => ({
           ...item,
           order: index + 1,
+          position_id: targetPosition, 
         }));
       }
-
-      // Mise à jour du state local
+  
       setData(newData);
-
-      // Préparation du payload pour l’API
+  
       const updates = [];
       Object.keys(newData).forEach((position) => {
         newData[position].forEach((item, index) => {
@@ -514,7 +508,7 @@ export default function Chaines({ produits = [] }) {
           });
         });
       });
-
+  
       const dragPayload = { multipleUpdates: updates };
       await api.post("/update_drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
@@ -545,8 +539,6 @@ export default function Chaines({ produits = [] }) {
     navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
 
-  // Si vous avez besoin de supprimer un produit et mettre à jour
-  // vous pouvez l'appeler depuis un composant enfant.
   const handleDeleteSuccess = (deletedItem) => {
     setData((prevData) => {
       const newData = { ...prevData };
@@ -596,16 +588,14 @@ export default function Chaines({ produits = [] }) {
               handleMouseEnter={handleMouseEnter}
               handleMouseMove={handleMouseMove}
               handleMouseLeave={handleMouseLeave}
+              filterAndSortProducts={filterAndSortProducts}
             />
           ))}
           <Col md="auto" className="d-flex align-items-center">
             <ControlButton
               variant="outline-light"
               onClick={() => setShowPosition6(!showPosition6)}
-            >
-              {/* Vous pouvez mettre une icône ici si vous le souhaitez */}
-              {showPosition6 ? "Cacher 6" : "Montrer 6"}
-            </ControlButton>
+            />
           </Col>
           {showPosition6 && (
             <ChainColumn
@@ -618,6 +608,7 @@ export default function Chaines({ produits = [] }) {
               handleMouseEnter={handleMouseEnter}
               handleMouseMove={handleMouseMove}
               handleMouseLeave={handleMouseLeave}
+              filterAndSortProducts={filterAndSortProducts}
               darkMode
             />
           )}
