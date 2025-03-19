@@ -25,13 +25,13 @@ const LoaderContainer = styled.div`
   justify-content: center;
   height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, #a8edea, #fed6e3);
+  background: linear-gradient(135deg, #667eea, #764ba2);
 `;
 
 const pulseAnimation = keyframes`
-  0% { transform: scale(0.9); opacity: 0.8; }
-  50% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(0.9); opacity: 0.8; }
+  0% { transform: scale(0.8); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.7; }
 `;
 
 const Dot = styled.div`
@@ -83,22 +83,24 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
-  background: #ffffff;
-  border: none;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-  padding: 12px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 2px solid #90be6d;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(145deg, #ffffff, #f9f9f9);
+  padding: 12px;
 
   &:hover {
-    background-color: #f1f1f1;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(145deg, #90be6d, #7aa95c);
+    color: #fff;
+    transform: scale(1.03);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
   }
+
   &:active {
-    transform: translateY(0);
-    box-shadow: none;
+    transform: scale(0.97);
   }
 `;
 
@@ -120,16 +122,16 @@ const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   padding: 10px;
 `;
 
 const ProductImage = styled.img`
-  width: 220px;
-  height: 260px;
-  border-radius: 16px;
+  width: 180px;
+  height: 200px;
+  border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 
   &:hover {
@@ -137,8 +139,8 @@ const ProductImage = styled.img`
   }
 
   @media (max-width: 768px) {
-    width: 100%; 
-    height: auto; 
+    width: 100%;
+    height: 220px;
   }
 `;
 
@@ -172,19 +174,19 @@ const HoverCard = styled.div`
 
 const ControlButton = styled(Button)`
   width: 30px;
-  height: 100%; 
-  background: none; 
+  height: 100%;
+  background: none;
   border: none;
   opacity: 0.9;
   background-color: transparent;
   position: relative;
   cursor: pointer;
   border-radius: 0;
-  transition: all 0.3s ease; 
+  transition: all 0.3s ease;
 
   &:hover {
     background-color: transparent;
-    opacity: 1; 
+    opacity: 1;
   }
 
   &:focus {
@@ -409,6 +411,7 @@ export default function Chaines({ produits = [] }) {
 
       setData(groupedData);
       localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
+      // Enregistrement de la date de dernière mise à jour
       const now = new Date().toISOString();
       localStorage.setItem("lastUpdate", JSON.stringify(now));
       setLastUpdate(now);
@@ -564,6 +567,7 @@ export default function Chaines({ produits = [] }) {
     navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
 
+
   if (isLoading) {
     return (
       <LoaderContainer>
@@ -585,7 +589,7 @@ export default function Chaines({ produits = [] }) {
             {lastUpdate && (
               <Message type="success">
                 <CheckCircle size={20} />
-                Dernière mise à jour : {formatTimestamp(lastUpdate)}
+                  Dernière mise à jour : {formatTimestamp(lastUpdate)}
               </Message>
             )}
           </Col>
