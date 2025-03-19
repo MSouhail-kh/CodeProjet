@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
-import { CheckCircle } from "react-bootstrap-icons";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
@@ -174,17 +173,6 @@ const MobileRow = styled(Row)`
     flex-direction: column;
     gap: 1rem;
   }
-`;
-
-const Message = styled.p`
-  margin: 0.5rem auto 0;
-  text-align: center;
-  font-weight: bold;
-  color: ${({ type }) => (type === "success" ? "#2ecc71" : "#e74c3c")};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
 `;
 
 const ChainColumn = ({
@@ -389,10 +377,8 @@ export default function Chaines({ produits = [] }) {
       });
 
       setData(groupedData);
-      localStorage.setItem(
-        "cachedProducts",
-        JSON.stringify({ data: groupedData })
-      );
+      // Mise à jour immédiate du cache lors d'un refresh manuel
+      localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
       setError(null);
     } catch (err) {
       console.error("Erreur :", err);
@@ -402,37 +388,31 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
-  useEffect(() => {
-    isMounted.current = true;
-    const cachedData = localStorage.getItem("cachedProducts");
-    if (cachedData) {
-      try {
-        const parsedData = JSON.parse(cachedData);
-        if (parsedData.data) {
-          setData(parsedData.data);
-          setIsLoading(false);
-        } else {
-          handleRefresh(produits);
-        }
-      } catch (error) {
-        console.error("Erreur de parsing du cache:", error);
-        localStorage.removeItem("cachedProducts");
-        handleRefresh(produits);
-      }
-    } else {
+useEffect(() => {
+  isMounted.current = true;
+  const cachedData = localStorage.getItem('cachedProducts');
+  if (cachedData) {
+    try {
+      const parsedData = JSON.parse(cachedData);
+      setData(parsedData);
+      setIsLoading(false); // On indique que le chargement est terminé
+    } catch (error) {
+      console.error('Erreur de parsing du cache:', error);
+      localStorage.removeItem('cachedProducts');
       handleRefresh(produits);
     }
-    return () => {
-      isMounted.current = false;
-    };
-  }, [produits]);
+  } else {
+    handleRefresh(produits);
+  }
+  return () => {
+    isMounted.current = false;
+  };
+}, []);
 
+  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
   useEffect(() => {
     if (Object.keys(data).length) {
-      localStorage.setItem(
-        "cachedProducts",
-        JSON.stringify({ data })
-      );
+      localStorage.setItem('cachedProducts', JSON.stringify(data));
     }
   }, [data]);
 
@@ -573,7 +553,6 @@ export default function Chaines({ produits = [] }) {
     <>
       <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
-
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
             <ChainColumn
