@@ -68,60 +68,42 @@ const Message = styled.p`
   gap: 8px;
   transition: opacity 0.3s ease;
 
-  &::before {
-    content: ${({ type }) => (type === "success" ? "'\\2713'" : "'\\26A0'")};
-    font-size: 1.2em;
-  }
+
 `;
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
-  min-height: 340px;
-  border: none;
-  border-radius: 16px;
+  min-height: 300px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: ${({ darkMode }) =>
-    darkMode
-      ? "linear-gradient(135deg, #2c3e50, #34495e)"
-      : "linear-gradient(135deg, #ffffff, #f8f9fa)"};
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
-  min-height: 300px; 
-  height: 100%;  
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  border: 2px solid ${({ darkMode }) => (darkMode ? "#34495e" : "#e0e0e0")};
-  background: ${({ darkMode }) =>
-    darkMode
-      ? "linear-gradient(135deg, #2c3e50, #34495e)" 
-      : "linear-gradient(135deg, #f9f9f9, #ffffff)"};
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")}; // Texte blanc pour le mode sombre
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background: ${({ darkMode }) =>
-      darkMode
-        ? "linear-gradient(135deg, #6a11cb, #2575fc)" // Couleur de survol pour le mode sombre
-        : "linear-gradient(135deg, #6a11cb, #2575fc)"};
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    color: white;
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -130,14 +112,16 @@ const StyledList = styled.div`
   font-style: italic;
   background: transparent;
   border: none;
-  color: #555;
-  height: 100%
-  min-height: 200px;
+  color: #888;
+  height: auto;           
+  min-height: 100px;    
 
   @media (max-width: 768px) {
-    min-height: 60vh;
+    height: auto;         
+    min-height: 50vh;    
   }
 `;
+
 
 const ProductContainer = styled.div`
   display: flex;
