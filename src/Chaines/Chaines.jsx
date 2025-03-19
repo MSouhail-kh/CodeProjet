@@ -573,7 +573,7 @@ export default function Chaines({ produits = [] }) {
       </LoaderContainer>
     );
   }
-  retu
+
   return (
     <>
       <MyNavbar onRefresh={handleRefresh} />
