@@ -179,8 +179,14 @@ const StyledContainer = styled(Container)`
   }
 `;
 
+const BouncingLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 /* Message de mise à jour */
-const UpdateMessage = styled.div`
+const UpdateMessage = styled.p`
   font-size: 1.1rem;
   padding: 12px 24px;
   border-radius: 50px;
