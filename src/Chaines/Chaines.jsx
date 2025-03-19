@@ -123,24 +123,26 @@ const ProductContainer = styled.div`
 `;
 
 const ProductImage = styled.img`
-  width : 10vw;
-  height : 10vh;
-  max-width : 200px;
-  max-height : 150px;
-  border-radius: 12px;
+  width: 15vw;
+  height: auto;
+  max-width: 250px;
+  border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
   }
 
   @media (max-width: 768px) {
-        width: 100%;
-        height: 250px;
-        object-fit: fill;
-        object-position: center;
+    width: 90%;
+    height: auto;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+    margin: 0 auto;
   }
 `;
 
