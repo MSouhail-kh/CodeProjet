@@ -180,7 +180,7 @@ const StyledContainer = styled(Container)`
 `;
 
 /* Message de mise à jour */
-const UpdateMessage = styled(Message)`
+const UpdateMessage = styled.div`
   font-size: 1.1rem;
   padding: 12px 24px;
   border-radius: 50px;
