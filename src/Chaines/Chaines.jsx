@@ -137,7 +137,6 @@ const StyledList = styled.div`
   }
 `;
 
-/* Product Styles */
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -220,11 +219,6 @@ const ControlButton = styled(Button)`
   &:hover {
     background-color: transparent;
   }
-
-  &:focus {
-    outline: none;
-  }
-
   @media (max-width: 768px) {
     width: 100%;
     height: 6vh;
