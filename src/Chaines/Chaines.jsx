@@ -374,7 +374,7 @@ export default function Chaines({ produits = [] }) {
     }
     return uniqueOrderProducts;
   };
-
+  
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
