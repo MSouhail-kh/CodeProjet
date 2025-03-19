@@ -240,7 +240,8 @@ const ChainColumn = ({
   handleMouseMove,
   handleMouseLeave,
   filterAndSortProducts,
-  darkMode = true,
+  
+  darkMode = false,
 }) => {
   const sortedProducts = filterAndSortProducts(products, chainNumber);
   return (
@@ -641,8 +642,9 @@ export default function Chaines({ produits = [] }) {
           </Col>
           {showPosition6 && (
             <ChainColumn
-              className='text-light '
               chainNumber={6}
+              
+              className='text-light '
               products={data[6]}
               handleDragOver={handleDragOver}
               handleDrop={handleDrop}
@@ -653,6 +655,7 @@ export default function Chaines({ produits = [] }) {
               handleMouseLeave={handleMouseLeave}
               filterAndSortProducts={filterAndSortProducts}
               darkMode
+              style={{ color: 'white' }} 
               />
           )}
         </MobileRow>
