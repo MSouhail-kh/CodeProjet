@@ -62,42 +62,44 @@ const Message = styled.p`
   gap: 8px;
 `;
 
-/* Card & List Styles */
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
-  min-height: 320px;
-  border: 2px solid #f9c74f;
+  min-height: 340px; /* Augmenté pour un design plus moderne */
+  border: none;
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: #fff;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   }
 `;
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 12px;
-  border: 2px solid #90be6d;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e0e0e0;
+  background: linear-gradient(135deg, #f9f9f9, #ffffff);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background-color: #90be6d;
+    background: linear-gradient(135deg, #6c63ff, #3f3d56);
     color: #fff;
-    transform: scale(1.03);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
+
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -124,15 +126,21 @@ const ProductContainer = styled.div`
 `;
 
 const ProductImage = styled.img`
-  width: 160px;
-  height: 180px;
-  border-radius: 12px;
+  width: 180px; /* Augmenté pour des images plus grandes */
+  height: 200px; /* Augmenté pour des images plus grandes */
+  border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
 
   @media (max-width: 768px) {
-    width: 100%; 
-    height: 200px; 
+    width: 100%;
+    height: 220px; /* Ajusté pour les écrans mobiles */
   }
 `;
 
@@ -148,20 +156,24 @@ const ProductStyle = styled.span`
 
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 280 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 20;
     return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
   }}px;
   z-index: 1000;
-  width: 260px;
+  width: 280px; /* Augmenté pour un aperçu plus grand */
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
     show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.2));
   pointer-events: none;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 `;
 
 const ControlButton = styled(Button)`
