@@ -236,7 +236,7 @@ const ChainColumn = ({
                   onMouseLeave={handleMouseLeave}
                 >
                   <ProductContainer>
-                    <ProductImage src={item.image || NoImage} alt={item.style} />
+                    <ProductImage src={item.image} alt={item.style} />
                     <ProductStyle>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
@@ -349,7 +349,7 @@ export default function Chaines({ produits = [] }) {
   const isProcessing = useRef(false);
   const navigate = useNavigate();
 
-  const filterAndSortProducts = (products, positionId) => {
+  const filterAndSortProducts = (products) => {
     if (!products || products.length === 0) return [];
     const productsWithDefaultOrder = products.map((product, index) => ({
       ...product,
@@ -374,7 +374,7 @@ export default function Chaines({ produits = [] }) {
     }
     return uniqueOrderProducts;
   };
-  
+
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
