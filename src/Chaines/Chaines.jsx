@@ -247,7 +247,7 @@ const ChainColumn = ({
                   onMouseLeave={handleMouseLeave}
                 >
                   <ProductContainer>
-                    <ProductImage src={item.image} alt={item.style} />
+                    <ProductImage src={item.image || NoImage} alt={item.style} />
                     <ProductStyle>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
@@ -314,7 +314,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
                 color: "#2d3436",
               }}
             >
-              {hoveredItem.style}/{hoveredItem.order}
+              {hoveredItem.style}
             </h3>
             <span
               style={{
@@ -361,7 +361,7 @@ export default function Chaines({ produits = [] }) {
   const isProcessing = useRef(false);
   const navigate = useNavigate();
 
-  const filterAndSortProducts = (products, positionId) => {
+  const filterAndSortProducts = (products) => {
     if (!products || products.length === 0) return [];
     const productsWithDefaultOrder = products.map((product, index) => ({
       ...product,
@@ -441,7 +441,6 @@ export default function Chaines({ produits = [] }) {
     };
   }, []);
 
-  // Sauvegarde automatique des modifications de data et de la date de mise à jour
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem("cachedProducts", JSON.stringify(data));
@@ -560,17 +559,6 @@ export default function Chaines({ produits = [] }) {
     navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
 
-  const handleDeleteSuccess = (deletedItem) => {
-    setData((prevData) => {
-      const newData = { ...prevData };
-      Object.keys(newData).forEach((key) => {
-        newData[key] = newData[key]
-          .filter((produit) => produit.id !== deletedItem.id)
-          .map((item, index) => ({ ...item, order: index + 1 }));
-      });
-      return newData;
-    });
-  };
 
   if (isLoading) {
     return (
