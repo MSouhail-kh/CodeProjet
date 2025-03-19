@@ -84,9 +84,9 @@ const StyledCard = styled(Card)`
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   background: ${({ darkMode }) =>
     darkMode
-      ? "linear-gradient(135deg, #2c3e50, #34495e)" // Fond sombre pour la chaîne 6
+      ? "linear-gradient(135deg, #2c3e50, #34495e)"
       : "linear-gradient(135deg, #ffffff, #f8f9fa)"};
-  color: ${({ darkMode }) => (darkMode ? "white" : "black")}; // Texte blanc pour le mode sombre
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 
   &:hover {
@@ -97,6 +97,7 @@ const StyledCard = styled(Card)`
 
 const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
+  height: 100%;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 12px;
   margin-bottom: 12px;
@@ -111,9 +112,8 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   &:hover {
     background: ${({ darkMode }) =>
       darkMode
-        ? "linear-gradient(135deg, #1abc9c, #16a085)" // Couleur de survol pour le mode sombre
-        : "linear-gradient(135deg, #6c63ff, #3f3d56)"};
-    color: #fff;
+        ? "linear-gradient(135deg, #6a11cb, #2575fc)" // Couleur de survol pour le mode sombre
+        : "linear-gradient(135deg, #6a11cb, #2575fc)"};
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
@@ -215,7 +215,7 @@ const ControlButton = styled(Button)`
   background: none;
   border: none;
   opacity: 0.9;
-  background-color: transparent;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
   position: relative;
   cursor: pointer;
   border-radius: 0;
