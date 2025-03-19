@@ -19,150 +19,106 @@ const formatTimestamp = (timestamp) => {
   return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
 };
 
-/* Animations */
-const pulseAnimation = keyframes`
-  0% { transform: scale(0.8); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.8); opacity: 0.7; }
-`;
-
-const floatAnimation = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
-  100% { transform: translateY(0px); }
-`;
-
-/* Loader Styles */
-export const LoaderContainer = styled.div`
+const LoaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  position: relative;
-  overflow: hidden;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  animation: gradientAnimation 10s ease infinite;
 
-  &::after {
-    content: '';
-    position: absolute;
-    width: 200vw;
-    height: 200vh;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: ${floatAnimation} 4s infinite ease-in-out;
+  @keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 `;
 
-export const Dot = styled.div`
+const pulseAnimation = keyframes`
+  0% { transform: scale(0.8); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.7; }
+`;
+const Dot = styled.div`
   width: 24px;
   height: 24px;
-  margin: 0 8px;
+  margin: 0 6px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #ffd60a, #f9c74f);
-  box-shadow: 0 4px 12px rgba(249, 199, 79, 0.3);
-  animation: ${pulseAnimation} 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #f9c74f;
+  animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
-  position: relative;
-  z-index: 1;
+  box-shadow: 0 0 12px rgba(249, 199, 79, 0.8);
 `;
 
-export const BouncingLoader = styled.div`
+const BouncingLoader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 2;
 `;
-
-/* Message Styles */
-export const Message = styled.p`
-  margin: 1rem auto 0;
-  padding: 12px 24px;
+const Message = styled.p`
+  margin: 0.5rem auto 0;
   text-align: center;
-  font-weight: 600;
-  font-size: 1.1rem;
-  border-radius: 8px;
-  background: ${({ type }) => type === "success" ? 'rgba(46, 204, 113, 0.15)' : 'rgba(231, 76, 60, 0.15)'};
-  color: ${({ type }) => type === "success" ? "#27ae60" : "#c0392b"};
-  display: inline-flex;
+  font-weight: bold;
+  color: ${({ type }) => (type === "success" ? "#2ecc71" : "#e74c3c")};
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 12px;
-  backdrop-filter: blur(4px);
-  border: 1px solid ${({ type }) => type === "success" ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)'};
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  gap: 8px;
+  transition: opacity 0.3s ease;
+
+  &::before {
+    content: ${({ type }) => (type === "success" ? "'\\2713'" : "'\\26A0'")};
+    font-size: 1.2em;
+  }
 `;
 
-/* Card & List Styles */
-export const StyledCard = styled(Card)`
+const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 380px;
-  border: none;
-  border-radius: 20px;
+  height: 100%;
+  min-height: 320px;
+  border: 1px solid rgba(249, 199, 79, 0.3);
+  border-radius: 16px;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 20px;
-    border: 2px solid transparent;
-    background: linear-gradient(45deg, #f9c74f, #ffd60a) border-box;
-    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    transform: translateY(-10px) rotateZ(1deg);
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
 `;
 
-export const StyledListGroupItem = styled(ListGroup.Item)`
+const StyledListGroupItem = styled(ListGroup.Item)`
   height: 100%;
-  width: 100%;
+  width: 100%;  
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   margin-bottom: 12px;
-  padding: 16px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 10px;
+  background: linear-gradient(145deg, rgba(144, 190, 109, 0.1), rgba(122, 169, 92, 0.1));
 
   &:hover {
-    background: linear-gradient(145deg, #90be6d, #7aa95c);
-    box-shadow: 0 6px 16px rgba(122, 169, 92, 0.3);
-    transform: translateY(-3px);
+    background: linear-gradient(145deg, rgba(144, 190, 109, 0.2), rgba(122, 169, 92, 0.2));
+    color: #fff;
+    transform: scale(1.03);
   }
 
   &:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
 `;
 
-export const StyledList = styled.div`
+const StyledList = styled.div`
   text-align: center;
   font-style: italic;
   background: transparent;
   border: none;
   color: #555;
   min-height: 120px;
-  padding: 20px;
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
 
   @media (max-width: 768px) {
     min-height: 60vh;
@@ -170,55 +126,43 @@ export const StyledList = styled.div`
 `;
 
 /* Product Styles */
-export const ProductContainer = styled.div`
+const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  gap: 10px;
+  padding: 10px;
 `;
-
-export const ProductImage = styled.img`
-  width: 160px;
-  height: 220px;
-  border-radius: 16px;
+const ProductImage = styled.img`
+  width: 150px;
+  height: 200px;
+  border-radius: 12px;
   object-fit: cover;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  filter: saturate(0.9) brightness(0.98);
-  border: 2px solid transparent;
+  border: 2px solid rgba(249, 199, 79, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
 
   &:hover {
-    transform: scale(1.05) rotateZ(1deg);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    filter: saturate(1.1) brightness(1.02);
-    border-color: #f9c74f;
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   }
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 240px;
+    height: 210px;
   }
 `;
 
-export const ProductStyle = styled.span`
-  font-size: 1.1rem;
+const ProductStyle = styled.span`
+  font-size: 18px;
   font-weight: 600;
-  color: #2d3436;
+  color: #333;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 20ch;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 16ch;
 `;
 
-/* Hover Card */
 export const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chain }) => (chain === 1 ? x + 30 : x - 280 - 30)}px;
@@ -253,45 +197,38 @@ export const HoverCard = styled.div`
   }
 `;
 
-/* Controls */
-export const ControlButton = styled(Button)`
-  width: 40px;
-  height: 40px;
+const ControlButton = styled(Button)`
+  width: 30px;
+  height: 100%;
   background: none;
   border: none;
   opacity: 0.9;
+  background-color: transparent;
   position: relative;
   cursor: pointer;
-  border-radius: 50%;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(4px);
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  transition: all 0.3s ease;
 
   &:hover {
+    background-color: transparent;
+    opacity: 1;
     transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    background: rgba(255, 255, 255, 0.95);
+  }
+
+  &:focus {
+    outline: none;
   }
 
   @media (max-width: 768px) {
-    width: 50px;
-    height: 50px;
+    width: 100%;
+    height: 6vh;
   }
 `;
-
-export const MobileRow = styled(Row)`
+const MobileRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 1.5rem;
-    
-    > * {
-      width: 100%;
-      margin: 0;
-    }
+    padding: 0 1rem;
   }
 `;
 const ChainColumn = ({
@@ -717,8 +654,7 @@ export default function Chaines({ produits = [] }) {
               handleMouseLeave={handleMouseLeave}
               filterAndSortProducts={filterAndSortProducts}
               darkMode
-              style={{ color: 'white' }}
-              />
+            />
           )}
         </MobileRow>
       </Container>
