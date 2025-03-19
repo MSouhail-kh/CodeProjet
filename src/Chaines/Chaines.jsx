@@ -4,7 +4,7 @@ import { CheckCircle } from "react-bootstrap-icons";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import MyNavbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
-import NoImage from "../assets/NoImage.png"; // Renommez votre image "No+Image.png" en "NoImage.png"
+import NoImage from "../assets/NoImage.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
