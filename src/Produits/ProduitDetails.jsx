@@ -6,12 +6,14 @@ import { Container, Card, Form, Button, Row, Col, Spinner, Alert, Modal } from '
 import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText, XCircle } from 'react-bootstrap-icons';
 import styled, { keyframes } from "styled-components";
 
+
 const LoaderContainer = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: 100vh;
   width: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
 `;
 
 const pulseAnimation = keyframes`
@@ -20,29 +22,22 @@ const pulseAnimation = keyframes`
   100% { transform: scale(0.8); opacity: 0.7; }
 `;
 
-const BouncingLoader = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 const Dot = styled.div`
-  width: 20px;
-  height: 20px;
-  margin: 0 5px;
+  width: 24px;
+  height: 24px;
+  margin: 0 6px;
   border-radius: 50%;
-  background-color: #007bff; 
+  background-color: #f9c74f;
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
-
-  &:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  &:nth-child(3) {
-    animation-delay: 0.4s;
-  }
 `;
+
+const BouncingLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 
 const StyledCard = styled(Card)`
   border: 1px solid #e0e0e0;

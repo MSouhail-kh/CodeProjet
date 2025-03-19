@@ -107,7 +107,7 @@ const StyledList = styled.div`
   background: transparent;
   border: none;
   color: #555;
-  min-height: 120px;
+  height: 100%;
 
   @media (max-width: 768px) {
     min-height: 60vh;

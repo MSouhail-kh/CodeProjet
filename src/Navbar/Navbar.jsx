@@ -29,7 +29,7 @@ const NavContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  width: 50%;
   gap: 1.5rem;
 `;
 
@@ -132,9 +132,6 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
               <IconButton onClick={handleShowSearchModal}>
                 <Search size={20} />
               </IconButton>
-              {/* <IconButton onClick={handleShowProduit}>
-                <PlusCircle size={20} />
-              </IconButton> */}
               <IconButton onClick={handleRefreshPage} disabled={isLoading}>
                 {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={20} />}
               </IconButton>
