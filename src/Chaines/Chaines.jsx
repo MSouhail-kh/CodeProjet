@@ -18,9 +18,6 @@ const formatTimestamp = (timestamp) => {
   const seconds = String(date.getSeconds()).padStart(2, "0");
   return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
 };
-import styled from 'styled-components';
-import { keyframes } from 'styled-components';
-import { Card, ListGroup, Button, Row } from 'react-bootstrap';
 
 /* Animations */
 const pulseAnimation = keyframes`
