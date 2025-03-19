@@ -229,6 +229,7 @@ const ChainColumn = ({
             Chaine {chainNumber}
           </Card.Title>
           <ListGroup
+            style={{height: "100%"}}
             variant="flush"
             onDragOver={handleDragOver}
             onDrop={(e) =>
@@ -236,7 +237,7 @@ const ChainColumn = ({
             }
           >
             {sortedProducts.length === 0 ? (
-              <StyledList style={{height: "100%"}}>
+              <StyledList >
                 <br />
                 <br />
               </StyledList>
@@ -257,7 +258,7 @@ const ChainColumn = ({
                 >
                   <ProductContainer>
                     <ProductImage src={item.image || NoImage} alt={item.style} />
-                    <ProductStyle className={darkMode ? "bg-dark text-white" : ""}>{item.style}</ProductStyle>
+                    <ProductStyle className={darkMode ? "text-white" : ""}>{item.style}</ProductStyle>
                   </ProductContainer>
                 </StyledListGroupItem>
               ))
@@ -613,7 +614,6 @@ export default function Chaines({ produits = [] }) {
           ))}
           <Col md="auto" className="d-flex align-items-center">
             <ControlButton
-              variant="outline-light"
               onClick={() => setShowPosition6(!showPosition6)}
             />
           </Col>
