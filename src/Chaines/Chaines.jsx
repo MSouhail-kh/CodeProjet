@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { FiCheckCircle as CheckCircle } from "react-icons/fi";
 
 /* Loader Styles */
 const LoaderContainer = styled.div`
@@ -39,7 +40,19 @@ const BouncingLoader = styled.div`
   justify-content: center;
 `;
 
-/* Updated Card & List Styles */
+/* Message Styles */
+const Message = styled.p`
+  margin: 0.5rem auto 0;
+  text-align: center;
+  font-weight: bold;
+  color: ${({ type }) => (type === "success" ? "#2ecc71" : "#e74c3c")};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+`;
+
+/* Card & List Styles */
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
@@ -91,7 +104,7 @@ const StyledList = styled.div`
   }
 `;
 
-/* Updated Product Styles */
+/* Product Styles */
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -164,7 +177,7 @@ const ControlButton = styled(Button)`
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 6vh; /* Fixed height for mobile */
+    height: 6vh;
   }
 `;
 
@@ -323,6 +336,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
     </HoverCard>
   );
 };
+
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});
@@ -331,6 +345,8 @@ export default function Chaines({ produits = [] }) {
   const [chain, setChain] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  // État pour stocker la date de dernière mise à jour
+  const [lastUpdate, setLastUpdate] = useState(null);
 
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
@@ -377,8 +393,11 @@ export default function Chaines({ produits = [] }) {
       });
 
       setData(groupedData);
-      // Mise à jour immédiate du cache lors d'un refresh manuel
-      localStorage.setItem('cachedProducts', JSON.stringify(groupedData));
+      localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
+      // Enregistrement de la date de dernière mise à jour
+      const now = new Date().toISOString();
+      localStorage.setItem("lastUpdate", JSON.stringify(now));
+      setLastUpdate(now);
       setError(null);
     } catch (err) {
       console.error("Erreur :", err);
@@ -388,31 +407,38 @@ export default function Chaines({ produits = [] }) {
     }
   };
 
-useEffect(() => {
-  isMounted.current = true;
-  const cachedData = localStorage.getItem('cachedProducts');
-  if (cachedData) {
-    try {
-      const parsedData = JSON.parse(cachedData);
-      setData(parsedData);
-      setIsLoading(false); // On indique que le chargement est terminé
-    } catch (error) {
-      console.error('Erreur de parsing du cache:', error);
-      localStorage.removeItem('cachedProducts');
+  useEffect(() => {
+    isMounted.current = true;
+    const cachedData = localStorage.getItem("cachedProducts");
+    const cachedUpdate = localStorage.getItem("lastUpdate");
+    if (cachedData) {
+      try {
+        const parsedData = JSON.parse(cachedData);
+        setData(parsedData);
+        if (cachedUpdate) {
+          setLastUpdate(JSON.parse(cachedUpdate));
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erreur de parsing du cache:", error);
+        localStorage.removeItem("cachedProducts");
+        handleRefresh(produits);
+      }
+    } else {
       handleRefresh(produits);
     }
-  } else {
-    handleRefresh(produits);
-  }
-  return () => {
-    isMounted.current = false;
-  };
-}, []);
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
-  // Ce useEffect sauvegarde automatiquement les changements de data dans le cache.
+  // Sauvegarde automatique des modifications de data et de la date de mise à jour
   useEffect(() => {
     if (Object.keys(data).length) {
-      localStorage.setItem('cachedProducts', JSON.stringify(data));
+      localStorage.setItem("cachedProducts", JSON.stringify(data));
+      const now = new Date().toISOString();
+      localStorage.setItem("lastUpdate", JSON.stringify(now));
+      setLastUpdate(now);
     }
   }, [data]);
 
@@ -553,6 +579,16 @@ useEffect(() => {
     <>
       <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
+        <Row className="mb-3">
+          <Col className="text-end">
+            {lastUpdate && (
+              <Message type="success">
+                <CheckCircle size={20} />
+                Dernière mise à jour : {lastUpdate}
+              </Message>
+            )}
+          </Col>
+        </Row>
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
             <ChainColumn
