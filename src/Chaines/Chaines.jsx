@@ -255,7 +255,8 @@ const ChainColumn = ({
           <Card.Title className="text-center fw-bold">
             Chaine {chainNumber}
           </Card.Title>
-          <ListGroup
+          <ListGroup 
+            style={{height:'100%'}}
             variant="flush"
             onDragOver={handleDragOver}
             onDrop={(e) =>
