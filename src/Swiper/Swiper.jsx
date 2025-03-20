@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
-import Loader from '../Loader';
+
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -95,35 +95,40 @@ const ImageContainer = styled.div`
   }
 `;
 
-export default function MySwiper({ setLoading, setError }) {
+export default function MySwiper() {
   const { po } = useParams();
   const [produits, setProduits] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const fetchProduitsByPosition = async () => {
-      setLoading(true); // Active le chargement
       try {
         const produitResponse = await api.get(`/produits/${po}`);
         const produit = produitResponse.data;
         const positionId = produit.position_id;
-  
+
         const relatedProduitsResponse = await api.get(
           `/produits/position/${positionId}`
         );
         setProduits(relatedProduitsResponse.data);
-        setError(null); // Réinitialise les erreurs
       } catch (err) {
         setError("Erreur lors du chargement des produits");
-        console.error(err);
       } finally {
-        setLoading(false); // Désactive le chargement
+        // setLoading(false);
+        setError(null);
       }
     };
-  
+
     fetchProduitsByPosition();
-  }, [po, setLoading, setError]);
-  
-  if (!produits.length) {
-    return null; // Ne rien afficher si aucun produit n'est disponible
+  }, [po]);
+
+  // if (loading) {
+  //   return <Loader />;
+  // }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   return (
@@ -147,7 +152,7 @@ export default function MySwiper({ setLoading, setError }) {
       >
         {produits.map((produit) => (
           <SwiperSlide key={produit.po}>
-            <Card>
+            <Card onClick={() => handleCardClick(produit.po)}>
               <ImageContainer>
                 <img src={produit.image} alt={produit.style} />
               </ImageContainer>
