@@ -100,7 +100,6 @@ export default function MySwiper() {
   const { po } = useParams();
   const navigate = useNavigate();
   const [produits, setProduits] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -115,16 +114,14 @@ export default function MySwiper() {
       } catch (err) {
         setError('Erreur lors du chargement des produits');
       } finally {
-        setLoading(false);
+        console.log('Produits chargés');
       }
     };
 
     fetchProduitsByPosition();
   }, [po]);
 
-  if (loading) {
-    return <div>Chargement...</div>;
-  }
+
 
   if (error) {
     return <div>{error}</div>;
