@@ -18,6 +18,7 @@ const formatTimestamp = (timestamp) => {
   const seconds = String(date.getSeconds()).padStart(2, "0");
   return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
 };
+/* Loader Container */
 export const LoaderContainer = styled.div`
   display: flex;
   align-items: center;
@@ -28,16 +29,18 @@ export const LoaderContainer = styled.div`
 
   @media (min-width: 1920px) {
     height: 120vh;
-      width: 100%;
+    width: 100%;
   }
 `;
 
+/* Pulse Animation */
 const pulseAnimation = keyframes`
   0% { transform: scale(0.8); opacity: 0.7; }
   50% { transform: scale(1.2); opacity: 1; }
   100% { transform: scale(0.8); opacity: 0.7; }
 `;
 
+/* Dot Component */
 export const Dot = styled.div`
   width: 24px;
   height: 24px;
@@ -54,12 +57,14 @@ export const Dot = styled.div`
   }
 `;
 
+/* Bouncing Loader */
 export const BouncingLoader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
+/* Message Component */
 export const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -73,9 +78,11 @@ export const Message = styled.p`
 
   @media (min-width: 1920px) {
     font-size: 1.5rem;
+    margin: 1rem auto 0;
   }
 `;
 
+/* Styled Card */
 export const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
@@ -101,9 +108,10 @@ export const StyledCard = styled(Card)`
   }
 `;
 
+/* Styled List Group Item */
 export const StyledListGroupItem = styled(ListGroup.Item)`
   height: 100%;
-  width: 100%;  
+  width: 100%;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 12px;
@@ -124,9 +132,11 @@ export const StyledListGroupItem = styled(ListGroup.Item)`
     padding: 16px;
     width: 100%;
     font-size: 1.2rem;
+    margin-bottom: 16px;
   }
 `;
 
+/* Styled List */
 export const StyledList = styled.div`
   text-align: center;
   font-style: italic;
@@ -137,16 +147,14 @@ export const StyledList = styled.div`
 
   @media (max-width: 768px) {
     height: 100%;
-    
   }
 
-  /* Pour écran TV, agrandir la police */
   @media (min-width: 1920px) {
-    font-size: 1.3rem;
-    
+    font-size: 1.2rem;
   }
 `;
 
+/* Product Container */
 export const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -154,13 +162,13 @@ export const ProductContainer = styled.div`
   gap: 10px;
   padding: 10px;
 
-  /* Pour écran TV, augmenter l'espacement et le padding */
   @media (min-width: 1920px) {
     gap: 16px;
     padding: 20px;
   }
 `;
 
+/* Product Image */
 export const ProductImage = styled.img`
   width: 150px;
   height: 200px;
@@ -186,6 +194,7 @@ export const ProductImage = styled.img`
   }
 `;
 
+/* Product Style */
 export const ProductStyle = styled.span`
   font-size: 18px;
   font-weight: 600;
@@ -201,6 +210,7 @@ export const ProductStyle = styled.span`
   }
 `;
 
+/* Hover Card */
 export const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
@@ -223,6 +233,7 @@ export const HoverCard = styled.div`
   }
 `;
 
+/* Control Button */
 export const ControlButton = styled(Button)`
   width: 30px;
   height: 100%;
@@ -254,6 +265,7 @@ export const ControlButton = styled(Button)`
   }
 `;
 
+/* Mobile Row */
 export const MobileRow = styled.div`
   display: flex;
   flex-wrap: nowrap;
