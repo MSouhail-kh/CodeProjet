@@ -125,7 +125,7 @@ const ProductImage = styled.img`
   width: 150px;
   height: 200px;
   border-radius: 12px;
-  object-fit: cover;
+  object-fit: fill;
   border: 2px solid rgba(249, 199, 79, 0.3);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
