@@ -28,6 +28,7 @@ export const LoaderContainer = styled.div`
 
   @media (min-width: 1920px) {
     height: 120vh;
+      width: 100%;
   }
 `;
 
@@ -46,7 +47,6 @@ export const Dot = styled.div`
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
 
-  /* Pour écran TV, augmenter légèrement la taille */
   @media (min-width: 1920px) {
     width: 32px;
     height: 32px;
@@ -60,7 +60,6 @@ export const BouncingLoader = styled.div`
   justify-content: center;
 `;
 
-  /* Adaptation pour TV */
 export const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -97,6 +96,7 @@ export const StyledCard = styled(Card)`
 
   @media (min-width: 1920px) {
     min-height: 400px;
+    width: 100%;
     border-radius: 20px;
   }
 `;
@@ -122,6 +122,7 @@ export const StyledListGroupItem = styled(ListGroup.Item)`
 
   @media (min-width: 1920px) {
     padding: 16px;
+    width: 100%;
     font-size: 1.2rem;
   }
 `;
@@ -136,11 +137,13 @@ export const StyledList = styled.div`
 
   @media (max-width: 768px) {
     height: 100%;
+    
   }
 
   /* Pour écran TV, agrandir la police */
   @media (min-width: 1920px) {
     font-size: 1.3rem;
+    
   }
 `;
 
