@@ -221,7 +221,7 @@ const ChainColumn = ({
   darkMode = false,
 }) => {
   const sortedProducts = filterAndSortProducts(products, chainNumber);
-  
+
   return (
     <Col xs={12} sm={6} md={2}>
       <StyledCard className={darkMode ? "bg-dark text-white" : ""}>
@@ -234,45 +234,46 @@ const ChainColumn = ({
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
           >
-            {sortedProducts.length === 0 ? (
-              <StyledList>
-                <br />
-                <br />
-              </StyledList>
-            ) : (
-              <>
-                <ProductContainer
-                  style={{ backgroundColor: 'transparent', width: '100%' }}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)} 
-                />
-                
-                {sortedProducts.map((item, index) => (
-                  <StyledListGroupItem
-                    key={item.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, chainNumber, item, index)}
-                    onDrop={(e) => handleDrop(e, chainNumber, index)}
-                    onDragOver={handleDragOver}
-                    onClick={() => handleItemClick(item)}
-                    onMouseEnter={(e) => handleMouseEnter(e, item)}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <ProductContainer>
-                      <ProductImage src={item.image || NoImage} alt={item.style} />
-                      <ProductStyle className={darkMode ? "text-white" : ""}>{item.style}</ProductStyle>
-                    </ProductContainer>
-                  </StyledListGroupItem>
-                ))}
-              </>
-            )}
+            {sortedProducts.map((item, index) => (
+              <StyledListGroupItem
+                key={item.id}
+                draggable
+                onDragStart={(e) =>
+                  handleDragStart(e, chainNumber, item, index)
+                }
+                onDrop={(e) => handleDrop(e, chainNumber, index)}
+                onDragOver={handleDragOver}
+                onClick={() => handleItemClick(item)}
+                onMouseEnter={(e) => handleMouseEnter(e, item)}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+              >
+                <ProductContainer>
+                  <ProductImage
+                    src={item.image || NoImage}
+                    alt={item.style}
+                  />
+                  <ProductStyle className={darkMode ? "text-white" : ""}>
+                    {item.style}
+                  </ProductStyle>
+                </ProductContainer>
+              </StyledListGroupItem>
+            ))}
+            <StyledListGroupItem
+              className="bg-transparent"
+              style={{ height: "100%" }}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
+            >
+              <ProductContainer style={{ height: "100%" }} />
+            </StyledListGroupItem>
           </ListGroup>
         </Card.Body>
       </StyledCard>
     </Col>
   );
 };
+
 
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
