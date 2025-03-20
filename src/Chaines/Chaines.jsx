@@ -163,8 +163,8 @@ export const ProductContainer = styled.div`
   padding: 10px;
 
   @media (min-width: 1920px) {
-    gap: 16px;
-    padding: 20px;
+    gap: 10px;
+    padding: 10px;
   }
 `;
 
@@ -261,7 +261,7 @@ export const ControlButton = styled(Button)`
   }
 
   @media (min-width: 1920px) {
-    width: 50px;
+    width: 25px;
   }
 `;
 
