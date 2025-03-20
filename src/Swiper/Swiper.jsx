@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
-
+import Loader from '../Loader';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -96,10 +96,9 @@ const ImageContainer = styled.div`
 `;
 
 export default function MySwiper() {
-  // Extraction du paramètre "po" depuis l'URL
   const { po } = useParams();
-  const navigate = useNavigate();
   const [produits, setProduits] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -109,32 +108,32 @@ export default function MySwiper() {
         const produit = produitResponse.data;
         const positionId = produit.position_id;
 
-        const relatedProduitsResponse = await api.get(`/produits/position/${positionId}`);
+        const relatedProduitsResponse = await api.get(
+          `/produits/position/${positionId}`
+        );
         setProduits(relatedProduitsResponse.data);
       } catch (err) {
-        setError('Erreur lors du chargement des produits');
+        setError("Erreur lors du chargement des produits");
       } finally {
-        console.log('Produits chargés');
+        setLoading(false);
       }
     };
 
     fetchProduitsByPosition();
   }, [po]);
 
-
+  if (loading) {
+    return <Loader />;
+  }
 
   if (error) {
     return <div>{error}</div>;
   }
 
-  const handleCardClick = (po) => {
-    navigate(`/produit/${po}`);
-  };
-
   return (
     <SwiperContainer>
       <Swiper
-        slidesPerView={'auto'}
+        slidesPerView={"auto"}
         centeredSlides={true}
         spaceBetween={20}
         grabCursor={true}

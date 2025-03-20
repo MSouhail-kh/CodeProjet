@@ -6,16 +6,7 @@ import { Container, Card, Form, Button, Row, Col, Spinner, Alert, Modal } from '
 import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText, XCircle } from 'react-bootstrap-icons';
 import styled, { keyframes } from "styled-components";
 import NoImage from "../assets/No+Image.png";
-
-
-const LoaderContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: 100%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-`;
+import Loader from '../Loader';
 
 const pulseAnimation = keyframes`
   0% { transform: scale(0.8); opacity: 0.7; }
@@ -23,21 +14,6 @@ const pulseAnimation = keyframes`
   100% { transform: scale(0.8); opacity: 0.7; }
 `;
 
-const Dot = styled.div`
-  width: 24px;
-  height: 24px;
-  margin: 0 6px;
-  border-radius: 50%;
-  background-color: #f9c74f;
-  animation: ${pulseAnimation} 1.4s infinite ease-in-out;
-  animation-delay: ${(props) => props.delay || "0s"};
-`;
-
-const BouncingLoader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
 
 const StyledCard = styled(Card)`
   border: 1px solid #e0e0e0;
@@ -255,15 +231,7 @@ const ProduitDetails = () => {
   };
 
   if (loading) {
-    return (
-      <LoaderContainer>
-        <BouncingLoader>
-          <Dot />
-          <Dot delay="0.2s" />
-          <Dot delay="0.4s" />
-        </BouncingLoader>
-      </LoaderContainer>
-    );
+    return <Loader />;
   }
 
   if (error) {
