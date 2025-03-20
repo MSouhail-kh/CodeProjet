@@ -5,16 +5,4 @@ body {
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   min-height: 100vh;
   color: #333;
-
-  /* Adaptation for TV */
-  font-size: 2rem; /* Increase font size for readability */
-  line-height: 1.5; /* Adjust line height for better spacing */
-  text-align: center; /* Center-align text for TV screens */
-  overflow: hidden; /* Prevent scrolling on TV */
-}
-
-@media screen and (min-width: 1920px) {
-  body {
-    font-size: 2.5rem; 
-  }
 }
