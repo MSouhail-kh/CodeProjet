@@ -18,14 +18,17 @@ const formatTimestamp = (timestamp) => {
   const seconds = String(date.getSeconds()).padStart(2, "0");
   return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
 };
-
-const LoaderContainer = styled.div`
+export const LoaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
   width: 100%;
   background: linear-gradient(135deg, #667eea, #764ba2);
+
+  @media (min-width: 1920px) {
+    height: 120vh;
+  }
 `;
 
 const pulseAnimation = keyframes`
@@ -34,7 +37,7 @@ const pulseAnimation = keyframes`
   100% { transform: scale(0.8); opacity: 0.7; }
 `;
 
-const Dot = styled.div`
+export const Dot = styled.div`
   width: 24px;
   height: 24px;
   margin: 0 6px;
@@ -42,16 +45,23 @@ const Dot = styled.div`
   background-color: #f9c74f;
   animation: ${pulseAnimation} 1.4s infinite ease-in-out;
   animation-delay: ${(props) => props.delay || "0s"};
+
+  /* Pour écran TV, augmenter légèrement la taille */
+  @media (min-width: 1920px) {
+    width: 32px;
+    height: 32px;
+    margin: 0 8px;
+  }
 `;
 
-const BouncingLoader = styled.div`
+export const BouncingLoader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-/* Message Styles */
-const Message = styled.p`
+  /* Adaptation pour TV */
+export const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
   font-weight: bold;
@@ -60,9 +70,14 @@ const Message = styled.p`
   justify-content: center;
   align-items: center;
   gap: 8px;
+  font-size: 1rem;
+
+  @media (min-width: 1920px) {
+    font-size: 1.5rem;
+  }
 `;
 
-const StyledCard = styled(Card)`
+export const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -79,9 +94,14 @@ const StyledCard = styled(Card)`
     transform: translateY(-8px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
+
+  @media (min-width: 1920px) {
+    min-height: 400px;
+    border-radius: 20px;
+  }
 `;
 
-const StyledListGroupItem = styled(ListGroup.Item)`
+export const StyledListGroupItem = styled(ListGroup.Item)`
   height: 100%;
   width: 100%;  
   cursor: pointer;
@@ -99,9 +119,14 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   &:active {
     transform: scale(0.97);
   }
+
+  @media (min-width: 1920px) {
+    padding: 16px;
+    font-size: 1.2rem;
+  }
 `;
 
-const StyledList = styled.div`
+export const StyledList = styled.div`
   text-align: center;
   font-style: italic;
   background: transparent;
@@ -112,16 +137,28 @@ const StyledList = styled.div`
   @media (max-width: 768px) {
     height: 100%;
   }
+
+  /* Pour écran TV, agrandir la police */
+  @media (min-width: 1920px) {
+    font-size: 1.3rem;
+  }
 `;
 
-const ProductContainer = styled.div`
+export const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
   padding: 10px;
+
+  /* Pour écran TV, augmenter l'espacement et le padding */
+  @media (min-width: 1920px) {
+    gap: 16px;
+    padding: 20px;
+  }
 `;
-const ProductImage = styled.img`
+
+export const ProductImage = styled.img`
   width: 150px;
   height: 200px;
   border-radius: 12px;
@@ -139,22 +176,29 @@ const ProductImage = styled.img`
     width: 100%;
     height: 210px;
   }
+
+  @media (min-width: 1920px) {
+    width: 250px;
+    height: 350px;
+  }
 `;
 
-const ProductStyle = styled.span`
+export const ProductStyle = styled.span`
   font-size: 18px;
   font-weight: 600;
-  color: ${({ darkMode }) =>
-    darkMode
-      ? "white" 
-      : "black"};
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 16ch;
+
+  @media (min-width: 1920px) {
+    font-size: 24px;
+    max-width: 20ch;
+  }
 `;
 
-const HoverCard = styled.div`
+export const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
   top: ${({ y, cardHeight }) => {
@@ -170,9 +214,13 @@ const HoverCard = styled.div`
     show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
   pointer-events: none;
+
+  @media (min-width: 1920px) {
+    width: 350px;
+  }
 `;
 
-const ControlButton = styled(Button)`
+export const ControlButton = styled(Button)`
   width: 30px;
   height: 100%;
   background: none;
@@ -197,12 +245,24 @@ const ControlButton = styled(Button)`
     width: 100%;
     height: 6vh;
   }
+
+  @media (min-width: 1920px) {
+    width: 50px;
+  }
 `;
 
-const MobileRow = styled(Row)`
+export const MobileRow = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 1rem;
+
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 1rem;
+  }
+
+  @media (min-width: 1920px) {
+    gap: 2rem;
   }
 `;
 

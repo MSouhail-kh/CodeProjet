@@ -9,18 +9,7 @@ import SearchResultsModal from "../Produits/SearchResultsModal";
 import api from "../services/axios";
 import Logo from "../assets/Sigmatex.png";
 
-
-// Animation pour la couleur du texte
-const textColorAnimation = keyframes`
-  0% { color: #7c4dff; }
-  25% { color: #448aff; }
-  50% { color: #00bcd4; }
-  75% { color: #ff6f61; }
-  100% { color: #7c4dff; }
-`;
-
-
-  const StyledNavbar = styled(Navbar)`
+const StyledNavbar = styled(Navbar)`
     background: linear-gradient(135deg, #7c4dff, #448aff) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     padding: 0.8rem 0;
@@ -75,17 +64,10 @@ const LogoContainer = styled(Navbar.Brand)`
     font-size: 1.4rem;
     padding: 0.4rem 1rem;
   }
-`;
 
-const IconsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  padding-right: 1rem;
-
-  @media (max-width: 768px) {
-    gap: 0.8rem;
-    padding-right: 0.5rem;
+  @media (min-width: 1920px) {
+    font-size: 2.5rem;
+    padding: 1rem 2rem;
   }
 `;
 
@@ -112,17 +94,26 @@ const IconButton = styled.div`
     width: 36px;
     height: 36px;
   }
+
+  @media (min-width: 1920px) {
+    width: 60px;
+    height: 60px;
+  }
 `;
 
-const MessageContainer = styled(Container)`
+
+const IconsContainer = styled.div`
   display: flex;
-  justify-content: center;
-  margin-top: 1rem;
+  align-items: center;
+  gap: 1.2rem;
+  padding-right: 1rem;
+
+  @media (max-width: 768px) {
+    gap: 0.8rem;
+    padding-right: 0.5rem;
+  }
 `;
 
-
-
-// Nouveau style pour le message
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -136,15 +127,21 @@ const Message = styled.p`
 
 const LogoImage = styled.img`
   max-width: 150px;
-  height: 'auto' ;
+  height: auto;
   object-fit: contain;
   margin-right: 12px;
 
   @media (max-width: 768px) {
     max-width: 100px;
-      height: 'auto' ;
+    height: auto;
+  }
+
+  /* Adaptation pour TV */
+  @media (min-width: 1920px) {
+    max-width: 200px;
   }
 `;
+
 
 const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
