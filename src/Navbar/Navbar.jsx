@@ -134,6 +134,16 @@ const Message = styled.p`
   gap: 8px;
 `;
 
+const LogoImage = styled.img`
+  max-width: 140px;
+  height: auto;
+  object-fit: contain;
+  margin-right: 12px;
+
+  @media (max-width: 768px) {
+    max-width: 100px;
+  }
+`;
 
 const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
@@ -171,13 +181,9 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
       <StyledNavbar expand="lg" variant="dark">
           <Container fluid>
             <NavContainer>
-              <LogoContainer href="/Chaines">
-                <img 
-                  src={Logo} 
-                  alt="Sigmatex Logo"
-                  style={{ maxWidth:'120px' ,height: '30px', marginRight: '12px' }}
-                />
-              </LogoContainer>
+            <LogoContainer href="/Chaines">
+              <LogoImage src={Logo} alt="Sigmatex Logo" />
+            </LogoContainer>
               
               <IconsContainer>
                 <IconButton onClick={handleShowSearchModal}>
