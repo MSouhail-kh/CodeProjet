@@ -294,7 +294,7 @@ const ProduitDetails = () => {
                 alt={product.style}
                 style={{ 
                   height: '100%', 
-                  objectFit: 'cover',
+                  objectFit: 'fill',
                   borderRight: '1px solid #e0e0e0',
                   cursor: 'pointer'
                 }}
