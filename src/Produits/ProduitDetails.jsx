@@ -5,13 +5,14 @@ import MyNavbar from '../Navbar/Navbar';
 import { Container, Card, Form, Button, Row, Col, Spinner, Alert, Modal } from 'react-bootstrap';
 import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText, XCircle } from 'react-bootstrap-icons';
 import styled, { keyframes } from "styled-components";
+import NoImage from "../assets/No+Image.png";
 
 
 const LoaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   background: linear-gradient(135deg, #667eea, #764ba2);
 `;
@@ -290,7 +291,7 @@ const ProduitDetails = () => {
             <Col md={6}>
               <Card.Img
                 variant="top"
-                src={previewImage || product.image || 'https://via.placeholder.com/300'}
+                src={previewImage || product.image || NoImage}
                 alt={product.style}
                 style={{ 
                   height: '100%', 
