@@ -64,10 +64,17 @@ const LogoContainer = styled(Navbar.Brand)`
     font-size: 1.4rem;
     padding: 0.4rem 1rem;
   }
+`;
 
-  @media (min-width: 1920px) {
-    font-size: 2.5rem;
-    padding: 1rem 2rem;
+const IconsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding-right: 1rem;
+
+  @media (max-width: 768px) {
+    gap: 0.8rem;
+    padding-right: 0.5rem;
   }
 `;
 
@@ -94,24 +101,6 @@ const IconButton = styled.div`
     width: 36px;
     height: 36px;
   }
-
-  @media (min-width: 1920px) {
-    width: 60px;
-    height: 60px;
-  }
-`;
-
-
-const IconsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  padding-right: 1rem;
-
-  @media (max-width: 768px) {
-    gap: 0.8rem;
-    padding-right: 0.5rem;
-  }
 `;
 
 const Message = styled.p`
@@ -127,21 +116,15 @@ const Message = styled.p`
 
 const LogoImage = styled.img`
   max-width: 150px;
-  height: auto;
+  height: 'auto' ;
   object-fit: contain;
   margin-right: 12px;
 
   @media (max-width: 768px) {
     max-width: 100px;
-    height: auto;
-  }
-
-  /* Adaptation pour TV */
-  @media (min-width: 1920px) {
-    max-width: 200px;
+      height: 'auto' ;
   }
 `;
-
 
 const MyNavbar = ({ produits = [], onRefresh }) => {
   const [showProduitModal, setShowProduitModal] = useState(false);
