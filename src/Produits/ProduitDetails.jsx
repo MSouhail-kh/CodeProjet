@@ -136,25 +136,24 @@ const ProduitDetails = () => {
   const [showFileModal, setShowFileModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
-
   useEffect(() => {
     const fetchProduct = async () => {
-      setLoading(true);
+      setLoading(true); // Active le chargement
       try {
         const response = await api.get(`/produits/${po}`);
         setProduct(response.data);
-        setError(null);
+        setError(null); // Réinitialise les erreurs
       } catch (err) {
         setError("Erreur lors de la récupération des données");
         console.error(err);
       } finally {
-        setLoading(false);
+        setLoading(false); // Désactive le chargement
       }
     };
-
+  
     fetchProduct();
   }, [po, setLoading, setError]);
-
+  
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
 

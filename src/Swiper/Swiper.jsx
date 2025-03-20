@@ -98,30 +98,30 @@ const ImageContainer = styled.div`
 export default function MySwiper({ setLoading, setError }) {
   const { po } = useParams();
   const [produits, setProduits] = useState([]);
-
   useEffect(() => {
     const fetchProduitsByPosition = async () => {
-      setLoading(true);
+      setLoading(true); // Active le chargement
       try {
         const produitResponse = await api.get(`/produits/${po}`);
         const produit = produitResponse.data;
         const positionId = produit.position_id;
-
+  
         const relatedProduitsResponse = await api.get(
           `/produits/position/${positionId}`
         );
         setProduits(relatedProduitsResponse.data);
-        setError(null);
+        setError(null); // Réinitialise les erreurs
       } catch (err) {
         setError("Erreur lors du chargement des produits");
+        console.error(err);
       } finally {
-        setLoading(false);
+        setLoading(false); // Désactive le chargement
       }
     };
-
+  
     fetchProduitsByPosition();
   }, [po, setLoading, setError]);
-
+  
   if (!produits.length) {
     return null; // Ne rien afficher si aucun produit n'est disponible
   }
