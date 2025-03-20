@@ -135,13 +135,14 @@ const Message = styled.p`
 `;
 
 const LogoImage = styled.img`
-  max-width: 140px;
-  height: auto;
+  max-width: 150px;
+  height: '30px' ;
   object-fit: contain;
   margin-right: 12px;
 
   @media (max-width: 768px) {
     max-width: 100px;
+      height: '30px' ;
   }
 `;
 
