@@ -258,6 +258,7 @@ const ChainColumn = ({
                 </ProductContainer>
               </StyledListGroupItem>
             ))}
+            </ListGroup>
             <StyledList
               className="bg-transparent"
               style={{ height: "100%" }}
@@ -266,7 +267,6 @@ const ChainColumn = ({
             >
               <ProductContainer style={{ height: "100%" }} />
             </StyledList>
-          </ListGroup>
         </Card.Body>
       </StyledCard>
     </Col>
