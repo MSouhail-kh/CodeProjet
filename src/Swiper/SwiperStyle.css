@@ -1,6 +1,6 @@
 #app {
     height: 100%;
-    background: linear-gradient(135deg, #6a11cb, #2575fc); 
+    background: transparent !important; 
 
   }
   html,
@@ -10,7 +10,7 @@
   }
   
   body {
-    background: linear-gradient(135deg, #6a11cb, #2575fc); 
+    background: transparent !important; 
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     font-size: 14px;
     color: #000;

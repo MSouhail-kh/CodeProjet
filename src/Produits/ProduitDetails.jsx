@@ -12,7 +12,7 @@ const LoaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   background: linear-gradient(135deg, #667eea, #764ba2);
 `;
