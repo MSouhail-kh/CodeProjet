@@ -259,14 +259,14 @@ const ChainColumn = ({
                 </ProductContainer>
               </StyledListGroupItem>
             ))}
-            <StyledListGroupItem
+            <StyledList
               className="bg-transparent"
               style={{ height: "100%" }}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
             >
               <ProductContainer style={{ height: "100%" }} />
-            </StyledListGroupItem>
+            </StyledList>
           </ListGroup>
         </Card.Body>
       </StyledCard>
