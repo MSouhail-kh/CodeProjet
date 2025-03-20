@@ -7,6 +7,8 @@ import AjouterProduitsModel from "../Produits/AjouterProduitsModel";
 import UserProfile from "../Authentification/User/UserProfile";
 import SearchResultsModal from "../Produits/SearchResultsModal";
 import api from "../services/axios";
+import Logo from "../assets/Sigmatex.png";
+
 
 // Animation pour la couleur du texte
 const textColorAnimation = keyframes`
@@ -171,11 +173,10 @@ const MyNavbar = ({ produits = [], onRefresh }) => {
             <NavContainer>
               <LogoContainer href="/Chaines">
                 <img 
-                  src="/chemin/vers/logo.png" 
+                  src={Logo} 
                   alt="Sigmatex Logo"
-                  style={{ height: '32px', marginRight: '12px' }}
+                  style={{ maxWidth:'120px' ,height: '30px', marginRight: '12px' }}
                 />
-                Sigmatex
               </LogoContainer>
               
               <IconsContainer>
