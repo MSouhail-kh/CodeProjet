@@ -114,7 +114,6 @@ const StyledList = styled.div`
   }
 `;
 
-/* Product Styles */
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
