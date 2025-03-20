@@ -110,7 +110,7 @@ const StyledList = styled.div`
   height: 100%;
 
   @media (max-width: 768px) {
-    min-height: 60vh;
+    height: 100%;
   }
 `;
 
@@ -261,11 +261,10 @@ const ChainColumn = ({
             </ListGroup>
             <StyledList
               className="bg-transparent"
-              style={{ height: "100%" }}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
             >
-              <ProductContainer style={{ height: "100%" }} />
+              <ProductContainer />
             </StyledList>
         </Card.Body>
       </StyledCard>
