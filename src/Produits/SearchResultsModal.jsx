@@ -98,7 +98,7 @@ const SearchResultsModal = ({ show, handleClose }) => {
       setSearchResults(response.data.results);
       setSearchError(null);
     } catch (err) {
-      setSearchError(err.response?.data?.error || 'An error occurred');
+      setSearchError(err.response?.data?.error || 'Une erreur est survenue');
       setSearchResults([]);
     }
   };
@@ -110,12 +110,12 @@ const SearchResultsModal = ({ show, handleClose }) => {
   return (
     <AnimatedModal show={show} onHide={handleClose} size="lg">
       <ModalHeader closeButton>
-        <Modal.Title>🔍 Search Products</Modal.Title>
+        <Modal.Title>🔍 Rechercher des Produits</Modal.Title>
       </ModalHeader>
       <ModalBody>
         <Form>
           <Form.Group controlId="formSearchValue">
-            <Form.Label>Search</Form.Label>
+            <Form.Label>Recherche</Form.Label>
             <Form.Control
               type="text"
               value={searchValue}
@@ -123,13 +123,13 @@ const SearchResultsModal = ({ show, handleClose }) => {
             />
           </Form.Group>
           <Form.Group controlId="formSearchType">
-            <Form.Label>Search By</Form.Label>
+            <Form.Label>Rechercher par</Form.Label>
             <Form.Control as="select" value={searchType} onChange={handleSearchTypeChange}>
               <option value="style">Style</option>
               <option value="po">PO</option>
-              <option value="brand">Brand</option>
+              <option value="brand">Marque</option>
               <option value="coloris">Coloris</option>
-              <option value="reference">Reference</option>
+              <option value="reference">Référence</option>
             </Form.Control>
           </Form.Group>
 
@@ -154,7 +154,7 @@ const SearchResultsModal = ({ show, handleClose }) => {
       </ModalBody>
       <Modal.Footer>
           <GradientButton onClick={handleSearch}>
-              <Search /> Search
+              <Search /> Rechercher
           </GradientButton>
       </Modal.Footer>
     </AnimatedModal>
