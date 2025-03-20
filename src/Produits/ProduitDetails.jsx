@@ -139,13 +139,13 @@ const ProduitDetails = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
+      setLoading(true);
       try {
         const response = await api.get(`/produits/${po}`);
         setProduct(response.data);
-        setEditedData(response.data);
-        setLoading(false); 
+        setError(null);
       } catch (err) {
-        setError('Erreur lors de la récupération des données');
+        setError("Erreur lors de la récupération des données");
         console.error(err);
       } finally {
         setLoading(false);
@@ -153,7 +153,7 @@ const ProduitDetails = () => {
     };
 
     fetchProduct();
-  }, [po]);
+  }, [po, setLoading, setError]);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -230,8 +230,8 @@ const ProduitDetails = () => {
     setShowImageModal(true);
   };
 
-  if (loading) {
-    return <Loader />;
+  if (!product) {
+    return null; 
   }
 
   if (error) {
