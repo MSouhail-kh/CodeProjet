@@ -126,7 +126,7 @@ const ProductContainer = styled.div`
 
 const ProductImage = styled.img`
   width: 150px;
-  height: 100px;
+  height: 80px;
   object-fit: fill;
 
   @media (max-width: 768px) {
@@ -134,13 +134,11 @@ const ProductImage = styled.img`
     height: 210px;
   }
 `;
+
 const ProductStyle = styled.span`
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   color: ${({ darkMode }) => (darkMode ? "white" : "black")};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   max-width: 16ch;
   padding: 5px;
 
@@ -201,6 +199,7 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
+
 const ChainColumn = ({
   chainNumber,
   products,
