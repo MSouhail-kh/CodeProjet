@@ -68,29 +68,32 @@ const StyledCard = styled(Card)`
   flex: 1;
   height: 100%;
   min-height: 320px;
-  border: 1px solid ;
+  border: 1px solid ${({ darkMode }) => (darkMode ? "#444" : "#ddd")};
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: ${({ darkMode }) => (darkMode ? "#333" : "#fff")};
 
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
   }
 `;
-
 const StyledListGroupItem = styled(ListGroup.Item)`
   height: 100%;
   width: 100%;  
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 12px;
-  
   padding: 10px;
+  border: 1px solid ${({ darkMode }) => (darkMode ? "#555" : "#eee")};
+  border-radius: 8px;
+  background-color: ${({ darkMode }) => (darkMode ? "#444" : "#f9f9f9")};
 
   &:hover {
     color: #fff;
     transform: scale(1.03);
+    background-color: ${({ darkMode }) => (darkMode ? "#555" : "#eee")};
   }
 
   &:active {
@@ -110,39 +113,59 @@ const StyledList = styled.div`
     height: 100%;
   }
 `;
-
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-    border-radius: 8px solid black;
+  border-radius: 8px;
+  border: 1px solid ${({ darkMode }) => (darkMode ? "#555" : "#eee")};
+  padding: 10px;
+  background-color: ${({ darkMode }) => (darkMode ? "#444" : "#f9f9f9")};
+  transition: all 0.3s ease;
 
+  &:hover {
+    border-color: ${({ darkMode }) => (darkMode ? "#888" : "#ccc")};
+    background-color: ${({ darkMode }) => (darkMode ? "#555" : "#eee")};
+  }
 `;
 
 const ProductImage = styled.img`
   width: 150px;
   height: 100px;
-  object-fit: fill;
+  object-fit: cover;
+  border: 2px solid ${({ darkMode }) => (darkMode ? "#666" : "#ddd")};
+  border-radius: 8px;
+  transition: all 0.3s ease;
 
+  &:hover {
+    border-color: ${({ darkMode }) => (darkMode ? "#888" : "#ccc")};
+    transform: scale(1.05);
+  }
 
   @media (max-width: 768px) {
     width: 100%;
     height: 210px;
   }
 `;
-
 const ProductStyle = styled.span`
   font-size: 18px;
   font-weight: 600;
-  color: ${({ darkMode }) =>
-    darkMode
-      ? "white" 
-      : "black"};
+  color: ${({ darkMode }) => (darkMode ? "white" : "black")};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 16ch;
+  padding: 5px;
+  border: 1px solid ${({ darkMode }) => (darkMode ? "#666" : "#ddd")};
+  border-radius: 4px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: ${({ darkMode }) => (darkMode ? "#888" : "#ccc")};
+    background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
+  }
 `;
+
 
 const HoverCard = styled.div`
   position: fixed;
@@ -195,7 +218,6 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
-
 const ChainColumn = ({
   chainNumber,
   products,
@@ -213,7 +235,7 @@ const ChainColumn = ({
 
   return (
     <Col xs={12} sm={6} md={2}>
-      <StyledCard className={darkMode ? "bg-dark text-white" : ""}>
+      <StyledCard darkMode={darkMode}>
         <Card.Body>
           <Card.Title className="text-center fw-bold">
             Chaine {chainNumber}
@@ -236,26 +258,28 @@ const ChainColumn = ({
                 onMouseEnter={(e) => handleMouseEnter(e, item)}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
+                darkMode={darkMode}
               >
-                <ProductContainer>
+                <ProductContainer darkMode={darkMode}>
                   <ProductImage
                     src={item.image || NoImage}
                     alt={item.style}
+                    darkMode={darkMode}
                   />
-                  <ProductStyle className={darkMode ? "text-white" : ""}>
+                  <ProductStyle darkMode={darkMode}>
                     {item.style}
                   </ProductStyle>
                 </ProductContainer>
               </StyledListGroupItem>
             ))}
-            </ListGroup>
-            <StyledList
-              className="bg-transparent"
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
-            >
-              <ProductContainer />
-            </StyledList>
+          </ListGroup>
+          <StyledList
+            className="bg-transparent"
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, chainNumber, sortedProducts.length)}
+          >
+            <ProductContainer darkMode={darkMode} />
+          </StyledList>
         </Card.Body>
       </StyledCard>
     </Col>
