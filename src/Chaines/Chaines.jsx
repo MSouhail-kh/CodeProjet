@@ -68,12 +68,10 @@ const StyledCard = styled(Card)`
   flex: 1;
   height: 100%;
   min-height: 320px;
-  border: 1px solid rgba(249, 199, 79, 0.3);
+  border: 1px solid ;
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
     transform: translateY(-8px);
@@ -87,6 +85,7 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 12px;
+  
   padding: 10px;
 
   &:hover {
@@ -116,6 +115,8 @@ const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+    border-radius: 8px solid black;
+
 `;
 
 const ProductImage = styled.img`
