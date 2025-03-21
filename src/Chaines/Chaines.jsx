@@ -117,11 +117,6 @@ const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: 8px;
-  border: 1px solid ${({ darkMode }) => (darkMode ? "#555" : "#eee")};
-  padding: 10px;
-  background-color: ${({ darkMode }) => (darkMode ? "#444" : "#f9f9f9")};
-  transition: all 0.3s ease;
 
   &:hover {
     border-color: ${({ darkMode }) => (darkMode ? "#888" : "#ccc")};
@@ -132,15 +127,7 @@ const ProductContainer = styled.div`
 const ProductImage = styled.img`
   width: 150px;
   height: 100px;
-  object-fit: cover;
-  border: 2px solid ${({ darkMode }) => (darkMode ? "#666" : "#ddd")};
-  border-radius: 8px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    border-color: ${({ darkMode }) => (darkMode ? "#888" : "#ccc")};
-    transform: scale(1.05);
-  }
+  object-fit: fill;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -156,12 +143,8 @@ const ProductStyle = styled.span`
   text-overflow: ellipsis;
   max-width: 16ch;
   padding: 5px;
-  border: 1px solid ${({ darkMode }) => (darkMode ? "#666" : "#ddd")};
-  border-radius: 4px;
-  transition: all 0.3s ease;
 
   &:hover {
-    border-color: ${({ darkMode }) => (darkMode ? "#888" : "#ccc")};
     background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
   }
 `;
