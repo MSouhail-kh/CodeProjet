@@ -118,22 +118,13 @@ const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
 `;
+
 const ProductImage = styled.img`
   width: 150px;
-  height: 200px;
-  border-radius: 12px;
+  height: 100px;
   object-fit: fill;
-  border: 2px solid rgba(249, 199, 79, 0.3);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
 
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  }
 
   @media (max-width: 768px) {
     width: 100%;

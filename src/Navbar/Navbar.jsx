@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Navbar, Container } from "react-bootstrap";
-import { PlusCircle, Search, ArrowClockwise, CheckCircle, XCircle } from "react-bootstrap-icons";
+import {  Search, ArrowClockwise, CheckCircle, XCircle } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import AjouterProduitsModel from "../Produits/AjouterProduitsModel";
 import UserProfile from "../Authentification/User/UserProfile";
 import SearchResultsModal from "../Produits/SearchResultsModal";
