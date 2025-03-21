@@ -416,7 +416,6 @@ export default function Chaines({ produits = [] }) {
 
       setData(groupedData);
       localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
-      // Enregistrement de la date de dernière mise à jour
       const now = new Date().toISOString();
       localStorage.setItem("lastUpdate", JSON.stringify(now));
       setLastUpdate(now);
@@ -428,18 +427,13 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     isMounted.current = true;
     const cachedData = localStorage.getItem("cachedProducts");
-    const cachedUpdate = localStorage.getItem("lastUpdate");
     if (cachedData) {
       try {
         const parsedData = JSON.parse(cachedData);
         setData(parsedData);
-        if (cachedUpdate) {
-          setLastUpdate(JSON.parse(cachedUpdate));
-        }
         setIsLoading(false);
       } catch (error) {
         console.error("Erreur de parsing du cache:", error);
@@ -457,9 +451,6 @@ export default function Chaines({ produits = [] }) {
   useEffect(() => {
     if (Object.keys(data).length) {
       localStorage.setItem("cachedProducts", JSON.stringify(data));
-      const now = new Date().toISOString();
-      localStorage.setItem("lastUpdate", JSON.stringify(now));
-      setLastUpdate(now);
     }
   }, [data]);
 
