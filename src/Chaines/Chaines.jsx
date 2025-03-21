@@ -61,18 +61,19 @@ const Message = styled.p`
   align-items: center;
   gap: 8px;
 `;
-
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
   min-height: 320px;
-  border: 1px solid ${({ darkMode }) => (darkMode ? "#444" : "#ddd")};
+  border: 1px solid ${({ darkMode, chainNumber }) =>
+    chainNumber === 6 ? "white" : darkMode ? "#444" : "#ddd"};
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: ${({ darkMode }) => (darkMode ? "#333" : "#fff")};
+  background-color: ${({ darkMode, chainNumber }) =>
+    chainNumber === 6 ? "black" : darkMode ? "#333" : "#fff"};
 
   &:hover {
     transform: translateY(-8px);
@@ -199,7 +200,6 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
-
 const ChainColumn = ({
   chainNumber,
   products,
@@ -219,7 +219,10 @@ const ChainColumn = ({
     <Col xs={12} sm={6} md={2}>
       <StyledCard darkMode={darkMode}>
         <Card.Body>
-          <Card.Title className="text-center fw-bold">
+          <Card.Title
+            className="text-center fw-bold"
+            style={{ color: chainNumber === 6 ? "white" : darkMode ? "white" : "black" }}
+          >
             Chaine {chainNumber}
           </Card.Title>
           <ListGroup
