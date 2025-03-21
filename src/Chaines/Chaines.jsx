@@ -399,7 +399,6 @@ export default function Chaines({ produits = [] }) {
     }
     return uniqueOrderProducts;
   };
-
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
@@ -417,7 +416,7 @@ export default function Chaines({ produits = [] }) {
       setData(groupedData);
       localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
       const now = new Date().toISOString();
-      localStorage.setItem("lastUpdate", JSON.stringify(now));
+      localStorage.setItem("lastUpdate", now); // Save lastUpdate in localStorage
       setLastUpdate(now);
       setError(null);
     } catch (err) {
@@ -427,17 +426,23 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     isMounted.current = true;
     const cachedData = localStorage.getItem("cachedProducts");
+    const cachedLastUpdate = localStorage.getItem("lastUpdate");
     if (cachedData) {
       try {
         const parsedData = JSON.parse(cachedData);
         setData(parsedData);
+        if (cachedLastUpdate) {
+          setLastUpdate(cachedLastUpdate);
+        }
         setIsLoading(false);
       } catch (error) {
         console.error("Erreur de parsing du cache:", error);
         localStorage.removeItem("cachedProducts");
+        localStorage.removeItem("lastUpdate");
         handleRefresh(produits);
       }
     } else {
