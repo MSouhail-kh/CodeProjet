@@ -88,10 +88,8 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   transition: all 0.3s ease;
   margin-bottom: 12px;
   padding: 10px;
-  background: linear-gradient(145deg, rgba(144, 190, 109, 0.1), rgba(122, 169, 92, 0.1));
 
   &:hover {
-    background: linear-gradient(145deg, rgba(144, 190, 109, 0.2), rgba(122, 169, 92, 0.2));
     color: #fff;
     transform: scale(1.03);
   }
