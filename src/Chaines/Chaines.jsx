@@ -150,13 +150,14 @@ const ProductStyle = styled.span`
   }
 `;
 
-/* Ici, nous utilisons la prop "isChainOne" pour déterminer le calcul de "left" :
-   - Si isChainOne est vrai (donc ProductStyle affiche "chaine 1"), alors left = x + 20.
-   - Sinon, left = x - 260 - 20.
+/* Ici, HoverCard ajuste sa position en fonction de la prop "isUnique" :
+   - Si l’item survolé appartient à la position 1 ET que cette position est unique,
+     alors left = x + 20
+   - Sinon, left = x - 260 - 20
 */
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, isChainOne }) => (isChainOne ? x + 20 : x - 260 - 20)}px;
+  left: ${({ x, isUnique }) => (isUnique ? x + 20 : x - 260 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 20;
@@ -277,15 +278,15 @@ const ChainColumn = ({
   );
 };
 
-const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
+const HoverPreview = ({ hoveredItem, hoverPosition, chain, show, unique }) => {
   if (!hoveredItem) return null;
-  // Vérifier si le texte affiché dans <ProductStyle /> correspond à "chaine 1"
-  const isChainOne = hoveredItem.style.toLowerCase() === "chaine 1";
+  // Détermine si l'item survolé est dans la position 1 et que celle‑ci est unique
+  const isUnique = chain === 1 && unique;
   return (
     <HoverCard
       x={hoverPosition.x}
       y={hoverPosition.y}
-      isChainOne={isChainOne}
+      isUnique={isUnique}
       show={show}
       cardHeight={260}
     >
@@ -587,6 +588,9 @@ export default function Chaines({ produits = [] }) {
     );
   }
 
+  // Vérifier si la position 1 est unique (contient un seul produit)
+  const isUniquePosition1 = data[1] && data[1].length === 1;
+
   return (
     <>
       <MyNavbar onRefresh={handleRefresh} />
@@ -643,6 +647,7 @@ export default function Chaines({ produits = [] }) {
         hoverPosition={hoverPosition}
         chain={chain}
         show={!!hoveredItem}
+        unique={isUniquePosition1}
       />
     </>
   );
