@@ -90,6 +90,7 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   border: 1px solid ${({ darkMode }) => (darkMode ? "#555" : "#eee")};
   border-radius: 8px;
 
+  
   &:hover {
     color: #fff;
     transform: scale(1.03);
