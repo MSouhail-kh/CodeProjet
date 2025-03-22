@@ -86,10 +86,9 @@ const StyledListGroupItem = styled(ListGroup.Item)`
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 12px;
-  padding: 10px;
+  padding: 3px;
   border: 1px solid ${({ darkMode }) => (darkMode ? "#555" : "#eee")};
   border-radius: 8px;
-  background-color: ${({ darkMode }) => (darkMode ? "#444" : "#f9f9f9")};
 
   &:hover {
     color: #fff;
@@ -127,7 +126,7 @@ const ProductContainer = styled.div`
 
 const ProductImage = styled.img`
   width: 150px;
-  height: 80px;
+  height: 90px;
   object-fit: fill;
 
   @media (max-width: 768px) {
