@@ -144,7 +144,7 @@ const SearchResultsModal = ({ show, handleClose }) => {
             </thead>
             <tbody>
               {searchResults.map((result) => (
-                <tr key={result.po} onClick={() => handleNavigation(result.id)} style={{ cursor: 'pointer' }}>
+                <tr key={result.po} onClick={() => handleNavigation(result.po)} style={{ cursor: 'pointer' }}>
                   <td>{result.style}</td>
                 </tr>
               ))}
