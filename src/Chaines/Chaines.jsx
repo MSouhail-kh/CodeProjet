@@ -395,5 +395,4 @@ export default function Chaines({ produits = [] }) {
       </Container>
       <HoverPreview hoveredItem={hoveredItem} hoverPosition={hoverPosition} chain={chain} show={!!hoveredItem} />
     </>
-  );
-}
+  );}
