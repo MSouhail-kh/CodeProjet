@@ -80,6 +80,7 @@ const StyledCard = styled(Card)`
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
   }
 `;
+
 const StyledListGroupItem = styled(ListGroup.Item)`
   height: 100%;
   width: 100%;  
@@ -128,7 +129,7 @@ const ProductContainer = styled.div`
 const ProductImage = styled.img`
   width: 150px;
   height: 90px;
-  object-fit: fill;
+  object-fit: scale-down;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -141,7 +142,6 @@ const ProductStyle = styled.span`
   font-weight: 600;
   color: ${({ darkMode }) => (darkMode ? "white" : "black")};
   max-width: 16ch;
-  padding: 5px;
 
   &:hover {
     background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
@@ -303,7 +303,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
             style={{
               width: "100%",
               height: "100%",
-              objectFit: hoveredItem.image ? "cover" : "contain",
+              objectFit: hoveredItem.image ? "fill" : "contain",
               objectPosition: "center",
               padding: hoveredItem.image ? 0 : "20px",
             }}
