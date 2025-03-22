@@ -280,13 +280,18 @@ const ChainColumn = ({
 
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show, unique }) => {
   if (!hoveredItem) return null;
+
   // Détermine si l'item survolé est dans la position 1 et que celle‑ci est unique
-  const isUnique = chain === 1 && unique;
+  const isUnique = chain === 1 ;
+
+  // Ajuster la position x si l'item est dans la chaîne 1
+  const adjustedX = chain === 1 ? hoverPosition.x + 20 : hoverPosition.x - 260 - 20;
+
   return (
     <HoverCard
-      x={hoverPosition.x}
+      x={adjustedX}
       y={hoverPosition.y}
-      isUnique={isUnique}
+      is={isUnique}
       show={show}
       cardHeight={260}
     >
