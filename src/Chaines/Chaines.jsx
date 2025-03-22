@@ -50,6 +50,7 @@ const BouncingLoader = styled.div`
   justify-content: center;
 `;
 
+/* Message Styles */
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -60,7 +61,6 @@ const Message = styled.p`
   align-items: center;
   gap: 8px;
 `;
-
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
@@ -80,10 +80,9 @@ const StyledCard = styled(Card)`
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
   }
 `;
-
 const StyledListGroupItem = styled(ListGroup.Item)`
   height: 100%;
-  width: 100%;
+  width: 100%;  
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 12px;
@@ -115,7 +114,6 @@ const StyledList = styled.div`
     height: 100%;
   }
 `;
-
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -150,14 +148,10 @@ const ProductStyle = styled.span`
   }
 `;
 
-/* Ici, HoverCard ajuste sa position en fonction de la prop "isUnique" :
-   - Si l’item survolé appartient à la position 1 ET que cette position est unique,
-     alors left = x + 20
-   - Sinon, left = x - 260 - 20
-*/
+
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, isUnique }) => (isUnique ? x + 20 : x - 260 - 20)}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 20;
@@ -206,7 +200,6 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
-
 const ChainColumn = ({
   chainNumber,
   products,
@@ -278,20 +271,14 @@ const ChainColumn = ({
   );
 };
 
-const HoverPreview = ({ hoveredItem, hoverPosition, chain, show, unique }) => {
+
+const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
-
-  // Détermine si l'item survolé est dans la position 1 et que celle‑ci est unique
-  const isUnique = chain === 1 ;
-
-  // Ajuster la position x si l'item est dans la chaîne 1
-  const adjustedX = chain === 1 ? hoverPosition.x + 20 : hoverPosition.x - 260 - 20;
-
   return (
     <HoverCard
-      x={adjustedX}
+      x={hoverPosition.x}
       y={hoverPosition.y}
-      is={isUnique}
+      chain={chain}
       show={show}
       cardHeight={260}
     >
@@ -411,7 +398,6 @@ export default function Chaines({ produits = [] }) {
     }
     return uniqueOrderProducts;
   };
-
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
@@ -429,7 +415,7 @@ export default function Chaines({ produits = [] }) {
       setData(groupedData);
       localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
       const now = new Date().toISOString();
-      localStorage.setItem("lastUpdate", now);
+      localStorage.setItem("lastUpdate", now); // Save lastUpdate in localStorage
       setLastUpdate(now);
       setError(null);
     } catch (err) {
@@ -581,6 +567,7 @@ export default function Chaines({ produits = [] }) {
     navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
 
+
   if (isLoading) {
     return (
       <LoaderContainer>
@@ -593,9 +580,6 @@ export default function Chaines({ produits = [] }) {
     );
   }
 
-  // Vérifier si la position 1 est unique (contient un seul produit)
-  const isUniquePosition1 = data[1] && data[1].length === 1;
-
   return (
     <>
       <MyNavbar onRefresh={handleRefresh} />
@@ -605,7 +589,7 @@ export default function Chaines({ produits = [] }) {
             {lastUpdate && (
               <Message type="success">
                 <CheckCircle size={20} />
-                Dernière mise à jour : {formatTimestamp(lastUpdate)}
+                  Dernière mise à jour : {formatTimestamp(lastUpdate)}
               </Message>
             )}
           </Col>
@@ -627,7 +611,9 @@ export default function Chaines({ produits = [] }) {
             />
           ))}
           <Col md="auto" className="d-flex align-items-center">
-            <ControlButton onClick={() => setShowPosition6(!showPosition6)} />
+            <ControlButton
+              onClick={() => setShowPosition6(!showPosition6)}
+            />
           </Col>
           {showPosition6 && (
             <ChainColumn
@@ -652,7 +638,6 @@ export default function Chaines({ produits = [] }) {
         hoverPosition={hoverPosition}
         chain={chain}
         show={!!hoveredItem}
-        unique={isUniquePosition1}
       />
     </>
   );
