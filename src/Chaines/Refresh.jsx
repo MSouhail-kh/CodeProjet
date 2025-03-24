@@ -5,7 +5,7 @@ import { ArrowClockwise } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
 import api from "../services/axios";
 
-export const RefreshButton = styled(Button)`
+export const RefreshButtonStyle = styled(Button)`
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   color: white;
   padding: 12px 25px;
@@ -39,7 +39,7 @@ export const RefreshButton = styled(Button)`
   }
 `;
 
-const Refresh = ({ onRefresh }) => {
+const RefreshButton = ({ onRefresh }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRefreshPage = async () => {
@@ -56,16 +56,16 @@ const Refresh = ({ onRefresh }) => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <RefreshButton onClick={handleRefreshPage} disabled={isLoading}>
+      <RefreshButtonStyle onClick={handleRefreshPage} disabled={isLoading}>
         {isLoading ? (
           <BounceLoader size={20} color="#fff" />
         ) : (
           <ArrowClockwise size={22} />
         )}
         Rafraîchir
-      </RefreshButton>
+      </RefreshButtonStyle>
     </div>
   );
 };
 
-export default Refresh;
+export default RefreshButton;

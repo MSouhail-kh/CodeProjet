@@ -7,7 +7,7 @@ import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CheckCircle } from "react-bootstrap-icons";
-import { RefreshButton } from "./Refresh";
+import RefreshButton from "./Refresh";
 
 
 const formatTimestamp = (timestamp) => {
@@ -639,7 +639,7 @@ export default function Chaines({ produits = [] }) {
       <Col
         md="auto"
         className="d-flex align-items-center justify-content-end p-4 m-auto">
-              <Refresh onRefresh={handleRefresh} />
+              <RefreshButton onRefresh={handleRefresh} />
       </Col>
 
       <HoverPreview
