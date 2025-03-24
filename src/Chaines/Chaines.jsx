@@ -5,6 +5,7 @@ import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import RefreshButton from "./RefreshButtons";
+import { useNavigate } from "react-router-dom";
 import Refresh from "./Refresh"; 
 
 const formatTimestamp = (timestamp) => {
@@ -370,7 +371,7 @@ export default function Chaines({ produits = [] }) {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(null);
-
+  const navigate = useNavigate();
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
 
