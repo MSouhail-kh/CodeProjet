@@ -77,7 +77,7 @@ const Login = ({ onLoginSuccess }) => {
             className="p-2 h-100 bg-success outline-secondary"
             aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           >
-            {showPassword ? <EyeSlash /> : <Eye />}
+            {showPassword ? <Eye /> : <EyeSlash />}
           </Button>
 
       </InputGroup>

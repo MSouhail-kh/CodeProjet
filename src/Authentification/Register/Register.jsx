@@ -121,7 +121,7 @@ export const Register = ({ onRegisterSuccess }) => {
                     onClick={togglePasswordVisibility}
                     className="p-2 h-100 bg-primary outline-secondary"
                     aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}>
-                    {showPassword ? <EyeSlash /> : <Eye />}
+                    {showPassword ? <Eye/> : <EyeSlash />}
                 </Button>
             </InputGroup>
 
