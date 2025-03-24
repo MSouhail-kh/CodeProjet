@@ -82,7 +82,7 @@ const Login = ({ onLoginSuccess }) => {
 
       </InputGroup>
 
-      <Button type="submit" className="btn-login btn-success btn-sm" disabled={loading}>
+      <Button type="submit" className="btn-login btn-success btn-sm w-50" disabled={loading}>
         {loading ? "Chargement..." : <BoxArrowInRight className="login-icon" />}
       </Button>
     </form>

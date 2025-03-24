@@ -125,7 +125,7 @@ export const Register = ({ onRegisterSuccess }) => {
                 </Button>
             </InputGroup>
 
-            <Button type="submit" className="btn-signup btn-primary btn-sm" disabled={loading}>
+            <Button type="submit" className="btn-signup btn-primary btn-sm w-50" disabled={loading}>
                 {loading ? "Chargement..." : <PersonPlusFill className="signup-icon" />}
             </Button>
         </form>
