@@ -150,23 +150,26 @@ const ProductStyle = styled.span`
   }
 `;
 
-
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 260 - 20)}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 320 - 20)}px; /* Augmenté la largeur */
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 20;
     return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
   }}px;
-  z-index: 1000;
-  width: 260px;
+  z-index: 1050; /* Plus haut pour éviter les conflits */
+  width: 320px; /* Augmenté la largeur */
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
-    show ? "scale(1) translateY(0)" : "scale(0.95) translateY(-10px)"};
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+    show ? "scale(1.05) translateY(0)" : "scale(0.95) translateY(-10px)"};
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   pointer-events: none;
+  background-color: white; /* Ajout d'un fond blanc */
+  border-radius: 16px; /* Coins arrondis */
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 `;
 
 const ControlButton = styled(Button)`
@@ -274,19 +277,19 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
   );
 };
 
-
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
+
   return (
     <HoverCard
       x={hoverPosition.x}
       y={hoverPosition.y}
       chain={chain}
       show={show}
-      cardHeight={260}
+      cardHeight={320} /* Augmenté la hauteur */
     >
       <Card
-        className="shadow-custom"
+        className="shadow-lg"
         style={{
           borderRadius: "16px",
           overflow: "hidden",
@@ -296,8 +299,8 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
         <div
           style={{
             position: "relative",
-            height: "180px",
-            background: "#eee",
+            height: "220px", /* Augmenté la hauteur de l'image */
+            background: "#f5f5f5",
           }}
         >
           <img
@@ -306,26 +309,26 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
             style={{
               width: "100%",
               height: "100%",
-              objectFit: hoveredItem.image ? "fill" : "contain",
+              objectFit: hoveredItem.image ? "cover" : "contain",
               objectPosition: "center",
               padding: hoveredItem.image ? 0 : "20px",
             }}
           />
         </div>
-        <Card.Body style={{ padding: "16px", position: "relative" }}>
+        <Card.Body style={{ padding: "20px", position: "relative" }}>
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "baseline",
-              marginBottom: "8px",
+              marginBottom: "12px",
             }}
           >
             <h3
               style={{
                 margin: 0,
-                fontSize: "1.2rem",
-                fontWeight: 600,
+                fontSize: "1.4rem",
+                fontWeight: 700,
                 color: "#2d3436",
               }}
             >
@@ -333,11 +336,11 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
             </h3>
             <span
               style={{
-                fontSize: "0.9rem",
+                fontSize: "1rem",
                 color: "#636e72",
                 backgroundColor: "#f5f5f5",
-                padding: "4px 8px",
-                borderRadius: "4px",
+                padding: "6px 12px",
+                borderRadius: "8px",
               }}
             >
               Qty: {hoveredItem.qty}
@@ -346,10 +349,10 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
           {hoveredItem.details && (
             <div
               style={{
-                fontSize: "0.875rem",
+                fontSize: "1rem",
                 color: "#636e72",
-                lineHeight: 1.4,
-                maxHeight: "100px",
+                lineHeight: 1.6,
+                maxHeight: "120px",
                 overflowY: "auto",
               }}
             >
@@ -585,7 +588,6 @@ export default function Chaines({ produits = [] }) {
 
   return (
     <>
-      <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
       <Row className="d-flex align-items-center justify-content-between p-2">
         <Col className="d-flex align-items-center gap-3 p-1">
