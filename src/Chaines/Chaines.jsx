@@ -149,17 +149,16 @@ const ProductStyle = styled.span`
     background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
   }
 `;
-
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 320 - 20)}px; /* Augmenté la largeur */
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px; /* Réduit la largeur */
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 20;
-    return calculatedBottom > viewportHeight ? y - cardHeight - 15 : y;
+    const calculatedBottom = y + cardHeight + 10; /* Réduit la hauteur */
+    return calculatedBottom > viewportHeight ? y - cardHeight - 25 : y;
   }}px;
   z-index: 1050; /* Plus haut pour éviter les conflits */
-  width: 320px; /* Augmenté la largeur */
+  width: 310px; /* Réduit la largeur */
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
