@@ -130,7 +130,7 @@ const ProductContainer = styled.div`
 
 const ProductImage = styled.img`
   width: 150px;
-  height: 65px;
+  height: 120px;
   object-fit: scale-down;
 
   @media (max-width: 768px) {

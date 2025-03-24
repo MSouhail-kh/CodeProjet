@@ -62,7 +62,6 @@ const RefreshButton = ({ onRefresh }) => {
         ) : (
           <ArrowClockwise size={22} />
         )}
-        Rafraîchir
       </RefreshButtonStyle>
     </div>
   );
