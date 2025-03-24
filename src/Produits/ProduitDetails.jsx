@@ -124,6 +124,7 @@ export const HomeButtonStyle = styled(Button)`
   &:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
   }
 
   &:disabled {

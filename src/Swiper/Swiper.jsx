@@ -13,7 +13,6 @@ const SwiperContainer = styled.div`
   width: 100%;
   padding: 20px 0;
   background: linear-gradient(135deg, #2575fc);
-  height: 350px;
 
   .swiper-pagination-bullet {
     background: #333;
@@ -85,7 +84,7 @@ const ImageContainer = styled.div`
 
   img {
     width: 90%;
-    height: auto;
+    height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
 
