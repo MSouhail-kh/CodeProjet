@@ -8,7 +8,9 @@ import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CheckCircle } from "react-bootstrap-icons";
 import RefreshButton from "./Refresh";
-
+import RefreshButton from "./RefreshButtons";
+import Refresh from "./Refresh"; 
+import ActionButtons from "./RefreshButtons";
 
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
@@ -598,20 +600,19 @@ export default function Chaines({ produits = [] }) {
                 fontWeight: "bold",
                 color: "#2ecc71",
                 fontSize: "18px",
-                background: "#f4f6f8",
                 padding: "15px 20px",
-                borderRadius: "12px",
-                boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
               }}
             >
               <CheckCircle size={24} />
               Dernière mise à jour : {formatTimestamp(lastUpdate)}
+            
             </div>
+
           )}
         </Col>
 
         <Col className="d-flex justify-content-end">
-          <RefreshButton onRefresh={handleRefresh} />
+          <Refresh onRefresh={handleRefresh} />
         </Col>
       </Row>
 

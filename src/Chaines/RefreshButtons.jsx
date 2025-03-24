@@ -1,17 +1,10 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import styled from "styled-components";
-import { ArrowClockwise, Search } from "react-bootstrap-icons";
+import { ArrowClockwise } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
-import UserProfile from "../Authentification/User/UserProfile";
-import SearchResultsModal from "../Produits/SearchResultsModal";
 import api from "../services/axios";
 
-export const RefreshButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
 
 export const RefreshButtonStyle = styled(Button)`
   width: 50px;
@@ -44,9 +37,8 @@ export const RefreshButtonStyle = styled(Button)`
   }
 `;
 
-const Refresh = ({ onRefresh }) => {
+const RefreshButton = ({ onRefresh }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [showSearchModal, setShowSearchModal] = useState(false);
 
   const handleRefreshPage = async () => {
     setIsLoading(true);
@@ -61,20 +53,16 @@ const Refresh = ({ onRefresh }) => {
   };
 
   return (
-    <RefreshButtonContainer>
-      <RefreshButtonStyle onClick={() => setShowSearchModal(true)}>
-        <Search size={22} />
-      </RefreshButtonStyle>
-
+    <div style={{ textAlign: "center" }}>
       <RefreshButtonStyle onClick={handleRefreshPage} disabled={isLoading}>
-        {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={22} />}
+        {isLoading ? (
+          <BounceLoader size={20} color="#fff" />
+        ) : (
+          <ArrowClockwise size={22} />
+        )}
       </RefreshButtonStyle>
-
-      <SearchResultsModal show={showSearchModal} handleClose={() => setShowSearchModal(false)} />
-
-      <UserProfile />
-    </RefreshButtonContainer>
+    </div>
   );
 };
 
-export default Refresh;
+export default RefreshButton;
