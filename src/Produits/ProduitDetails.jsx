@@ -3,10 +3,11 @@ import api from '../services/axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import MyNavbar from '../Navbar/Navbar';
 import { Container, Card, Form, Button, Row, Col, Spinner, Alert, Modal } from 'react-bootstrap';
-import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText, XCircle } from 'react-bootstrap-icons';
+import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText, XCircle ,HouseDoorFill } from 'react-bootstrap-icons';
 import styled, { keyframes } from "styled-components";
 import NoImage from "../assets/No+Image.png";
 import Loader from '../Loader';
+
 
 const pulseAnimation = keyframes`
   0% { transform: scale(0.8); opacity: 0.7; }
@@ -104,6 +105,37 @@ const FileInputLabel = styled.label`
   &:hover {
     border-color: #3498db;
     background: #f8f9fa;
+  }
+`;
+
+export const HomeButtonStyle = styled(Button)`
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
   }
 `;
 
@@ -301,17 +333,12 @@ const ProduitDetails = () => {
                         </>
                       )}
                     </Button> */}
-
-                    {isEditing && (
-                      <Button
-                        variant="outline-danger"
-                        onClick={() => setIsEditing(false)}
-                        className="d-flex align-items-center gap-2 btn-sm"
-                      >
-                        <XCircle size={18}/>
-                        <span>Fermer</span>
-                      </Button>
-                    )}
+                    <Button className="d-flex align-items-center gap-2 btn-sm">
+                     <HomeButtonStyle>
+                        <HouseDoorFill onClick={() => {navigate(`/`)}} size={18} />
+                     </HomeButtonStyle>                    
+                    </Button>
+                  
                   </div>
                 </div>
 

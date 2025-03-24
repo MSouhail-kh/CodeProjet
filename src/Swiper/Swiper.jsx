@@ -131,6 +131,9 @@ export default function MySwiper() {
     return <div>{error}</div>;
   }
 
+  const handleCardClick = (id) => {
+    navigate(`/produit/${id}`);
+  };
   return (
     <SwiperContainer>
       <Swiper
