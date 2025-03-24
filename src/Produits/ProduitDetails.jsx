@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import MyNavbar from '../Navbar/Navbar';
 import { Container, Card, Form, Button, Row, Col, Spinner, Alert, Modal } from 'react-bootstrap';
 import { FilePdf, PencilSquare, CheckCircle, Palette, Calendar, Image, FileEarmarkText, CardText, XCircle ,HouseDoorFill } from 'react-bootstrap-icons';
 import styled, { keyframes } from "styled-components";
@@ -283,8 +282,7 @@ const ProduitDetails = () => {
 
   return (
     <>
-      <MyNavbar />
-      <Container className="mt-2" style={{ maxWidth: '1500px' }}>
+      <Container className="mt-4" style={{ maxWidth: '1500px' }}>
         <StyledCard>
           <Row>
             <Col md={6}>

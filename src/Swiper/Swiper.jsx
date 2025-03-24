@@ -3,6 +3,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
+import NoImage from "../assets/No+Image.png";
+
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -156,7 +158,7 @@ export default function MySwiper() {
           <SwiperSlide key={produit.po}>
             <Card onClick={() => handleCardClick(produit.po)}>
               <ImageContainer>
-                <img src={produit.image} alt={produit.style} />
+                <img src={produit.image || NoImage} alt={produit.style} />
               </ImageContainer>
               <h3>{produit.style}</h3>
             </Card>
