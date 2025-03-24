@@ -587,16 +587,34 @@ export default function Chaines({ produits = [] }) {
     <>
       <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
-        <Row className="mb-3">
-          <Col className="text-end">
+      <Row className="d-flex justify-content-center align-items-center vh-100">
+          <Col xs={12} className="d-flex justify-content-center">
             {lastUpdate && (
-              <Message type="success">
-                <CheckCircle size={20} />
-                  Dernière mise à jour : {formatTimestamp(lastUpdate)}
-              </Message>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  fontWeight: "bold",
+                  color: "#2ecc71",
+                  fontSize: "18px",
+                  background: "#f4f6f8",
+                  padding: "15px 20px",
+                  borderRadius: "12px",
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                }}
+              >
+                <CheckCircle size={24} />
+                Dernière mise à jour : {formatTimestamp(lastUpdate)}
+              </div>
             )}
           </Col>
+
+          <Col xs={12} className="d-flex justify-content-end mt-4">
+            <RefreshButton onRefresh={handleRefresh} />
+          </Col>
         </Row>
+
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
             <ChainColumn
@@ -636,11 +654,7 @@ export default function Chaines({ produits = [] }) {
         </MobileRow>
       </Container>
         
-      <Col
-        md="auto"
-        className="d-flex align-items-center justify-content-end p-4 m-auto">
-              <RefreshButton onRefresh={handleRefresh} />
-      </Col>
+
 
       <HoverPreview
         hoveredItem={hoveredItem}
