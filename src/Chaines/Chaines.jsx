@@ -587,7 +587,7 @@ export default function Chaines({ produits = [] }) {
     <>
       <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
-      <Row className="d-flex justify-content-center align-items-center vh-100">
+      <Row className="mb-4">
           <Col xs={12} className="d-flex justify-content-center">
             {lastUpdate && (
               <div
