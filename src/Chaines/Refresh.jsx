@@ -5,37 +5,35 @@ import { ArrowClockwise } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
 import api from "../services/axios";
 
+
 export const RefreshButtonStyle = styled(Button)`
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: white;
-  padding: 12px 25px;
-  font-size: 16px;
-  border-radius: 30px;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  position: relative;
-  font-weight: bold;
-  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease-in-out;
   cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
     background: linear-gradient(135deg, #2575fc, #6a11cb);
   }
 
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(98, 0, 234, 0.3);
+  svg {
+    width: 24px;
+    height: 24px;
   }
 `;
 
