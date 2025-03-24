@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { CheckCircle } from "react-bootstrap-icons";
 import RefreshButton from "./RefreshButtons";
 import Refresh from "./Refresh"; 
 
@@ -597,14 +596,12 @@ export default function Chaines({ produits = [] }) {
                 alignItems: "center",
                 gap: "10px",
                 fontWeight: "bold",
-                color: "#2ecc71",
+                color: "cornsil",
                 fontSize: "18px",
                 padding: "15px 20px",
               }}
             >
-              <CheckCircle size={24} />
               Dernière mise à jour : {formatTimestamp(lastUpdate)}
-            
             </div>
 
           )}
