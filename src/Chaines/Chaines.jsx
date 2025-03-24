@@ -587,8 +587,8 @@ export default function Chaines({ produits = [] }) {
     <>
       <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
-      <Row className="d-flex align-items-center justify-content-between">
-        <Col className="d-flex align-items-center gap-3">
+      <Row className="d-flex align-items-center justify-content-between p-2">
+        <Col className="d-flex align-items-center gap-3 p-1">
           {lastUpdate && (
             <div
               style={{
@@ -656,7 +656,7 @@ export default function Chaines({ produits = [] }) {
       
       <Col
         md="auto"
-        className="d-flex align-items-center justify-content-end p-4 m-auto">
+        className="d-flex align-items-center justify-content-end p-3 ">
               <RefreshButton onRefresh={handleRefresh} />
       </Col>
         
