@@ -98,7 +98,7 @@ const ImageContainer = styled.div`
 export default function MySwiper() {
   const { po } = useParams();
   const [produits, setProduits] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
 
   useEffect(() => {

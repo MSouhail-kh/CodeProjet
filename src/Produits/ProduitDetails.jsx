@@ -115,7 +115,6 @@ export const HomeButtonStyle = styled(Button)`
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
   backdrop-filter: blur(4px);
   transition: all 0.3s ease-in-out;
   cursor: pointer;
@@ -125,7 +124,6 @@ export const HomeButtonStyle = styled(Button)`
   &:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
   }
 
   &:disabled {
