@@ -587,33 +587,33 @@ export default function Chaines({ produits = [] }) {
     <>
       <MyNavbar onRefresh={handleRefresh} />
       <Container fluid className="p-4">
-      <Row className="mb-4">
-          <Col xs={12} className="d-flex justify-content-center">
-            {lastUpdate && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  fontWeight: "bold",
-                  color: "#2ecc71",
-                  fontSize: "18px",
-                  background: "#f4f6f8",
-                  padding: "15px 20px",
-                  borderRadius: "12px",
-                  boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                }}
-              >
-                <CheckCircle size={24} />
-                Dernière mise à jour : {formatTimestamp(lastUpdate)}
-              </div>
-            )}
-          </Col>
+      <Row className="d-flex align-items-center justify-content-between">
+        <Col className="d-flex align-items-center gap-3">
+          {lastUpdate && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                fontWeight: "bold",
+                color: "#2ecc71",
+                fontSize: "18px",
+                background: "#f4f6f8",
+                padding: "15px 20px",
+                borderRadius: "12px",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+              }}
+            >
+              <CheckCircle size={24} />
+              Dernière mise à jour : {formatTimestamp(lastUpdate)}
+            </div>
+          )}
+        </Col>
 
-          <Col xs={12} className="d-flex justify-content-end mt-4">
-            <RefreshButton onRefresh={handleRefresh} />
-          </Col>
-        </Row>
+        <Col className="d-flex justify-content-end">
+          <RefreshButton onRefresh={handleRefresh} />
+        </Col>
+      </Row>
 
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
@@ -653,9 +653,13 @@ export default function Chaines({ produits = [] }) {
           )}
         </MobileRow>
       </Container>
+      
+      <Col
+        md="auto"
+        className="d-flex align-items-center justify-content-end p-4 m-auto">
+              <RefreshButton onRefresh={handleRefresh} />
+      </Col>
         
-
-
       <HoverPreview
         hoveredItem={hoveredItem}
         hoverPosition={hoverPosition}
