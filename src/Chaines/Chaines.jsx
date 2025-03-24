@@ -7,6 +7,8 @@ import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CheckCircle } from "react-bootstrap-icons";
+import { RefreshButton } from "./Refresh";
+
 
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
@@ -128,12 +130,12 @@ const ProductContainer = styled.div`
 
 const ProductImage = styled.img`
   width: 150px;
-  height: 90px;
+  height: 65px;
   object-fit: scale-down;
 
   @media (max-width: 768px) {
     width: 100%;
-    height: 210px;
+    height: 50px;
   }
 `;
 
@@ -200,6 +202,7 @@ const MobileRow = styled(Row)`
     gap: 1rem;
   }
 `;
+
 const ChainColumn = ({
   chainNumber,
   products,
@@ -213,7 +216,7 @@ const ChainColumn = ({
   filterAndSortProducts,
   darkMode = false,
 }) => {
-  const sortedProducts = filterAndSortProducts(products, chainNumber);
+const sortedProducts = filterAndSortProducts(products, chainNumber);
 
   return (
     <Col xs={12} sm={6} md={2}>
@@ -632,6 +635,12 @@ export default function Chaines({ produits = [] }) {
           )}
         </MobileRow>
       </Container>
+        
+      <Col
+        md="auto"
+        className="d-flex align-items-center justify-content-end p-4 m-auto">
+              <Refresh onRefresh={handleRefresh} />
+      </Col>
 
       <HoverPreview
         hoveredItem={hoveredItem}
