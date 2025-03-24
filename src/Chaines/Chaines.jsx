@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
-import MyNavbar from "../Navbar/Navbar";
-import { useNavigate } from "react-router-dom";
 import NoImage from "../assets/No+Image.png";
 import api from "../services/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -297,7 +295,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
         <div
           style={{
             position: "relative",
-            height: "220px", /* Augmenté la hauteur de l'image */
+            height: "220px", 
             background: "#f5f5f5",
           }}
         >
@@ -375,7 +373,6 @@ export default function Chaines({ produits = [] }) {
 
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
-  const navigate = useNavigate();
 
   const filterAndSortProducts = (products) => {
     if (!products || products.length === 0) return [];
@@ -596,7 +593,7 @@ export default function Chaines({ produits = [] }) {
                 alignItems: "center",
                 gap: "10px",
                 fontWeight: "bold",
-                color: "cornsil",
+                color: "#2ecc71",
                 fontSize: "18px",
                 padding: "15px 20px",
               }}
