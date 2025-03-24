@@ -332,7 +332,7 @@ const ProduitDetails = () => {
                     </Button> */}
                     <div className="d-flex align-items-center gap-2 btn-sm">
                      <HomeButtonStyle>
-                        <HouseDoorFill onClick={() => {navigate(`/`)}} size={18} />
+                        <HouseDoorFill onClick={() => {navigate(`/Chaines`)}} size={18} />
                      </HomeButtonStyle>                    
                     </div>
                   
