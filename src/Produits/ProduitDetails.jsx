@@ -331,11 +331,11 @@ const ProduitDetails = () => {
                         </>
                       )}
                     </Button> */}
-                    <Button className="d-flex align-items-center gap-2 btn-sm">
+                    <div className="d-flex align-items-center gap-2 btn-sm">
                      <HomeButtonStyle>
                         <HouseDoorFill onClick={() => {navigate(`/`)}} size={18} />
                      </HomeButtonStyle>                    
-                    </Button>
+                    </div>
                   
                   </div>
                 </div>
