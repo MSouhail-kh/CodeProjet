@@ -154,17 +154,9 @@ const ProduitDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [previewImage, setPreviewImage] = useState(null);
-  const [imageFileName, setImageFileName] = useState('');
-  const [dossierTechniqueFileName, setDossierTechniqueFileName] = useState('');
-  const [dossierSerigraphieFileName, setDossierSerigraphieFileName] = useState('');
-  const [bonDeCommandeFileName, setBonDeCommandeFileName] = useState('');
-  const [patronageFileName, setPatronageFileName] = useState('');
   const [showImageModal, setShowImageModal] = useState(false);
-  const [showFileModal, setShowFileModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -225,36 +217,6 @@ const ProduitDetails = () => {
     }
   };
 
-  const handleSave = async () => {
-    try {
-      const formData = new FormData();
-
-      Object.keys(editedData).forEach((key) => {
-        if (editedData[key] !== null && editedData[key] !== undefined) {
-          formData.append(key, editedData[key]);
-        }
-      });
-
-      const response = await api.put(`/update/produits/${po}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      setProduct(response.data);
-      setIsEditing(false);
-      setPreviewImage(null);
-      setLoading(false);
-      navigate(`/Chaines`);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleFileClick = (fileUrl) => {
-    setSelectedFile(fileUrl);
-    setShowFileModal(true);
-  };
 
   const handleImageClick = () => {
     setShowImageModal(true);
@@ -304,39 +266,17 @@ const ProduitDetails = () => {
               <Card.Body className="p-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <Card.Title className="mb-0" style={{ fontSize: '1.75rem', fontWeight: '600' }}>
-                    {isEditing ? (
-                      <>
-                      </>
-                    ) : (
+                    { (
                       product.style
                     )}
                   </Card.Title>
 
-                  <div className="d-flex align-items-center gap-2">
-                    {/* <Button
-                      variant={isEditing ? 'success' : 'outline-primary'}
-                      onClick={isEditing ? handleSave : () => setIsEditing(true)}
-                      className="d-flex align-items-center gap-2 btn-sm"
-                    >
-                      {isEditing ? (
-                        <>
-                          <CheckCircle size={18} />
-                          Sauvegarder
-                        </>
-                      ) : (
-                        <>
-                          <PencilSquare size={18} />
-                          Modifier
-                        </>
-                      )}
-                    </Button> */}
                     <div className="d-flex align-items-center gap-2 btn-sm">
                      <HomeButtonStyle>
                         <HouseDoorFill onClick={() => {navigate(`/Chaines`)}} size={18} />
                      </HomeButtonStyle>                    
                     </div>
                   
-                  </div>
                 </div>
 
                 <SectionTitle>
@@ -345,59 +285,7 @@ const ProduitDetails = () => {
                 </SectionTitle>
 
                 <Card.Subtitle className=" text-muted">
-                  {isEditing ? (
-                    <Row className="g-3">
-                      <Col xs={12} md={6}>
-                        <Form.Group>
-                          <Form.Label>Style : </Form.Label>
-                          <StyledFormControl
-                            type="text"
-                            name="style"
-                            value={editedData.style || ''}
-                            onChange={handleInputChange}
-                          />
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col xs={12} md={6}>
-                        <Form.Group>
-                          <Form.Label>Quantité :</Form.Label>
-                          <StyledFormControl
-                            type="number"
-                            name="qty"
-                            value={editedData.qty || ''}
-                            onChange={handleInputChange}
-                          />
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col xs={12} md={6}>
-                        <Form.Group>
-                          <Form.Label>Référence PO :</Form.Label>
-                          <StyledFormControl
-                            type="text"
-                            name="po"
-                            value={editedData.po || ''}
-                            onChange={handleInputChange}
-                          />
-                        </Form.Group>
-                      </Col>
-                      
-                      <Col xs={12} md={6}>
-                        <Form.Group>
-                          <Form.Label>Couleur :</Form.Label>
-                          <div >
-                            <StyledFormControl
-                              type="text"
-                              name="coloris"
-                              value={editedData.coloris }
-                              onChange={handleInputChange}
-                            />
-                          </div>
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  ) : (
+                  {(
                     <div className="d-flex flex-wrap gap-3">
                       <div>
                         <strong>Style :</strong>{product.style}
@@ -428,14 +316,7 @@ const ProduitDetails = () => {
                   <Col md={6}>
                        <Form.Group>
                           <Form.Label>Date de Réception : </Form.Label>
-                          {isEditing ? (
-                            <StyledFormControl
-                              type="date"
-                              name="date_reception"
-                              value={editedData.date_reception || ''}
-                              onChange={handleInputChange}
-                            />
-                          ) : (
+                          { (
                             <div className="text-muted">
                               {formatDate(product.date_reception)}
                             </div>
@@ -445,14 +326,7 @@ const ProduitDetails = () => {
                   <Col md={6}>
                     <Form.Group>
                       <Form.Label>Date de Livraison : </Form.Label>
-                      {isEditing ? (
-                        <StyledFormControl
-                          type="date"
-                          name="date_livraison"
-                          value={editedData.date_livraison || ''}
-                          onChange={handleInputChange}
-                        />
-                      ) : (
+                      { (
                         <div className="text-muted">{formatDate(product.date_livraison)}</div>
                       )}
                     </Form.Group>
@@ -466,80 +340,7 @@ const ProduitDetails = () => {
                 <StyledCard className="mb-4">
                   <Card.Body>
                     <Row className="g-3">
-                      {isEditing ? (
-                        <>
-                          <Col md={6}>
-                            <Form.Group>
-                              <Form.Label>Marque : </Form.Label>
-                              <StyledFormControl
-                                type="text"
-                                name="brand"
-                                value={editedData.brand || ''}
-                                onChange={handleInputChange}
-                              />
-                            </Form.Group>
-                          </Col>
-
-                          <Col md={6}>
-                            <Form.Group>
-                              <Form.Label>Type de commande : </Form.Label>
-                              <StyledFormControl
-                                as="select"
-                                name="type_de_commande"
-                                value={editedData.type_de_commande || ''}
-                                onChange={handleInputChange}
-                              >
-                                <option value="">Sélectionner...</option>
-                                <option value="CMT">CMT</option>
-                                <option value="MAKER">MAKER</option>
-                              </StyledFormControl>
-                            </Form.Group>
-                          </Col>
-
-                          <Col md={6}>
-                            <Form.Group>
-                              <Form.Label>État : </Form.Label>
-                              <StyledFormControl
-                                type="text"
-                                name="etat_de_commande"
-                                value={editedData.etat_de_commande || ''}
-                                onChange={handleInputChange}
-                              >
-                              </StyledFormControl>
-                            </Form.Group>
-                          </Col>
-
-                          <Col md={6}>
-                            <Form.Group>
-                              <Form.Label>Référence : </Form.Label>
-                              <StyledFormControl
-                                type="text"
-                                name="reference"
-                                value={editedData.reference || ''}
-                                onChange={handleInputChange}
-                              />
-                            </Form.Group>
-                          </Col>
-
-                          <Col md={6}>
-                            <Form.Group>
-                              <Form.Label>Type de produit : </Form.Label>
-                              <StyledFormControl
-                                as="select"
-                                name="type_de_produit"
-                                value={editedData.type_de_produit || ''}
-                                onChange={handleInputChange}
-                              >
-                                <option value="">Sélectionner...</option>
-                                <option value="TSHIRT">TSHIRT</option>
-                                <option value="TSHIRT MC">TSHIRT MC</option>
-                                <option value="TEE SHIRT ML">TEE SHIRT ML</option>
-                              </StyledFormControl>
-                            </Form.Group>
-                          </Col>
-                        </>
-                      ) : (
-                        <>
+                      {(
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px', margin: '0 auto' }}>
                             <DetailItem>
                               <DetailLabel>
@@ -578,7 +379,6 @@ const ProduitDetails = () => {
                               <DetailValue>{product.type_de_commande || '-'}</DetailValue>
                             </DetailItem>
                           </div>
-                        </>        
                       )}
                     </Row>
                   </Card.Body>
@@ -589,84 +389,13 @@ const ProduitDetails = () => {
                   Fichiers
                 </SectionTitle>
 
-                {isEditing ? (
-                  <>
-                    <FileInputLabel>
-                      <Image size={20} />
-                      <span>Changer l'image du produit : </span>
-                      <input
-                        type="file"
-                        name="image"
-                        onChange={handleInputChange}
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                      />
-                      {imageFileName && <FileName>{imageFileName}</FileName>}
-                    </FileInputLabel>
-
-                    <FileInputLabel className="mt-3">
-                      <FilePdf size={20} />
-                      <span>Changer le dossier technique (PDF) : </span>
-                      <input
-                        type="file"
-                        name="technique"
-                        onChange={handleInputChange}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                      />
-                      {dossierTechniqueFileName && <FileName>{dossierTechniqueFileName}</FileName>}
-                    </FileInputLabel>
-
-                    <FileInputLabel className="mt-3">
-                      <FilePdf size={20} />
-                      <span>Changer le dossier de sérigraphie (PDF / ZIP / RAR) : </span>
-                      <input
-                        type="file"
-                        name="serigraphie"
-                        onChange={handleInputChange}
-                        accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
-                        style={{ display: 'none' }}
-                      />
-                      {dossierSerigraphieFileName && <FileName>{dossierSerigraphieFileName}</FileName>}
-                    </FileInputLabel>
-
-                    <FileInputLabel className="mt-3">
-                      <FilePdf size={20} />
-                      <span>Changer le bon de commande (PDF) : </span>
-                      <input
-                        type="file"
-                        name="commande"
-                        onChange={handleInputChange}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                      />
-                      {bonDeCommandeFileName && <FileName>{bonDeCommandeFileName}</FileName>}
-                    </FileInputLabel>
-
-                    <FileInputLabel className="mt-3">
-                      <FilePdf size={20} />
-                      <span>Changer le patronage (PDF / ZIP / RAR) : </span>
-                      <input
-                        type="file"
-                        name="patronage"
-                        onChange={handleInputChange}
-                        accept=".pdf, .zip, .rar, application/pdf, application/zip, application/x-rar-compressed"
-                        style={{ display: 'none' }}
-                      />
-                      {patronageFileName && <FileName>{patronageFileName}</FileName>}
-                    </FileInputLabel>
-                  </>
-                ) : (
+                {product.documents && (
                   <>
                     {product.documents.technique && (
                       <DownloadLink
                         href={product.documents.technique}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleFileClick(product.documents.technique);
-                        }}
                       >
                         <FilePdf size={20} />
                         Télécharger le Dossier Technique PDF
@@ -677,10 +406,6 @@ const ProduitDetails = () => {
                         href={product.documents.serigraphie}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleFileClick(product.documents.serigraphie);
-                        }}
                       >
                         <FilePdf size={20} />
                         Télécharger le Dossier de Sérigraphie
@@ -691,10 +416,6 @@ const ProduitDetails = () => {
                         href={product.documents.commande}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleFileClick(product.documents.commande);
-                        }}
                       >
                         <FilePdf size={20} />
                         Télécharger le Bon de Commande
@@ -705,10 +426,6 @@ const ProduitDetails = () => {
                         href={product.documents.patronage}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleFileClick(product.documents.patronage);
-                        }}
                       >
                         <FilePdf size={20} />
                         Télécharger le Patronage
@@ -728,30 +445,13 @@ const ProduitDetails = () => {
         </Modal.Header>
         <Modal.Body>
           <img
-            src={previewImage || product.image || 'https://via.placeholder.com/300'}
+            src={previewImage || product.image || NoImage }
             alt={product.style}
             style={{ width: '100%', height: 'auto' }}
           />
         </Modal.Body>
       </Modal>
 
-      <Modal show={showFileModal} onHide={() => setShowFileModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Télécharger le fichier</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Voulez-vous télécharger ce fichier ?</p>
-          <Button
-            variant="primary"
-            onClick={() => {
-              window.open(selectedFile, '_blank');
-              setShowFileModal(false);
-            }}
-          >
-            Télécharger
-          </Button>
-        </Modal.Body>
-      </Modal>
     </>
   );
 };
