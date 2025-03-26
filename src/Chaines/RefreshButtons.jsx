@@ -5,6 +5,12 @@ import { ArrowClockwise, ChevronUp } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
 import api from "../services/axios";
 
+export const RefreshButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
 export const RefreshButtonStyle = styled(Button)`
   width: 50px;
   height: 50px;
@@ -83,7 +89,8 @@ const RefreshButton = ({ onRefresh }) => {
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <RefreshButtonContainer >
+
       <RefreshButtonStyle onClick={handleRefreshPage} disabled={isLoading}>
         {isLoading ? (
           <BounceLoader size={20} color="#fff" />
@@ -91,10 +98,12 @@ const RefreshButton = ({ onRefresh }) => {
           <ArrowClockwise size={22} />
         )}
       </RefreshButtonStyle>
-      <ScrollTopButtonStyle onClick={scrollToTop}>
+      
+      <RefreshButtonStyle onClick={scrollToTop}>
         <ChevronUp size={22} />
-      </ScrollTopButtonStyle>
-    </div>
+      </RefreshButtonStyle>
+
+    </RefreshButtonContainer>
   );
 };
 
