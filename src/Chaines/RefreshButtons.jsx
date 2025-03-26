@@ -91,6 +91,10 @@ const RefreshButton = ({ onRefresh }) => {
   return (
     <RefreshButtonContainer >
 
+      <RefreshButtonStyle onClick={scrollToTop}>
+        <ChevronUp size={22} />
+      </RefreshButtonStyle>
+
       <RefreshButtonStyle onClick={handleRefreshPage} disabled={isLoading}>
         {isLoading ? (
           <BounceLoader size={20} color="#fff" />
@@ -98,13 +102,8 @@ const RefreshButton = ({ onRefresh }) => {
           <ArrowClockwise size={22} />
         )}
       </RefreshButtonStyle>
-      
-      <RefreshButtonStyle onClick={scrollToTop}>
-        <ChevronUp size={22} />
-      </RefreshButtonStyle>
 
     </RefreshButtonContainer>
-  );
-};
+  );};
 
 export default RefreshButton;
