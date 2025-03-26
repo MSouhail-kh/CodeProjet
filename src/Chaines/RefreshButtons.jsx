@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import styled from "styled-components";
-import { ArrowClockwise } from "react-bootstrap-icons";
+import { ArrowClockwise, ChevronUp } from "react-bootstrap-icons";
 import { BounceLoader } from "react-spinners";
 import api from "../services/axios";
-
 
 export const RefreshButtonStyle = styled(Button)`
   width: 50px;
@@ -37,6 +36,33 @@ export const RefreshButtonStyle = styled(Button)`
   }
 `;
 
+export const ScrollTopButtonStyle = styled(Button)`
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #ff4b2b, #ff416c);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+`;
+
 const RefreshButton = ({ onRefresh }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,6 +78,10 @@ const RefreshButton = ({ onRefresh }) => {
     }
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div style={{ textAlign: "center" }}>
       <RefreshButtonStyle onClick={handleRefreshPage} disabled={isLoading}>
@@ -61,6 +91,9 @@ const RefreshButton = ({ onRefresh }) => {
           <ArrowClockwise size={22} />
         )}
       </RefreshButtonStyle>
+      <ScrollTopButtonStyle onClick={scrollToTop}>
+        <ChevronUp size={22} />
+      </ScrollTopButtonStyle>
     </div>
   );
 };
