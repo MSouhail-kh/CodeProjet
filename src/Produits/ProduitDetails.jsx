@@ -138,9 +138,15 @@ export const HomeButtonStyle = styled(Button)`
 `;
 
 const formatDate = (dateStr) => {
+  // Si la date est exactement "0/0/0", la retourner directement
+  if (dateStr === "0/0/0") {
+    return "0/0/0";
+  }
+
   if (!dateStr || isNaN(Date.parse(dateStr))) {
     return '- / - / -';
   }
+
   const date = new Date(dateStr);
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
