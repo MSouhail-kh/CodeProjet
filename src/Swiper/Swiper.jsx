@@ -116,17 +116,12 @@ export default function MySwiper() {
       } catch (err) {
         setError("Erreur lors du chargement des produits");
       } finally {
-        // setLoading(false);
         setError(null);
       }
     };
 
     fetchProduitsByPosition();
   }, [po]);
-
-  // if (loading) {
-  //   return <Loader />;
-  // }
 
   if (error) {
     return <div>{error}</div>;
