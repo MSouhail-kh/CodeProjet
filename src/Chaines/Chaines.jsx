@@ -149,7 +149,21 @@ const ProductStyle = styled.span`
 `;
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px;
+  left: ${({ x, chain }) => {
+    const viewportWidth = window.innerWidth;
+    const cardWidth = 310; // Largeur fixe de la carte
+    const offset = 20; // Décalage par rapport à la position de la souris
+
+    if (chain === 1) {
+      return x + offset; // Positionner à droite pour la chaîne 1
+    }
+
+    if (x + cardWidth + offset > viewportWidth) {
+      return x - cardWidth - offset; // Ajuster si dépassement à droite
+    }
+
+    return x - cardWidth - offset; // Positionner à gauche par défaut
+  }}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 10;
@@ -511,10 +525,17 @@ export default function Chaines({ produits = [] }) {
   
       setData(newData);
   
-      // Mettre à jour hoveredItem et chain
+      // Mettre à jour hoveredItem, chain et hoverPosition
       const updatedHoveredItem = newData[targetPosition][dropIndex];
       setHoveredItem(updatedHoveredItem);
       setChain(targetPosition);
+  
+      // Mettre à jour la position de la HoverCard
+      setHoverPosition((prevPosition) => ({
+        ...prevPosition,
+        x: e.clientX, // Utiliser la position actuelle de la souris
+        y: e.clientY, // Utiliser la position actuelle de la souris
+      }));
   
       // Envoyer les mises à jour au backend
       const updates = [];
