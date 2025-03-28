@@ -473,6 +473,7 @@ export default function Chaines({ produits = [] }) {
     e.preventDefault();
   };
   
+  
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
