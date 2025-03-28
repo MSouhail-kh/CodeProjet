@@ -149,29 +149,25 @@ const ProductStyle = styled.span`
 `;
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) =>
-    // If chain equals 1, display HoverCard to the right; otherwise display to the left
-    chain === 1 ? x + 20 : x - 310 - 20}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px; /* Réduit la largeur */
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 10;
-    return calculatedBottom > viewportHeight ? y - cardHeight - 20 : y;
+    const calculatedBottom = y + cardHeight + 10; /* Réduit la hauteur */
+    return calculatedBottom > viewportHeight ? y - cardHeight - 25 : y;
   }}px;
-  z-index: 1050; 
-  width: 310px; 
+  z-index: 1050; /* Plus haut pour éviter les conflits */
+  width: 310px; /* Réduit la largeur */
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
     show ? "scale(1.05) translateY(0)" : "scale(0.95) translateY(-10px)"};
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   pointer-events: none;
-  background-color: white; 
-  border-radius: 16px; 
+  background-color: white; /* Ajout d'un fond blanc */
+  border-radius: 16px; /* Coins arrondis */
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-  cursor: default; 
 `;
-
 
 const ControlButton = styled(Button)`
   width: 30px;
@@ -279,29 +275,15 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
 };
 
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
-  useEffect(() => {
-    if (hoveredItem && hoverPosition) {
-      localStorage.setItem("hoverPosition", JSON.stringify(hoverPosition));
-    }
-  }, [hoveredItem, hoverPosition]);
-
-  let position = { ...hoverPosition };
-  if (!position.x || !position.y) {
-    const stored = localStorage.getItem("hoverPosition");
-    if (stored) {
-      position = JSON.parse(stored);
-    }
-  }
-
   if (!hoveredItem) return null;
 
   return (
     <HoverCard
-      x={position.x}
-      y={position.y}
+      x={hoverPosition.x}
+      y={hoverPosition.y}
       chain={chain}
       show={show}
-      cardHeight={300}
+      cardHeight={320} /* Augmenté la hauteur */
     >
       <Card
         className="shadow-lg"
@@ -314,7 +296,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
         <div
           style={{
             position: "relative",
-            height: "220px",
+            height: "220px", 
             background: "#f5f5f5",
           }}
         >
@@ -477,53 +459,40 @@ export default function Chaines({ produits = [] }) {
       localStorage.setItem("cachedProducts", JSON.stringify(data));
     }
   }, [data]);
-  // Improved Drag/Drop functions
-
-  const updateOrdering = (list) =>
-    list.map((item, index) => ({ ...item, order: index + 1 }));
-
-  const generateUpdates = (list, position) =>
-    list.map((item, index) => ({
-        produit: item,
-        newPosition: position,
-        newOrder: index + 1,
-    }));
 
   const handleDragStart = (e, sourcePosition, item, index) => {
     e.dataTransfer.setData(
-        "text/plain",
-        JSON.stringify({ from: sourcePosition, item, index })
+      "text/plain",
+      JSON.stringify({ from: sourcePosition, item, index })
     );
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
   
+    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const newData = { ...data };
+    if (!newData[targetPosition]) newData[targetPosition] = [];
+    if (!newData[transferData.from]) newData[transferData.from] = [];
+  
     try {
-      const { from, index } = JSON.parse(e.dataTransfer.getData("text/plain"));
-      const newData = { ...data };
-      newData[targetPosition] = newData[targetPosition] || [];
-      newData[from] = newData[from] || [];
-  
-      if (from === targetPosition) {
-        // Moving within the same list
+      if (transferData.from === targetPosition) {
         const list = [...newData[targetPosition]];
-        const [movedItem] = list.splice(index, 1);
+        const [movedItem] = list.splice(transferData.index, 1);
         list.splice(dropIndex, 0, movedItem);
-        newData[targetPosition] = updateOrdering(list);
+        newData[targetPosition] = list.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
       } else {
-        // Moving between lists
-        const sourceList = [...newData[from]];
+        const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
-        const [movedItem] = sourceList.splice(index, 1);
-  
-        // Remove invisible placeholder if present
+        const [movedItem] = sourceList.splice(transferData.index, 1);
         if (
           targetList.length === 1 &&
           targetList[0].id === `invisible-${targetPosition}`
@@ -531,30 +500,55 @@ export default function Chaines({ produits = [] }) {
           targetList.pop();
         }
         targetList.splice(dropIndex, 0, movedItem);
-        newData[from] = updateOrdering(sourceList);
-        newData[targetPosition] = updateOrdering(targetList);
+        newData[transferData.from] = sourceList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+        newData[targetPosition] = targetList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
       }
   
       setData(newData);
   
-      // Update chain state to reflect the new position
+      // Update hoveredItem and chain dynamically
+      const updatedHoveredItem = newData[targetPosition][dropIndex];
+      setHoveredItem(updatedHoveredItem);
       setChain(targetPosition);
   
-      const updates =
-        from === targetPosition
-          ? generateUpdates(newData[targetPosition], targetPosition)
-          : [
-              ...generateUpdates(newData[targetPosition], targetPosition),
-              ...generateUpdates(newData[from], from),
-            ];
+      let updates = [];
+      if (transferData.from === targetPosition) {
+        newData[targetPosition].forEach((item, index) => {
+          updates.push({
+            produit: item,
+            newPosition: targetPosition,
+            newOrder: index + 1,
+          });
+        });
+      } else {
+        newData[targetPosition].forEach((item, index) => {
+          updates.push({
+            produit: item,
+            newPosition: targetPosition,
+            newOrder: index + 1,
+          });
+        });
+        newData[transferData.from].forEach((item, index) => {
+          updates.push({
+            produit: item,
+            newPosition: transferData.from,
+            newOrder: index + 1,
+          });
+        });
+      }
   
-      await api.post(
-        "/update_drag",
-        { multipleUpdates: updates },
-        { headers: { "Content-Type": "application/json" } }
-      );
-    } catch (error) {
-      console.error("Drag/Drop error:", error);
+      const dragPayload = { multipleUpdates: updates };
+      await api.post("/update_drag", dragPayload, {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err) {
+      console.error("Erreur lors du déplacement :", err);
       setError("Erreur lors du déplacement - Veuillez réessayer");
     } finally {
       isProcessing.current = false;
