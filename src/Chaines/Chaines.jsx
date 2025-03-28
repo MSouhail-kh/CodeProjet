@@ -150,25 +150,22 @@ const ProductStyle = styled.span`
 
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px; /* Réduit la largeur */
-  top: ${({ y, cardHeight }) => {
-    const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 10; /* Réduit la hauteur */
-    return calculatedBottom > viewportHeight ? y - cardHeight - 25 : y;
-  }}px;
-  z-index: 1050; /* Plus haut pour éviter les conflits */
-  width: 310px; /* Réduit la largeur */
+  /* La propriété left utilise la valeur stockée et ajuste en fonction du chain */
+  left: ${({ left, chain }) => (chain === 1 ? left + 20 : left - 310 - 20)}px;
+  /* top est directement la valeur calculée */
+  top: ${({ top }) => top}px;
+  z-index: 1050;
+  width: 310px;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
     show ? "scale(1.05) translateY(0)" : "scale(0.95) translateY(-10px)"};
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   pointer-events: none;
-  background-color: white; /* Ajout d'un fond blanc */
-  border-radius: 16px; /* Coins arrondis */
+  background-color: white;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-  cursor: default; /* Affichage du curseur */
 `;
 
 
@@ -278,31 +275,45 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
 };
 
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
-  // Save the live hover position to localStorage for persistence
-  useEffect(() => {
-    if (hoveredItem && hoverPosition) {
-      localStorage.setItem("hoverPosition", JSON.stringify(hoverPosition));
-    }
-  }, [hoveredItem, hoverPosition]);
+  // Récupère left depuis le localStorage ou initialise à 0
+  const [leftPosition, setLeftPosition] = useState(() => {
+    const savedLeft = localStorage.getItem('hoverLeft');
+    return savedLeft ? JSON.parse(savedLeft) : 0;
+  });
+  
+  // top est calculé en fonction du curseur, avec sauvegarde dans le localStorage
+  const [topPosition, setTopPosition] = useState(() => {
+    const savedTop = localStorage.getItem('hoverTop');
+    return savedTop ? JSON.parse(savedTop) : 0;
+  });
 
-  // Use stored hover position if current one is not available
-  let position = { ...hoverPosition };
-  if (!position.x || !position.y) {
-    const stored = localStorage.getItem("hoverPosition");
-    if (stored) {
-      position = JSON.parse(stored);
+  useEffect(() => {
+    if (hoverPosition) {
+      // Mettre à jour et stocker left dans le localStorage
+      setLeftPosition(hoverPosition.x);
+      localStorage.setItem('hoverLeft', JSON.stringify(hoverPosition.x));
+
+      // Calculer top en s'assurant que la carte ne dépasse pas le viewport
+      const cardHeight = 300;
+      const viewportHeight = window.innerHeight;
+      let newTop = hoverPosition.y;
+      if (newTop + cardHeight + 10 > viewportHeight) {
+        newTop = viewportHeight - cardHeight - 10;
+      }
+      setTopPosition(newTop);
+      localStorage.setItem('hoverTop', JSON.stringify(newTop));
     }
-  }
+  }, [hoverPosition]);
 
   if (!hoveredItem) return null;
 
   return (
     <HoverCard
-      x={position.x}
-      y={position.y}
+      left={leftPosition}
+      top={topPosition}
       chain={chain}
       show={show}
-      cardHeight={300} /* Augmenté la hauteur */
+      cardHeight={300} /* Hauteur totale de la carte */
     >
       <Card
         className="shadow-lg"
