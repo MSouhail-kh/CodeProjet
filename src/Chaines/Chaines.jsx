@@ -282,7 +282,6 @@ const ChainColumn = ({
   );
 };
 
-
 export default function Chaines({ produits = [] }) {
   const [data, setData] = useState({});
   const [hoveredItem, setHoveredItem] = useState(null);
