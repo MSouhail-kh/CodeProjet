@@ -147,26 +147,22 @@ const ProductStyle = styled.span`
     background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
   }
 `;
+
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px; /* Réduit la largeur */
+  left: ${({ x, chaine }) => (chaine === 1 ? x + 15 : x - 240 - 15)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 10; /* Réduit la hauteur */
-    return calculatedBottom > viewportHeight ? y - cardHeight - 25 : y;
+    const calculatedBottom = y + cardHeight + 20;
+    return calculatedBottom > viewportHeight ? y - cardHeight - 10 : y;
   }}px;
-  z-index: 1050; /* Plus haut pour éviter les conflits */
-  width: 310px; /* Réduit la largeur */
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 900;
+  width: 240px;
+  transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   opacity: ${({ show }) => (show ? 1 : 0)};
-  transform: ${({ show }) =>
-    show ? "scale(1.05) translateY(0)" : "scale(0.95) translateY(-10px)"};
-  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
+  transform: ${({ show }) => show ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-15px)'};
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
   pointer-events: none;
-  background-color: white; /* Ajout d'un fond blanc */
-  border-radius: 16px; /* Coins arrondis */
-  overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 `;
 
 const ControlButton = styled(Button)`
@@ -330,6 +326,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
               }}
             >
               {hoveredItem.style}
+              {hoveredItem.position_id}
             </h3>
             <span
               style={{
