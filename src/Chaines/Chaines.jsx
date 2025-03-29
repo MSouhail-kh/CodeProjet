@@ -510,10 +510,11 @@ export default function Chaines({ produits = [] }) {
     if (!newData[targetPosition]) newData[targetPosition] = [];
     if (!newData[transferData.from]) newData[transferData.from] = [];
 
+    let movedItem;
     try {
       if (transferData.from === targetPosition) {
         const list = [...newData[targetPosition]];
-        const [movedItem] = list.splice(transferData.index, 1);
+        [movedItem] = list.splice(transferData.index, 1);
         list.splice(dropIndex, 0, movedItem);
         newData[targetPosition] = list.map((item, index) => ({
           ...item,
@@ -522,7 +523,7 @@ export default function Chaines({ produits = [] }) {
       } else {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
-        const [movedItem] = sourceList.splice(transferData.index, 1);
+        [movedItem] = sourceList.splice(transferData.index, 1);
         if (
           targetList.length === 1 &&
           targetList[0].id === `invisible-${targetPosition}`
