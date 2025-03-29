@@ -150,6 +150,7 @@ const ProductStyle = styled.span`
 const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chain, cardWidth }) => {
+    // Calcul dynamique : si chain === 1, position à droite du curseur ; sinon, à gauche
     const rightPosition = x + 20;
     const leftPosition = x - cardWidth - 20;
     return chain === 1 ? rightPosition : leftPosition;
@@ -510,11 +511,10 @@ export default function Chaines({ produits = [] }) {
     if (!newData[targetPosition]) newData[targetPosition] = [];
     if (!newData[transferData.from]) newData[transferData.from] = [];
 
-    let movedItem;
     try {
       if (transferData.from === targetPosition) {
         const list = [...newData[targetPosition]];
-        [movedItem] = list.splice(transferData.index, 1);
+        const [movedItem] = list.splice(transferData.index, 1);
         list.splice(dropIndex, 0, movedItem);
         newData[targetPosition] = list.map((item, index) => ({
           ...item,
@@ -523,7 +523,7 @@ export default function Chaines({ produits = [] }) {
       } else {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
-        [movedItem] = sourceList.splice(transferData.index, 1);
+        const [movedItem] = sourceList.splice(transferData.index, 1);
         if (
           targetList.length === 1 &&
           targetList[0].id === `invisible-${targetPosition}`
@@ -543,15 +543,6 @@ export default function Chaines({ produits = [] }) {
 
       setData(newData);
 
-      if (hoveredItem && hoveredItem.id === movedItem.id) {
-        const updatedItem =
-          newData[targetPosition]?.find((prod) => prod.id === movedItem.id) ||
-          newData[transferData.from]?.find((prod) => prod.id === movedItem.id);
-        if (updatedItem) {
-          setHoveredItem(updatedItem);
-          setChain(updatedItem.position_id);
-        }
-      }
       let updates = [];
       if (transferData.from === targetPosition) {
         newData[targetPosition].forEach((item, index) => {
@@ -589,17 +580,17 @@ export default function Chaines({ produits = [] }) {
       isProcessing.current = false;
     }
   };
-  
   const handleMouseEnter = (e, item) => {
     console.debug("Mouse entered on item:", item);
-    console.debug("Old position of product:", item.position_id);
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
     console.log("Hover position set to:", { x: e.clientX, y: e.clientY });
   };
-  
-  const handleMouseMove = (e) => {
+
+  const handleMouseMove = (e,item) => {
     setHoverPosition({ x: e.clientX, y: e.clientY });
+    setChain(item.position_id);
+    console.log("Chain set to:", item.position_id);
   };
 
   const handleMouseLeave = () => {
