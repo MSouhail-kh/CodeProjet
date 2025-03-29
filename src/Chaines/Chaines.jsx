@@ -283,7 +283,6 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
   );
 };
 
-
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   const cardRef = useRef(null);
   const [cardDimensions, setCardDimensions] = useState({
@@ -299,6 +298,10 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
       });
     }
   }, [hoveredItem]);
+
+  useEffect(() => {
+    console.log("Chain value changed:", chain);
+  }, [chain]);
 
   if (!hoveredItem) return null;
 
@@ -577,11 +580,13 @@ export default function Chaines({ produits = [] }) {
       isProcessing.current = false;
     }
   };
-
   const handleMouseEnter = (e, item) => {
+    console.debug("Mouse entered on item:", item);
     setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
     setChain(item.position_id);
+    console.log("Hover position set to:", { x: e.clientX, y: e.clientY });
+    console.log("Chain set to:", item.position_id);
   };
 
   const handleMouseMove = (e) => {
