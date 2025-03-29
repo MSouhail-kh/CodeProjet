@@ -50,7 +50,6 @@ const BouncingLoader = styled.div`
   justify-content: center;
 `;
 
-/* Message Styles */
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -61,6 +60,7 @@ const Message = styled.p`
   align-items: center;
   gap: 8px;
 `;
+
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
@@ -115,6 +115,7 @@ const StyledList = styled.div`
     height: 100%;
   }
 `;
+
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -147,16 +148,15 @@ const ProductStyle = styled.span`
     background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
   }
 `;
+
 const HoverCard = styled.div`
   position: fixed;
   left: ${({ x, chain, cardWidth }) => {
-    // Calcul dynamique : si chain === 1, position à droite du curseur ; sinon, à gauche
     const rightPosition = x + 20;
     const leftPosition = x - cardWidth - 20;
     return chain === 1 ? rightPosition : leftPosition;
   }}px;
   top: ${({ y, cardHeight }) => {
-    // On calcule la position top en fonction de la hauteur réelle de la carte et de la hauteur de la fenêtre
     const viewportHeight = window.innerHeight;
     let topValue = y;
     if (y + cardHeight + 10 > viewportHeight) {
@@ -225,11 +225,11 @@ const ChainColumn = ({
   filterAndSortProducts,
   darkMode = false,
 }) => {
-const sortedProducts = filterAndSortProducts(products, chainNumber);
+  const sortedProducts = filterAndSortProducts(products, chainNumber);
 
   return (
     <Col xs={12} sm={6} md={2}>
-      <StyledCard darkMode={darkMode}>
+      <StyledCard darkMode={darkMode} chainNumber={chainNumber}>
         <Card.Body>
           <Card.Title
             className="text-center fw-bold"
@@ -286,7 +286,7 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   const cardRef = useRef(null);
   const [cardDimensions, setCardDimensions] = useState({
-    width: 310, // valeur par défaut
+    width: 310,
     height: 320,
   });
 
@@ -297,11 +297,8 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
         height: cardRef.current.offsetHeight,
       });
     }
+    console.log(chain);
   }, [hoveredItem]);
-
-  useEffect(() => {
-    console.log("Chain value changed:", chain);
-  }, [chain]);
 
   if (!hoveredItem) return null;
 
@@ -373,6 +370,20 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
               Qty: {hoveredItem.qty}
             </span>
           </div>
+
+          <div style={{ marginBottom: "12px" }}>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <span style={{ fontWeight: "bold" }}>Position actuelle:</span>
+              <span>{hoveredItem.position_id}</span>
+            </div>
+            {hoveredItem.oldPositionId && hoveredItem.oldPositionId !== hoveredItem.position_id && (
+              <div style={{ display: "flex", gap: "8px" }}>
+                <span style={{ fontWeight: "bold" }}>Ancienne position:</span>
+                <span>{hoveredItem.oldPositionId}</span>
+              </div>
+            )}
+          </div>
+
           {hoveredItem.details && (
             <div
               style={{
@@ -430,6 +441,7 @@ export default function Chaines({ produits = [] }) {
     }
     return uniqueOrderProducts;
   };
+
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
@@ -447,7 +459,7 @@ export default function Chaines({ produits = [] }) {
       setData(groupedData);
       localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
       const now = new Date().toISOString();
-      localStorage.setItem("lastUpdate", now); // Save lastUpdate in localStorage
+      localStorage.setItem("lastUpdate", now);
       setLastUpdate(now);
       setError(null);
     } catch (err) {
@@ -524,13 +536,20 @@ export default function Chaines({ produits = [] }) {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
-        if (
-          targetList.length === 1 &&
-          targetList[0].id === `invisible-${targetPosition}`
-        ) {
+        
+        const itemWithOldPosition = {
+          ...movedItem,
+          oldPositionId: movedItem.position_id
+        };
+
+        if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
           targetList.pop();
         }
-        targetList.splice(dropIndex, 0, movedItem);
+        targetList.splice(dropIndex, 0, {
+          ...itemWithOldPosition,
+          position_id: targetPosition
+        });
+        
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -580,17 +599,19 @@ export default function Chaines({ produits = [] }) {
       isProcessing.current = false;
     }
   };
-  const handleMouseEnter = (e, item) => {
-    console.debug("Mouse entered on item:", item);
-    setHoveredItem(item);
-    setHoverPosition({ x: e.clientX, y: e.clientY });
-    console.log("Hover position set to:", { x: e.clientX, y: e.clientY });
-  };
 
-  const handleMouseMove = (e,item) => {
+  const handleMouseEnter = (e, item) => {
+    setHoveredItem({
+      ...item,
+      oldPositionId: item.position_id
+    });
     setHoverPosition({ x: e.clientX, y: e.clientY });
     setChain(item.position_id);
-    console.log("Chain set to:", item.position_id);
+    console.log(setChain)
+  };
+
+  const handleMouseMove = (e) => {
+    setHoverPosition({ x: e.clientX, y: e.clientY });
   };
 
   const handleMouseLeave = () => {
@@ -600,7 +621,6 @@ export default function Chaines({ produits = [] }) {
   const handleItemClick = (item) => {
     navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
-
 
   if (isLoading) {
     return (
@@ -617,30 +637,29 @@ export default function Chaines({ produits = [] }) {
   return (
     <>
       <Container fluid className="p-4">
-      <Row className="d-flex align-items-center justify-content-between p-2">
-        <Col className="d-flex align-items-center gap-3 p-1">
-          {lastUpdate && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                fontWeight: "bold",
-                color: "#2ecc71",
-                fontSize: "18px",
-                padding: "15px 20px",
-              }}
-            >
-              Dernière mise à jour : {formatTimestamp(lastUpdate)}
-            </div>
+        <Row className="d-flex align-items-center justify-content-between p-2">
+          <Col className="d-flex align-items-center gap-3 p-1">
+            {lastUpdate && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  fontWeight: "bold",
+                  color: "#2ecc71",
+                  fontSize: "18px",
+                  padding: "15px 20px",
+                }}
+              >
+                Dernière mise à jour : {formatTimestamp(lastUpdate)}
+              </div>
+            )}
+          </Col>
 
-          )}
-        </Col>
-
-        <Col className="d-flex justify-content-end">
-          <Refresh onRefresh={handleRefresh} />
-        </Col>
-      </Row>
+          <Col className="d-flex justify-content-end">
+            <Refresh onRefresh={handleRefresh} />
+          </Col>
+        </Row>
 
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
@@ -683,8 +702,8 @@ export default function Chaines({ produits = [] }) {
       
       <Col
         md="auto"
-        className="d-flex align-items-center justify-content-end p-3 ">
-              <RefreshButton onRefresh={handleRefresh} />
+        className="d-flex align-items-center justify-content-end p-3">
+        <RefreshButton onRefresh={handleRefresh} />
       </Col>
         
       <HoverPreview
