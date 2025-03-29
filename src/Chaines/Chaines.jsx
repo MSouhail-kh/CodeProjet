@@ -147,22 +147,35 @@ const ProductStyle = styled.span`
     background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
   }
 `;
-
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chaine }) => (chaine === 1 ? x + 15 : x - 240 - 15)}px;
-  top: ${({ y, cardHeight }) => {
-    const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 20;
-    return calculatedBottom > viewportHeight ? y - cardHeight - 10 : y;
+  left: ${({ x, chain, cardWidth }) => {
+    // Calcul dynamique : si chain === 1, position à droite du curseur ; sinon, à gauche
+    const rightPosition = x + 20;
+    const leftPosition = x - cardWidth - 20;
+    return chain === 1 ? rightPosition : leftPosition;
   }}px;
-  z-index: 900;
-  width: 240px;
-  transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  top: ${({ y, cardHeight }) => {
+    // On calcule la position top en fonction de la hauteur réelle de la carte et de la hauteur de la fenêtre
+    const viewportHeight = window.innerHeight;
+    let topValue = y;
+    if (y + cardHeight + 10 > viewportHeight) {
+      topValue = y - cardHeight - 25;
+    }
+    return topValue;
+  }}px;
+  z-index: 1050;
+  width: ${({ cardWidth }) => cardWidth}px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
-  transform: ${({ show }) => show ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-15px)'};
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
+  transform: ${({ show }) =>
+    show ? "scale(1.05) translateY(0)" : "scale(0.95) translateY(-10px)"};
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   pointer-events: none;
+  background-color: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 `;
 
 const ControlButton = styled(Button)`
@@ -270,7 +283,23 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
   );
 };
 
+
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
+  const cardRef = useRef(null);
+  const [cardDimensions, setCardDimensions] = useState({
+    width: 310, // valeur par défaut
+    height: 320,
+  });
+
+  useEffect(() => {
+    if (cardRef.current) {
+      setCardDimensions({
+        width: cardRef.current.offsetWidth,
+        height: cardRef.current.offsetHeight,
+      });
+    }
+  }, [hoveredItem]);
+
   if (!hoveredItem) return null;
 
   return (
@@ -279,9 +308,11 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
       y={hoverPosition.y}
       chain={chain}
       show={show}
-      cardHeight={320} /* Augmenté la hauteur */
+      cardWidth={cardDimensions.width}
+      cardHeight={cardDimensions.height}
     >
       <Card
+        ref={cardRef}
         className="shadow-lg"
         style={{
           borderRadius: "16px",
@@ -292,7 +323,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
         <div
           style={{
             position: "relative",
-            height: "220px", 
+            height: "220px",
             background: "#f5f5f5",
           }}
         >
@@ -302,7 +333,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "scale-down",
+              objectFit: hoveredItem.image ? "cover" : "contain",
               objectPosition: "center",
               padding: hoveredItem.image ? 0 : "20px",
             }}
@@ -326,7 +357,6 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
               }}
             >
               {hoveredItem.style}
-              {hoveredItem.position_id}
             </h3>
             <span
               style={{
