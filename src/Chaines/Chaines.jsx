@@ -50,6 +50,7 @@ const BouncingLoader = styled.div`
   justify-content: center;
 `;
 
+/* Message Styles */
 const Message = styled.p`
   margin: 0.5rem auto 0;
   text-align: center;
@@ -60,7 +61,6 @@ const Message = styled.p`
   align-items: center;
   gap: 8px;
 `;
-
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
@@ -115,7 +115,6 @@ const StyledList = styled.div`
     height: 100%;
   }
 `;
-
 const ProductContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -148,32 +147,24 @@ const ProductStyle = styled.span`
     background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
   }
 `;
-
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain, cardWidth }) => {
-    const rightPosition = x + 20;
-    const leftPosition = x - cardWidth - 20;
-    return chain === 1 ? rightPosition : leftPosition;
-  }}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px; /* Réduit la largeur */
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
-    let topValue = y;
-    if (y + cardHeight + 10 > viewportHeight) {
-      topValue = y - cardHeight - 25;
-    }
-    return topValue;
+    const calculatedBottom = y + cardHeight + 10; /* Réduit la hauteur */
+    return calculatedBottom > viewportHeight ? y - cardHeight - 25 : y;
   }}px;
-  z-index: 1050;
-  width: ${({ cardWidth }) => cardWidth}px;
+  z-index: 1050; /* Plus haut pour éviter les conflits */
+  width: 310px; /* Réduit la largeur */
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
     show ? "scale(1.05) translateY(0)" : "scale(0.95) translateY(-10px)"};
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   pointer-events: none;
-  background-color: white;
-  border-radius: 16px;
+  background-color: white; /* Ajout d'un fond blanc */
+  border-radius: 16px; /* Coins arrondis */
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 `;
@@ -225,11 +216,11 @@ const ChainColumn = ({
   filterAndSortProducts,
   darkMode = false,
 }) => {
-  const sortedProducts = filterAndSortProducts(products, chainNumber);
+const sortedProducts = filterAndSortProducts(products, chainNumber);
 
   return (
     <Col xs={12} sm={6} md={2}>
-      <StyledCard darkMode={darkMode} chainNumber={chainNumber}>
+      <StyledCard darkMode={darkMode}>
         <Card.Body>
           <Card.Title
             className="text-center fw-bold"
@@ -284,22 +275,6 @@ const ChainColumn = ({
 };
 
 const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
-  const cardRef = useRef(null);
-  const [cardDimensions, setCardDimensions] = useState({
-    width: 310,
-    height: 320,
-  });
-
-  useEffect(() => {
-    if (cardRef.current) {
-      setCardDimensions({
-        width: cardRef.current.offsetWidth,
-        height: cardRef.current.offsetHeight,
-      });
-    }
-    console.log(chain);
-  }, [hoveredItem]);
-
   if (!hoveredItem) return null;
 
   return (
@@ -308,11 +283,9 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
       y={hoverPosition.y}
       chain={chain}
       show={show}
-      cardWidth={cardDimensions.width}
-      cardHeight={cardDimensions.height}
+      cardHeight={320} /* Augmenté la hauteur */
     >
       <Card
-        ref={cardRef}
         className="shadow-lg"
         style={{
           borderRadius: "16px",
@@ -323,7 +296,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
         <div
           style={{
             position: "relative",
-            height: "220px",
+            height: "220px", 
             background: "#f5f5f5",
           }}
         >
@@ -370,20 +343,6 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
               Qty: {hoveredItem.qty}
             </span>
           </div>
-
-          <div style={{ marginBottom: "12px" }}>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <span style={{ fontWeight: "bold" }}>Position actuelle:</span>
-              <span>{hoveredItem.position_id}</span>
-            </div>
-            {hoveredItem.oldPositionId && hoveredItem.oldPositionId !== hoveredItem.position_id && (
-              <div style={{ display: "flex", gap: "8px" }}>
-                <span style={{ fontWeight: "bold" }}>Ancienne position:</span>
-                <span>{hoveredItem.oldPositionId}</span>
-              </div>
-            )}
-          </div>
-
           {hoveredItem.details && (
             <div
               style={{
@@ -441,7 +400,6 @@ export default function Chaines({ produits = [] }) {
     }
     return uniqueOrderProducts;
   };
-
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
@@ -459,7 +417,7 @@ export default function Chaines({ produits = [] }) {
       setData(groupedData);
       localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
       const now = new Date().toISOString();
-      localStorage.setItem("lastUpdate", now);
+      localStorage.setItem("lastUpdate", now); // Save lastUpdate in localStorage
       setLastUpdate(now);
       setError(null);
     } catch (err) {
@@ -536,20 +494,13 @@ export default function Chaines({ produits = [] }) {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
-        
-        const itemWithOldPosition = {
-          ...movedItem,
-          oldPositionId: movedItem.position_id
-        };
-
-        if (targetList.length === 1 && targetList[0].id === `invisible-${targetPosition}`) {
+        if (
+          targetList.length === 1 &&
+          targetList[0].id === `invisible-${targetPosition}`
+        ) {
           targetList.pop();
         }
-        targetList.splice(dropIndex, 0, {
-          ...itemWithOldPosition,
-          position_id: targetPosition
-        });
-        
+        targetList.splice(dropIndex, 0, movedItem);
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
           order: index + 1,
@@ -601,11 +552,9 @@ export default function Chaines({ produits = [] }) {
   };
 
   const handleMouseEnter = (e, item) => {
-    setHoveredItem({
-      ...item,
-      oldPositionId: item.position_id
-    });
+    setHoveredItem(item);
     setHoverPosition({ x: e.clientX, y: e.clientY });
+    console.log(setHoverPosition)
     setChain(item.position_id);
     console.log(setChain)
   };
@@ -622,6 +571,7 @@ export default function Chaines({ produits = [] }) {
     navigate(`/produit/${item.po}`, { state: { produit: item } });
   };
 
+
   if (isLoading) {
     return (
       <LoaderContainer>
@@ -637,29 +587,30 @@ export default function Chaines({ produits = [] }) {
   return (
     <>
       <Container fluid className="p-4">
-        <Row className="d-flex align-items-center justify-content-between p-2">
-          <Col className="d-flex align-items-center gap-3 p-1">
-            {lastUpdate && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  fontWeight: "bold",
-                  color: "#2ecc71",
-                  fontSize: "18px",
-                  padding: "15px 20px",
-                }}
-              >
-                Dernière mise à jour : {formatTimestamp(lastUpdate)}
-              </div>
-            )}
-          </Col>
+      <Row className="d-flex align-items-center justify-content-between p-2">
+        <Col className="d-flex align-items-center gap-3 p-1">
+          {lastUpdate && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                fontWeight: "bold",
+                color: "#2ecc71",
+                fontSize: "18px",
+                padding: "15px 20px",
+              }}
+            >
+              Dernière mise à jour : {formatTimestamp(lastUpdate)}
+            </div>
 
-          <Col className="d-flex justify-content-end">
-            <Refresh onRefresh={handleRefresh} />
-          </Col>
-        </Row>
+          )}
+        </Col>
+
+        <Col className="d-flex justify-content-end">
+          <Refresh onRefresh={handleRefresh} />
+        </Col>
+      </Row>
 
         <MobileRow className="g-1 flex-nowrap justify-content-center align-items-stretch">
           {[1, 2, 3, 4, 5].map((num) => (
@@ -702,8 +653,8 @@ export default function Chaines({ produits = [] }) {
       
       <Col
         md="auto"
-        className="d-flex align-items-center justify-content-end p-3">
-        <RefreshButton onRefresh={handleRefresh} />
+        className="d-flex align-items-center justify-content-end p-3 ">
+              <RefreshButton onRefresh={handleRefresh} />
       </Col>
         
       <HoverPreview
