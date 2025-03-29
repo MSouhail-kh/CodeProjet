@@ -149,36 +149,22 @@ const ProductStyle = styled.span`
 `;
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => {
-    const viewportWidth = window.innerWidth;
-    const cardWidth = 310; // Largeur fixe de la carte
-    const offset = 20; // Décalage par rapport à la position de la souris
-
-    if (chain === 1) {
-      return x + offset; // Positionner à droite pour la chaîne 1
-    }
-
-    if (x + cardWidth + offset > viewportWidth) {
-      return x - cardWidth - offset; // Ajuster si dépassement à droite
-    }
-
-    return x - cardWidth - offset; // Positionner à gauche par défaut
-  }}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px; /* Réduit la largeur */
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 10;
+    const calculatedBottom = y + cardHeight + 10; /* Réduit la hauteur */
     return calculatedBottom > viewportHeight ? y - cardHeight - 25 : y;
   }}px;
-  z-index: 1050;
-  width: 310px;
+  z-index: 1050; /* Plus haut pour éviter les conflits */
+  width: 310px; /* Réduit la largeur */
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
     show ? "scale(1.05) translateY(0)" : "scale(0.95) translateY(-10px)"};
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   pointer-events: none;
-  background-color: white;
-  border-radius: 16px;
+  background-color: white; /* Ajout d'un fond blanc */
+  border-radius: 16px; /* Coins arrondis */
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 `;
@@ -288,7 +274,7 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
   );
 };
 
-const HoverPreview = ({ hoveredItem, hoverPosition, chain, show, handleDrop }) => {
+const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
   if (!hoveredItem) return null;
 
   return (
@@ -297,9 +283,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show, handleDrop }) =
       y={hoverPosition.y}
       chain={chain}
       show={show}
-      cardHeight={320}
-      onDragOver={(e) => e.preventDefault()} // Permettre le glisser-déposer
-      onDrop={(e) => handleDrop(e, chain, 0)} // Appeler handleDrop avec la position de la chaîne
+      cardHeight={320} /* Augmenté la hauteur */
     >
       <Card
         className="shadow-lg"
@@ -312,7 +296,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show, handleDrop }) =
         <div
           style={{
             position: "relative",
-            height: "220px",
+            height: "220px", 
             background: "#f5f5f5",
           }}
         >
@@ -322,7 +306,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show, handleDrop }) =
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "fill",
+              objectFit: "scale-down",
               objectPosition: "center",
               padding: hoveredItem.image ? 0 : "20px",
             }}
@@ -486,19 +470,17 @@ export default function Chaines({ produits = [] }) {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-  
-  
+
   const handleDrop = async (e, targetPosition, dropIndex) => {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
-  
+
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
     const newData = { ...data };
-  
     if (!newData[targetPosition]) newData[targetPosition] = [];
     if (!newData[transferData.from]) newData[transferData.from] = [];
-  
+
     try {
       if (transferData.from === targetPosition) {
         const list = [...newData[targetPosition]];
@@ -512,6 +494,12 @@ export default function Chaines({ produits = [] }) {
         const sourceList = [...newData[transferData.from]];
         const targetList = [...newData[targetPosition]];
         const [movedItem] = sourceList.splice(transferData.index, 1);
+        if (
+          targetList.length === 1 &&
+          targetList[0].id === `invisible-${targetPosition}`
+        ) {
+          targetList.pop();
+        }
         targetList.splice(dropIndex, 0, movedItem);
         newData[transferData.from] = sourceList.map((item, index) => ({
           ...item,
@@ -522,34 +510,37 @@ export default function Chaines({ produits = [] }) {
           order: index + 1,
         }));
       }
-  
+
       setData(newData);
-  
-      // Mettre à jour hoveredItem, chain et hoverPosition
-      const updatedHoveredItem = newData[targetPosition][dropIndex];
-      setHoveredItem(updatedHoveredItem);
-      setChain(targetPosition);
-  
-      // Mettre à jour la position de la HoverCard
-      setHoverPosition((prevPosition) => ({
-        ...prevPosition,
-        x: e.clientX, // Utiliser la position actuelle de la souris
-        y: e.clientY, // Utiliser la position actuelle de la souris
-      }));
-  
-      // Envoyer les mises à jour au backend
-      const updates = [];
-      Object.keys(newData).forEach((position) => {
-        newData[position].forEach((item, index) => {
+
+      let updates = [];
+      if (transferData.from === targetPosition) {
+        newData[targetPosition].forEach((item, index) => {
           updates.push({
             produit: item,
-            newPosition: parseInt(position, 10),
+            newPosition: targetPosition,
             newOrder: index + 1,
           });
         });
-      });
-  
-      await api.post("/update_drag", { multipleUpdates: updates }, {
+      } else {
+        newData[targetPosition].forEach((item, index) => {
+          updates.push({
+            produit: item,
+            newPosition: targetPosition,
+            newOrder: index + 1,
+          });
+        });
+        newData[transferData.from].forEach((item, index) => {
+          updates.push({
+            produit: item,
+            newPosition: transferData.from,
+            newOrder: index + 1,
+          });
+        });
+      }
+
+      const dragPayload = { multipleUpdates: updates };
+      await api.post("/update_drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
       });
     } catch (err) {
