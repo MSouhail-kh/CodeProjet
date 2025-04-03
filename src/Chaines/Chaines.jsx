@@ -150,8 +150,7 @@ const ProductStyle = styled.span`
 
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain, productPosition }) =>
-    productPosition === 1 ? x + 40 : (chain === 1 ? x + 20 : x - 310 - 20)}px;
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
     const calculatedBottom = y + cardHeight + 10;
@@ -285,8 +284,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, newPosition, show }) => {
       y={hoverPosition.y}
       chain={newPosition}
       show={show}
-      cardHeight={320} 
-      productPosition={hoveredItem.position_id} 
+      cardHeight={320} /* Augmenté la hauteur */
     >
       <Card
         className="shadow-lg"
