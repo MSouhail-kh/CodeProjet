@@ -277,12 +277,13 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
 
 const HoverPreview = ({ hoveredItem, hoverPosition, newPosition, show }) => {
   if (!hoveredItem) return null;
+  const chainPosition = hoveredItem.position_id || newPosition;
 
   return (
     <HoverCard
       x={hoverPosition.x}
       y={hoverPosition.y}
-      chain={newPosition}
+      chain={chainPosition}
       show={show}
       cardHeight={320} /* Augmenté la hauteur */
     >
