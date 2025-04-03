@@ -397,10 +397,18 @@ export default function Chaines({ produits = [] }) {
     });
   
     // Réassigner les ordres de manière séquentielle sans doublons
-    return chainProducts.map((product, index) => ({
-      ...product,
-      order: index + 1 // Réindexation séquentielle à partir de 1
-    }));
+    const uniqueOrders = new Set();
+    return chainProducts.map((product, index) => {
+      let newOrder = index + 1;
+      while (uniqueOrders.has(newOrder)) {
+        newOrder++;
+      }
+      uniqueOrders.add(newOrder);
+      return {
+        ...product,
+        order: newOrder // Réindexation séquentielle unique
+      };
+    });
   };
   
   const handleRefresh = (produits) => {
