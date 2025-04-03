@@ -435,7 +435,7 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
-  
+
   useEffect(() => {
     isMounted.current = true;
     const cachedData = localStorage.getItem("cachedProducts");
@@ -479,86 +479,86 @@ export default function Chaines({ produits = [] }) {
     e.preventDefault();
   };
 
-  const handleDrop = async (e, targetPosition, dropIndex) => {
-    e.preventDefault();
-    if (isProcessing.current) return;
-    isProcessing.current = true;
-  
-    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    const newData = { ...data };
-    if (!newData[targetPosition]) newData[targetPosition] = [];
-    if (!newData[transferData.from]) newData[transferData.from] = [];
-  
-    try {
-      if (transferData.from === targetPosition) {
-        const list = [...newData[targetPosition]];
-        const [movedItem] = list.splice(transferData.index, 1);
-        list.splice(dropIndex, 0, movedItem);
-        newData[targetPosition] = list.map((item, index) => ({
-          ...item,
-          order: index + 1,
-        }));
-      } else {
-        const sourceList = [...newData[transferData.from]];
-        const targetList = [...newData[targetPosition]];
-        const [movedItem] = sourceList.splice(transferData.index, 1);
-        if (
-          targetList.length === 1 &&
-          targetList[0].id === `invisible-${targetPosition}`
-        ) {
-          targetList.pop();
-        }
-        targetList.splice(dropIndex, 0, movedItem);
-        newData[transferData.from] = sourceList.map((item, index) => ({
-          ...item,
-          order: index + 1,
-        }));
-        newData[targetPosition] = targetList.map((item, index) => ({
-          ...item,
-          order: index + 1,
-        }));
-      }
-  
-      setData(newData);
-      setNewPosition(targetPosition); // Update newPosition here
-  
-      let updates = [];
-      if (transferData.from === targetPosition) {
-        newData[targetPosition].forEach((item, index) => {
-          updates.push({
-            produit: item,
-            newPosition: targetPosition,
-            newOrder: index + 1,
-          });
-        });
-      } else {
-        newData[targetPosition].forEach((item, index) => {
-          updates.push({
-            produit: item,
-            newPosition: targetPosition,
-            newOrder: index + 1,
-          });
-        });
-        newData[transferData.from].forEach((item, index) => {
-          updates.push({
-            produit: item,
-            newPosition: transferData.from,
-            newOrder: index + 1,
-          });
-        });
-      }
-  
-      const dragPayload = { multipleUpdates: updates };
-      await api.post("/update_drag", dragPayload, {
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (err) {
-      console.error("Erreur lors du déplacement :", err);
-      setError("Erreur lors du déplacement - Veuillez réessayer");
-    } finally {
-      isProcessing.current = false;
+const handleDrop = async (e, targetPosition, dropIndex) => {
+  e.preventDefault();
+  if (isProcessing.current) return;
+  isProcessing.current = true;
+
+  const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+  const newData = { ...data };
+  if (!newData[targetPosition]) newData[targetPosition] = [];
+  if (!newData[transferData.from]) newData[transferData.from] = [];
+
+  try {
+    if (transferData.from === targetPosition) {
+      // Reorder within the same chain
+      const list = [...newData[targetPosition]];
+      const [movedItem] = list.splice(transferData.index, 1);
+      list.splice(dropIndex, 0, movedItem);
+      // Update order for all items in the chain
+      newData[targetPosition] = list.map((item, index) => ({
+        ...item,
+        order: index + 1,
+      }));
+    } else {
+      // Move between different chains
+      const sourceList = [...newData[transferData.from]];
+      const targetList = [...newData[targetPosition]];
+      const [movedItem] = sourceList.splice(transferData.index, 1);
+      
+      // Update position_id for the moved item
+      const updatedItem = { ...movedItem, position_id: targetPosition };
+      targetList.splice(dropIndex, 0, updatedItem);
+
+      // Update order for source chain
+      newData[transferData.from] = sourceList.map((item, index) => ({
+        ...item,
+        order: index + 1,
+      }));
+
+      // Update order for target chain
+      newData[targetPosition] = targetList.map((item, index) => ({
+        ...item,
+        order: index + 1,
+      }));
     }
-  };
+
+    setData(newData);
+    setNewPosition(targetPosition);
+
+    // Prepare update payload for all affected items
+    let updates = [];
+    // Include items from target chain
+    newData[targetPosition].forEach((item, index) => {
+      updates.push({
+        produit: item,
+        newPosition: targetPosition,
+        newOrder: index + 1,
+      });
+    });
+    // Include items from source chain (if different)
+    if (transferData.from !== targetPosition) {
+      newData[transferData.from].forEach((item, index) => {
+        updates.push({
+          produit: item,
+          newPosition: transferData.from,
+          newOrder: index + 1,
+        });
+      });
+    }
+
+    // Send updates to the server
+    const dragPayload = { multipleUpdates: updates };
+    await api.post("/update_drag", dragPayload, {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("Erreur lors du déplacement :", err);
+    setError("Erreur lors du déplacement - Veuillez réessayer");
+  } finally {
+    isProcessing.current = false;
+  }
+};
   
 
   const handleMouseEnter = (e, item) => {
