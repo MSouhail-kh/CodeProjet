@@ -377,50 +377,55 @@ export default function Chaines({ produits = [] }) {
   const navigate = useNavigate();
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
-
-  const filterAndSortProducts = (products) => {
+  const filterAndSortProducts = (products, chainNumber) => {
     if (!products || products.length === 0) return [];
-    const productsWithDefaultOrder = products.map((product, index) => ({
+    
+    // Assigner les valeurs par défaut
+    const productsWithDefaults = products.map(product => ({
       ...product,
-      order:
-        product.order !== undefined && product.order !== null
-          ? product.order
-          : index + 1,
+      position_id: product.position_id || 6, // Valeur par défaut 6 si position non définie
+      order: typeof product.order === 'number' ? product.order : 0 // Valeur par défaut 0 si order non défini
     }));
-    const sortedProducts = productsWithDefaultOrder.sort(
-      (a, b) => a.order - b.order
-    );
-    const uniqueOrderProducts = [];
-    const usedOrders = new Set();
-
-    for (const product of sortedProducts) {
-      let order = product.order;
-      while (usedOrders.has(order)) {
-        order++;
-      }
-      usedOrders.add(order);
-      uniqueOrderProducts.push({ ...product, order });
-    }
-    return uniqueOrderProducts;
+  
+    // Filtrer uniquement les produits de la chaîne demandée
+    const chainProducts = productsWithDefaults.filter(p => p.position_id === chainNumber);
+  
+    // Trier d'abord par order existant, puis par po pour stabilité
+    chainProducts.sort((a, b) => {
+      if (a.order !== b.order) return a.order - b.order;
+      return a.po.localeCompare(b.po);
+    });
+  
+    // Réassigner les ordres de manière séquentielle sans doublons
+    return chainProducts.map((product, index) => ({
+      ...product,
+      order: index + 1 // Réindexation séquentielle à partir de 1
+    }));
   };
+  
   const handleRefresh = (produits) => {
     setIsLoading(true);
     try {
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      
+      // D'abord regrouper tous les produits
       produits.forEach((produit) => {
-        if (groupedData[produit.position_id]) {
-          groupedData[produit.position_id].push(produit);
+        const position = produit.position_id || 6; // Valeur par défaut 6
+        if (groupedData[position]) {
+          groupedData[position].push(produit);
         }
       });
-
+  
+      // Ensuite appliquer le tri et réindexation pour chaque position
       Object.keys(groupedData).forEach((key) => {
-        groupedData[key] = filterAndSortProducts(groupedData[key], key);
+        const chainNumber = parseInt(key);
+        groupedData[key] = filterAndSortProducts(groupedData[key], chainNumber);
       });
-
+  
       setData(groupedData);
       localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
       const now = new Date().toISOString();
-      localStorage.setItem("lastUpdate", now); // Save lastUpdate in localStorage
+      localStorage.setItem("lastUpdate", now);
       setLastUpdate(now);
       setError(null);
     } catch (err) {
@@ -430,7 +435,7 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
-
+  
   useEffect(() => {
     isMounted.current = true;
     const cachedData = localStorage.getItem("cachedProducts");
