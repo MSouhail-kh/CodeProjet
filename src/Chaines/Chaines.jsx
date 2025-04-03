@@ -147,24 +147,25 @@ const ProductStyle = styled.span`
     background-color: ${({ darkMode }) => (darkMode ? "#555" : "#f0f0f0")};
   }
 `;
+
 const HoverCard = styled.div`
   position: fixed;
-  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px; /* Réduit la largeur */
+  left: ${({ x, chain }) => (chain === 1 ? x + 20 : x - 310 - 20)}px;
   top: ${({ y, cardHeight }) => {
     const viewportHeight = window.innerHeight;
-    const calculatedBottom = y + cardHeight + 10; /* Réduit la hauteur */
+    const calculatedBottom = y + cardHeight + 10;
     return calculatedBottom > viewportHeight ? y - cardHeight - 25 : y;
   }}px;
-  z-index: 1050; /* Plus haut pour éviter les conflits */
-  width: 310px; /* Réduit la largeur */
+  z-index: 1050;
+  width: 310px;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: ${({ show }) => (show ? 1 : 0)};
   transform: ${({ show }) =>
     show ? "scale(1.05) translateY(0)" : "scale(0.95) translateY(-10px)"};
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   pointer-events: none;
-  background-color: white; /* Ajout d'un fond blanc */
-  border-radius: 16px; /* Coins arrondis */
+  background-color: white;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 `;
@@ -274,14 +275,14 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
   );
 };
 
-const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
+const HoverPreview = ({ hoveredItem, hoverPosition, newPosition, show }) => {
   if (!hoveredItem) return null;
 
   return (
     <HoverCard
       x={hoverPosition.x}
       y={hoverPosition.y}
-      chain={chain}
+      chain={newPosition}
       show={show}
       cardHeight={320} /* Augmenté la hauteur */
     >
@@ -368,6 +369,7 @@ export default function Chaines({ produits = [] }) {
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [chain, setChain] = useState(null);
+  const [newPosition, setNewPosition] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(null);
@@ -475,12 +477,12 @@ export default function Chaines({ produits = [] }) {
     e.preventDefault();
     if (isProcessing.current) return;
     isProcessing.current = true;
-
+  
     const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
     const newData = { ...data };
     if (!newData[targetPosition]) newData[targetPosition] = [];
     if (!newData[transferData.from]) newData[transferData.from] = [];
-
+  
     try {
       if (transferData.from === targetPosition) {
         const list = [...newData[targetPosition]];
@@ -510,9 +512,10 @@ export default function Chaines({ produits = [] }) {
           order: index + 1,
         }));
       }
-
+  
       setData(newData);
-
+      setNewPosition(targetPosition); // Update newPosition here
+  
       let updates = [];
       if (transferData.from === targetPosition) {
         newData[targetPosition].forEach((item, index) => {
@@ -538,7 +541,7 @@ export default function Chaines({ produits = [] }) {
           });
         });
       }
-
+  
       const dragPayload = { multipleUpdates: updates };
       await api.post("/update_drag", dragPayload, {
         headers: { "Content-Type": "application/json" },
@@ -550,6 +553,7 @@ export default function Chaines({ produits = [] }) {
       isProcessing.current = false;
     }
   };
+  
 
   const handleMouseEnter = (e, item) => {
     setHoveredItem(item);
@@ -660,7 +664,7 @@ export default function Chaines({ produits = [] }) {
       <HoverPreview
         hoveredItem={hoveredItem}
         hoverPosition={hoverPosition}
-        chain={chain}
+        newPosition={newPosition}
         show={!!hoveredItem}
       />
     </>
