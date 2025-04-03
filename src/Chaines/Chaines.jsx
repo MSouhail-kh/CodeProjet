@@ -306,7 +306,7 @@ const HoverPreview = ({ hoveredItem, hoverPosition, chain, show }) => {
             style={{
               width: "100%",
               height: "100%",
-              objectFit: hoveredItem.image ? "cover" : "contain",
+              objectFit: "scale-down",
               objectPosition: "center",
               padding: hoveredItem.image ? 0 : "20px",
             }}
