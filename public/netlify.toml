@@ -3,14 +3,16 @@
   publish = "build" 
   base = "/"
 
-[[redirects]]
-  from = "/public/static/*"
-  to = "/public/static/:splat"
-  status = 200
+
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/public/static/*"
+  to = "/public/static/:splat"
   status = 200
 
 [functions]
