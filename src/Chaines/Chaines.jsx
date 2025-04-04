@@ -251,7 +251,7 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
               >
                 <ProductContainer darkMode={darkMode}>
                   <ProductImage
-                    src={item.localImage  || NoImage}
+                    src={item.localImage || NoImage}
                     alt={item.style}
                     darkMode={darkMode}
                   />
@@ -410,21 +410,45 @@ export default function Chaines({ produits = [] }) {
       };
     });
   };
-  
-  const handleRefresh = (produits) => {
+  const handleRefresh = async (produits) => {
     setIsLoading(true);
     try {
+      // Pour chaque produit, vérifier si une image existe et créer une URL blob locale
+      await Promise.all(
+        produits.map(async (produit) => {
+          if (produit.image) {
+            try {
+              // Télécharger l'image
+              const response = await fetch(produit.image);
+              if (response.ok) {
+                const blob = await response.blob();
+                // Créer une URL blob locale
+                const localUrl = URL.createObjectURL(blob);
+                // Mettre à jour la référence de l'image pour utiliser l'URL blob
+                produit.localImage = localUrl;
+              }
+            } catch (err) {
+              console.error("Erreur lors du téléchargement de l'image :", err);
+            }
+          } else {
+            // Si aucune image n'est disponible, utiliser une image par défaut
+            produit.localImage = "/images/NoImage.png"; // Assurez-vous que cette image existe dans `public/images`
+          }
+          return produit;
+        })
+      );
+  
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-      
-      // D'abord regrouper tous les produits
+  
+      // Regrouper les produits
       produits.forEach((produit) => {
-        const position = produit.position_id || 6; // Valeur par défaut 6
+        const position = produit.position_id || 6;
         if (groupedData[position]) {
           groupedData[position].push(produit);
         }
       });
   
-      // Ensuite appliquer le tri et réindexation pour chaque position
+      // Appliquer le tri et la réindexation
       Object.keys(groupedData).forEach((key) => {
         const chainNumber = parseInt(key);
         groupedData[key] = filterAndSortProducts(groupedData[key], chainNumber);
@@ -443,7 +467,6 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
-
   
 
   useEffect(() => {
