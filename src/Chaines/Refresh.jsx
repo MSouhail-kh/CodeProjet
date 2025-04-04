@@ -43,14 +43,28 @@ export const RefreshButtonStyle = styled(Button)`
     height: 24px;
   }
 `;
-const downloadImage = async (url) => {
+const fs = window.require("fs");
+const path = window.require("path");
+
+const downloadImage = async (url, localPath) => {
   try {
     const response = await fetch(url);
     const blob = await response.blob();
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result); 
+      reader.onloadend = () => {
+        const buffer = Buffer.from(reader.result.split(",")[1], "base64");
+        fs.writeFile(localPath, buffer, (err) => {
+          if (err) {
+            console.log("Erreur lors de l'enregistrement de l'image :", err);
+            reject(err);
+          } else {
+            resolve(localPath);
+          }
+        });
+      };
+      reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
   } catch (error) {
@@ -61,16 +75,24 @@ const downloadImage = async (url) => {
 
 const getLocalImage = async (url) => {
   const cache = JSON.parse(localStorage.getItem("imageCache")) || {};
+  const localFolder = path.join(__dirname, "images");
+
+  if (!fs.existsSync(localFolder)) {
+    fs.mkdirSync(localFolder);
+  }
 
   if (cache[url]) {
-    return cache[url]; 
+    return cache[url];
   } else {
-    const downloadedImage = await downloadImage(url);
-    if (downloadedImage) {
-      cache[url] = downloadedImage; 
+    const fileName = path.basename(url);
+    const localPath = path.join(localFolder, fileName);
+
+    const downloadedImagePath = await downloadImage(url, localPath);
+    if (downloadedImagePath) {
+      cache[url] = downloadedImagePath;
       localStorage.setItem("imageCache", JSON.stringify(cache));
     }
-    return downloadedImage;
+    return downloadedImagePath;
   }
 };
 
@@ -86,7 +108,7 @@ const Refresh = ({ onRefresh }) => {
       const updatedProducts = await Promise.all(
         response.data.map(async (product) => ({
           ...product,
-          localImage: await getLocalImage(product.image), 
+          localImage: await getLocalImage(product.image),
         }))
       );
 
