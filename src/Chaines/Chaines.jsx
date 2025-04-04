@@ -364,6 +364,10 @@ const HoverPreview = ({ hoveredItem, hoverPosition, newPosition, show }) => {
   );
 };
 
+function buildCdnImageUrl(originalUrl) {
+  return `https://sigmatex.netlify.app/.netlify/images?url=${encodeURIComponent(originalUrl)}&fm=webp&q=75`;
+}
+
 export default function Chaines({ produits = [] }) {
   const [showPosition6, setShowPosition6] = useState(true);
   const [data, setData] = useState({});

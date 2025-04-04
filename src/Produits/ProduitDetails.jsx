@@ -161,7 +161,6 @@ const ProduitDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editedData, setEditedData] = useState({});
-  const [previewImage, setPreviewImage] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
 
@@ -212,9 +211,6 @@ const ProduitDetails = () => {
           break;
       }
 
-      if (name === 'image') {
-        setPreviewImage(URL.createObjectURL(files[0]));
-      }
     } else {
       setEditedData(prev => ({
         ...prev,
@@ -256,7 +252,7 @@ const ProduitDetails = () => {
             <Col md={6}>
               <Card.Img
                 variant="top"
-                src={previewImage || product.image || NoImage}
+                src={product.image || NoImage}
                 alt={product.style}
                 style={{ 
                   height: '100%', 
@@ -451,7 +447,7 @@ const ProduitDetails = () => {
         </Modal.Header>
         <Modal.Body>
           <img
-            src={previewImage || product.image || NoImage }
+            src={ product.image || NoImage }
             alt={product.style}
             style={{ width: '100%', height: 'auto' }}
           />

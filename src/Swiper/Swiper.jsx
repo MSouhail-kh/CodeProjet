@@ -14,13 +14,11 @@ import api from '../services/axios';
 const SwiperContainer = styled.div`
   width: 100%;
   padding: 20px 0;
-  background: linear-gradient(135deg, #2575fc);
 
   .swiper-pagination-bullet {
     background: #333;
     opacity: 0.5;
     &-active {
-      background: #007aff;
       opacity: 1;
     }
   }
