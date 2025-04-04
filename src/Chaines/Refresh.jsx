@@ -7,30 +7,28 @@ import UserProfile from "../Authentification/User/UserProfile";
 import SearchResultsModal from "../Produits/SearchResultsModal";
 import api from "../services/axios";
 
-// Vérifier si nous sommes dans un environnement Node.js
-let fs, path;
+let fs, path, localFolder;
+
+// Vérifier si nous sommes côté serveur (Node.js)
 if (typeof window === "undefined") {
   fs = require("fs");
   path = require("path");
+  localFolder = path.join(__dirname, "images");
+
+  if (!fs.existsSync(localFolder)) {
+    fs.mkdirSync(localFolder, { recursive: true });
+  }
 }
 
-// Dossier local où stocker les images
-const localFolder = path?.join(__dirname, "images");
-
-// Fonction pour télécharger et stocker l'image localement
 const downloadImage = async (url) => {
-  if (typeof window !== "undefined") return url; // Pas de gestion des fichiers côté client
+  if (typeof window !== "undefined") return url; // En mode client, on retourne juste l'URL
 
   try {
-    if (!fs.existsSync(localFolder)) {
-      fs.mkdirSync(localFolder, { recursive: true }); // Créer le dossier si inexistant
-    }
-
     const fileName = path.basename(url);
     const localPath = path.join(localFolder, fileName);
 
     if (fs.existsSync(localPath)) {
-      return localPath; // Si l'image est déjà téléchargée, retourne le chemin local
+      return localPath; // Retourne le chemin si l'image est déjà téléchargée
     }
 
     // Télécharger l'image
@@ -48,7 +46,6 @@ const downloadImage = async (url) => {
   }
 };
 
-// Récupérer le chemin local d'une image
 const getLocalImage = async (url) => {
   if (typeof window !== "undefined") return url; // En mode client, retourne l'URL d'origine
 
