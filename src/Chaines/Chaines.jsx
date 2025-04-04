@@ -204,6 +204,54 @@ const MobileRow = styled(Row)`
   }
 `;
 
+const loadingspinner = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const LoadingSpinner = styled.div`
+  width: 30px;
+  height: 30px;
+  border: 2px solid indigo;
+  border-radius: 50%;
+  border-top-color: #0001;
+  display: inline-block;
+  animation: ${loadingspinner} 0.7s linear infinite;
+  margin-bottom: 8px;
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: ${({ show }) => (show ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+`;
+
+const ModalDialog = styled.div`
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 200px;
+  text-align: center;
+`;
+
+const ModalContent = styled.div`
+  padding: 15px;
+`;
+
+const ModalBody = styled.div`
+  font-size: 16px;
+  color: #333;
+`;
+
+
+
 const ChainColumn = ({
   chainNumber,
   products,
@@ -381,6 +429,7 @@ export default function Chaines({ produits = [] }) {
   const navigate = useNavigate();
   const isMounted = useRef(false);
   const isProcessing = useRef(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
   const filterAndSortProducts = (products, chainNumber) => {
     if (!products || products.length === 0) return [];
     
@@ -491,86 +540,81 @@ export default function Chaines({ produits = [] }) {
     e.preventDefault();
   };
 
-const handleDrop = async (e, targetPosition, dropIndex) => {
-  e.preventDefault();
-  if (isProcessing.current) return;
-  isProcessing.current = true;
-
-  const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
-  const newData = { ...data };
-  if (!newData[targetPosition]) newData[targetPosition] = [];
-  if (!newData[transferData.from]) newData[transferData.from] = [];
-
-  try {
-    if (transferData.from === targetPosition) {
-      // Reorder within the same chain
-      const list = [...newData[targetPosition]];
-      const [movedItem] = list.splice(transferData.index, 1);
-      list.splice(dropIndex, 0, movedItem);
-      // Update order for all items in the chain
-      newData[targetPosition] = list.map((item, index) => ({
-        ...item,
-        order: index + 1,
-      }));
-    } else {
-      // Move between different chains
-      const sourceList = [...newData[transferData.from]];
-      const targetList = [...newData[targetPosition]];
-      const [movedItem] = sourceList.splice(transferData.index, 1);
-      
-      // Update position_id for the moved item
-      const updatedItem = { ...movedItem, position_id: targetPosition };
-      targetList.splice(dropIndex, 0, updatedItem);
-
-      // Update order for source chain
-      newData[transferData.from] = sourceList.map((item, index) => ({
-        ...item,
-        order: index + 1,
-      }));
-
-      // Update order for target chain
-      newData[targetPosition] = targetList.map((item, index) => ({
-        ...item,
-        order: index + 1,
-      }));
-    }
-
-    setData(newData);
-    setNewPosition(targetPosition);
-
-    // Prepare update payload for all affected items
-    let updates = [];
-    // Include items from target chain
-    newData[targetPosition].forEach((item, index) => {
-      updates.push({
-        produit: item,
-        newPosition: targetPosition,
-        newOrder: index + 1,
-      });
-    });
-    // Include items from source chain (if different)
-    if (transferData.from !== targetPosition) {
-      newData[transferData.from].forEach((item, index) => {
+  const handleDrop = async (e, targetPosition, dropIndex) => {
+    e.preventDefault();
+    if (isProcessing.current) return;
+    isProcessing.current = true;
+  
+    setIsModalLoading(true); // Afficher le modal de chargement
+  
+    const transferData = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const newData = { ...data };
+    if (!newData[targetPosition]) newData[targetPosition] = [];
+    if (!newData[transferData.from]) newData[transferData.from] = [];
+  
+    try {
+      if (transferData.from === targetPosition) {
+        // Reorder within the same chain
+        const list = [...newData[targetPosition]];
+        const [movedItem] = list.splice(transferData.index, 1);
+        list.splice(dropIndex, 0, movedItem);
+        newData[targetPosition] = list.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+      } else {
+        // Move between different chains
+        const sourceList = [...newData[transferData.from]];
+        const targetList = [...newData[targetPosition]];
+        const [movedItem] = sourceList.splice(transferData.index, 1);
+  
+        const updatedItem = { ...movedItem, position_id: targetPosition };
+        targetList.splice(dropIndex, 0, updatedItem);
+  
+        newData[transferData.from] = sourceList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+  
+        newData[targetPosition] = targetList.map((item, index) => ({
+          ...item,
+          order: index + 1,
+        }));
+      }
+  
+      setData(newData);
+      setNewPosition(targetPosition);
+  
+      let updates = [];
+      newData[targetPosition].forEach((item, index) => {
         updates.push({
           produit: item,
-          newPosition: transferData.from,
+          newPosition: targetPosition,
           newOrder: index + 1,
         });
       });
+      if (transferData.from !== targetPosition) {
+        newData[transferData.from].forEach((item, index) => {
+          updates.push({
+            produit: item,
+            newPosition: transferData.from,
+            newOrder: index + 1,
+          });
+        });
+      }
+  
+      const dragPayload = { multipleUpdates: updates };
+      await api.post("/update_drag", dragPayload, {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err) {
+      console.error("Erreur lors du déplacement :", err);
+      setError("Erreur lors du déplacement - Veuillez réessayer");
+    } finally {
+      isProcessing.current = false;
+      setIsModalLoading(false); // Masquer le modal de chargement
     }
-
-    // Send updates to the server
-    const dragPayload = { multipleUpdates: updates };
-    await api.post("/update_drag", dragPayload, {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    console.error("Erreur lors du déplacement :", err);
-    setError("Erreur lors du déplacement - Veuillez réessayer");
-  } finally {
-    isProcessing.current = false;
-  }
-};
+  };
   
 
   const handleMouseEnter = (e, item) => {
@@ -606,8 +650,21 @@ const handleDrop = async (e, targetPosition, dropIndex) => {
     );
   }
 
+
   return (
     <>
+      {isModalLoading && (
+            <ModalOverlay show={isModalLoading}>
+              <ModalDialog>
+                <ModalContent>
+                  <ModalBody>
+                    <LoadingSpinner />
+                    <div>Chargement en cours...</div>
+                  </ModalBody>
+                </ModalContent>
+              </ModalDialog>
+            </ModalOverlay>
+          )}
       <Container fluid className="p-4">
       <Row className="d-flex align-items-center justify-content-between p-2">
         <Col className="d-flex align-items-center gap-3 p-1">
