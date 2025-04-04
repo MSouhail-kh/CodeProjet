@@ -43,8 +43,11 @@ export const RefreshButtonStyle = styled(Button)`
     height: 24px;
   }
 `;
-const fs = window.require("fs");
-const path = window.require("path");
+let fs, path;
+if (typeof window === "undefined") {
+  fs = require("fs");
+  path = require("path");
+}
 
 const downloadImage = async (url, localPath) => {
   try {
