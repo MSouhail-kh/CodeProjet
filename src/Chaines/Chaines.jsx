@@ -413,30 +413,16 @@ export default function Chaines({ produits = [] }) {
   const handleRefresh = async (produits) => {
     setIsLoading(true);
     try {
-      // Pour chaque produit, vérifier si une image existe et créer une URL blob locale
-      await Promise.all(
-        produits.map(async (produit) => {
-          if (produit.image) {
-            try {
-              // Télécharger l'image
-              const response = await fetch(produit.image);
-              if (response.ok) {
-                const blob = await response.blob();
-                // Créer une URL blob locale
-                const localUrl = URL.createObjectURL(blob);
-                // Mettre à jour la référence de l'image pour utiliser l'URL blob
-                produit.localImage = localUrl;
-              }
-            } catch (err) {
-              console.error("Erreur lors du téléchargement de l'image :", err);
-            }
-          } else {
-            // Si aucune image n'est disponible, utiliser une image par défaut
-            produit.localImage = "/images/NoImage.png"; // Assurez-vous que cette image existe dans `public/images`
-          }
-          return produit;
-        })
-      );
+      // Pour chaque produit, vérifier si une image existe et générer une URL transformée via Netlify Image CDN
+      produits.forEach((produit) => {
+        if (produit.image) {
+          // Générer une URL transformée via Netlify Image CDN
+          produit.localImage = `/.netlify/images?w=300&h=200&fit=cover&url=${encodeURIComponent(produit.image)}`;
+        } else {
+          // Utiliser l'image par défaut
+          produit.localImage = NoImage;
+        }
+      });
   
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
   
