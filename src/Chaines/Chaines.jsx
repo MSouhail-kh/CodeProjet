@@ -586,7 +586,7 @@ const handleDrop = async (e, targetPosition, dropIndex) => {
   };
 
   const handleItemClick = (item) => {
-    navigate(`/produit/${item.po}`, { state: { produit: item } });
+    navigate(`/produit/${item.id}`, { state: { produit: item } });
   };
 
 
