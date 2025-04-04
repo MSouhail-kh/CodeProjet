@@ -251,7 +251,7 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
               >
                 <ProductContainer darkMode={darkMode}>
                   <ProductImage
-                    src={item.localImage || NoImage}
+                    src={item.image || NoImage}
                     alt={item.style}
                     darkMode={darkMode}
                   />
@@ -410,61 +410,39 @@ export default function Chaines({ produits = [] }) {
       };
     });
   };
-
-const handleRefresh = async (produits) => {
-  setIsLoading(true);
-  try {
-    // Pour chaque produit, valider et transformer l'URL de l'image
-    produits.forEach((produit) => {
-      if (produit.image && isValidUrl(produit.image)) {
-        // Générer une URL transformée via Netlify Image CDN
-        produit.localImage = `/.netlify/images?w=300&h=200&fit=cover&url=${encodeURIComponent(produit.image)}`;
-      } else {
-        // Utiliser l'image par défaut si l'URL est invalide ou manquante
-        produit.localImage = NoImage;
-      }
-    });
-
-    const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-
-    // Regrouper les produits
-    produits.forEach((produit) => {
-      const position = produit.position_id || 6;
-      if (groupedData[position]) {
-        groupedData[position].push(produit);
-      }
-    });
-
-    // Appliquer le tri et la réindexation
-    Object.keys(groupedData).forEach((key) => {
-      const chainNumber = parseInt(key);
-      groupedData[key] = filterAndSortProducts(groupedData[key], chainNumber);
-    });
-
-    setData(groupedData);
-    localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
-    const now = new Date().toISOString();
-    localStorage.setItem("lastUpdate", now);
-    setLastUpdate(now);
-    setError(null);
-  } catch (err) {
-    console.error("Erreur :", err);
-    setError("Échec de la récupération des données.");
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-// Fonction utilitaire pour valider une URL
-  const isValidUrl = (url) => {
+  
+  const handleRefresh = (produits) => {
+    setIsLoading(true);
     try {
-      new URL(url);
-      return true;
+      const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+      
+      // D'abord regrouper tous les produits
+      produits.forEach((produit) => {
+        const position = produit.position_id || 6; // Valeur par défaut 6
+        if (groupedData[position]) {
+          groupedData[position].push(produit);
+        }
+      });
+  
+      // Ensuite appliquer le tri et réindexation pour chaque position
+      Object.keys(groupedData).forEach((key) => {
+        const chainNumber = parseInt(key);
+        groupedData[key] = filterAndSortProducts(groupedData[key], chainNumber);
+      });
+  
+      setData(groupedData);
+      localStorage.setItem("cachedProducts", JSON.stringify(groupedData));
+      const now = new Date().toISOString();
+      localStorage.setItem("lastUpdate", now);
+      setLastUpdate(now);
+      setError(null);
     } catch (err) {
-      return false;
+      console.error("Erreur :", err);
+      setError("Échec de la récupération des données.");
+    } finally {
+      setIsLoading(false);
     }
   };
-  
 
   useEffect(() => {
     isMounted.current = true;

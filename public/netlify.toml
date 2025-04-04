@@ -3,7 +3,8 @@
   publish = "build" 
   base = "/"
 
-
+[images]
+  remote_images = ["https://gestion-planning-back-end-0u92.onrender.com/.*"]
 
 [[redirects]]
   from = "/*"
