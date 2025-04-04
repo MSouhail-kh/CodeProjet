@@ -406,7 +406,7 @@ export default function Chaines({ produits = [] }) {
       uniqueOrders.add(newOrder);
       return {
         ...product,
-        order: newOrder // Réindexation séquentielle unique
+        order: newOrder 
       };
     });
   };
@@ -416,15 +416,19 @@ export default function Chaines({ produits = [] }) {
     try {
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
       
-      // D'abord regrouper tous les produits
       produits.forEach((produit) => {
-        const position = produit.position_id || 6; // Valeur par défaut 6
+        if (produit.image) {
+          const segments = produit.image.split('/');
+          const filename = segments[segments.length - 1];
+          produit.image = `/images/${filename}`;
+        }
+        
+        const position = produit.position_id || 6;
         if (groupedData[position]) {
           groupedData[position].push(produit);
         }
       });
   
-      // Ensuite appliquer le tri et réindexation pour chaque position
       Object.keys(groupedData).forEach((key) => {
         const chainNumber = parseInt(key);
         groupedData[key] = filterAndSortProducts(groupedData[key], chainNumber);

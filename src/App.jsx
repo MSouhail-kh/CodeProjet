@@ -16,7 +16,7 @@ function App() {
                      element={<PrivateRoute element={<Chaines />} />}
                     />
                     <Route
-                        path="/produit/:po"
+                        path="/produit/:id"
                         element={<PrivateRoute
                                 element={
                                     <>

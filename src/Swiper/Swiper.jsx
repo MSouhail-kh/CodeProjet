@@ -97,7 +97,7 @@ const ImageContainer = styled.div`
 `;
 
 export default function MySwiper() {
-  const { po } = useParams();
+  const { id } = useParams();
   const [produits, setProduits] = useState([]);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -105,7 +105,7 @@ export default function MySwiper() {
   useEffect(() => {
     const fetchProduitsByPosition = async () => {
       try {
-        const produitResponse = await api.get(`/produits/${po}`);
+        const produitResponse = await api.get(`/produits/${id}`);
         const produit = produitResponse.data;
         const positionId = produit.position_id;
 

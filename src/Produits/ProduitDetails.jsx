@@ -156,7 +156,7 @@ const formatDate = (dateStr) => {
 
 
 const ProduitDetails = () => {
-  const { po } = useParams();
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -168,7 +168,7 @@ const ProduitDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await api.get(`/produits/${po}`);
+        const response = await api.get(`/produits/${id}`);
         setProduct(response.data);
         setEditedData(response.data);
         setLoading(false); 
@@ -181,7 +181,7 @@ const ProduitDetails = () => {
     };
 
     fetchProduct();
-  }, [po]);
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
