@@ -417,7 +417,7 @@ export default function Chaines({ produits = [] }) {
       produits.forEach((produit) => {
         if (produit.image) {
           // Générer une URL transformée via Netlify Image CDN
-          produit.localImage = `/.netlify/images?w=300&h=200&fit=cover&url=${encodeURIComponent(produit.image)}`;
+          produit.localImage = `/.netlify/images?w=300&h=200&fit=cover&url=${produit.image}`;
         } else {
           // Utiliser l'image par défaut
           produit.localImage = NoImage;
