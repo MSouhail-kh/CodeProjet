@@ -7,13 +7,120 @@ import UserProfile from "../Authentification/User/UserProfile";
 import SearchResultsModal from "../Produits/SearchResultsModal";
 import api from "../services/axios";
 
-export const RefreshButtonContainer = styled.div`
+// Vérifier si nous sommes dans un environnement Node.js
+let fs, path;
+if (typeof window === "undefined") {
+  fs = require("fs");
+  path = require("path");
+}
+
+// Dossier local où stocker les images
+const localFolder = path?.join(__dirname, "images");
+
+// Fonction pour télécharger et stocker l'image localement
+const downloadImage = async (url) => {
+  if (typeof window !== "undefined") return url; // Pas de gestion des fichiers côté client
+
+  try {
+    if (!fs.existsSync(localFolder)) {
+      fs.mkdirSync(localFolder, { recursive: true }); // Créer le dossier si inexistant
+    }
+
+    const fileName = path.basename(url);
+    const localPath = path.join(localFolder, fileName);
+
+    if (fs.existsSync(localPath)) {
+      return localPath; // Si l'image est déjà téléchargée, retourne le chemin local
+    }
+
+    // Télécharger l'image
+    const response = await fetch(url);
+    const buffer = Buffer.from(await response.arrayBuffer());
+
+    // Sauvegarde l'image
+    fs.writeFileSync(localPath, buffer);
+    console.log(`✅ Image téléchargée : ${localPath}`);
+
+    return localPath;
+  } catch (error) {
+    console.error("❌ Erreur lors du téléchargement de l'image :", error);
+    return null;
+  }
+};
+
+// Récupérer le chemin local d'une image
+const getLocalImage = async (url) => {
+  if (typeof window !== "undefined") return url; // En mode client, retourne l'URL d'origine
+
+  let cache = {};
+  try {
+    cache = JSON.parse(localStorage.getItem("imageCache")) || {};
+  } catch (error) {
+    console.error("❌ Erreur lors de la lecture du cache :", error);
+  }
+
+  if (cache[url]) {
+    return cache[url]; // Retourne le chemin si l'image est déjà en cache
+  }
+
+  const localPath = await downloadImage(url);
+  if (localPath) {
+    cache[url] = localPath;
+    localStorage.setItem("imageCache", JSON.stringify(cache));
+  }
+
+  return localPath;
+};
+
+// Composant Refresh
+const Refresh = ({ onRefresh }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
+
+  const handleRefreshPage = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get("/process");
+
+      const updatedProducts = await Promise.all(
+        response.data.map(async (product) => ({
+          ...product,
+          localImage: await getLocalImage(product.image),
+        }))
+      );
+
+      onRefresh(updatedProducts);
+    } catch (error) {
+      console.error("❌ Erreur de synchronisation :", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <RefreshButtonContainer>
+      <RefreshButtonStyle onClick={() => setShowSearchModal(true)}>
+        <Search size={22} />
+      </RefreshButtonStyle>
+
+      <RefreshButtonStyle onClick={handleRefreshPage} disabled={isLoading}>
+        {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={22} />}
+      </RefreshButtonStyle>
+
+      <SearchResultsModal show={showSearchModal} handleClose={() => setShowSearchModal(false)} />
+      <UserProfile />
+    </RefreshButtonContainer>
+  );
+};
+
+// Styles
+const RefreshButtonContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
 `;
 
-export const RefreshButtonStyle = styled(Button)`
+const RefreshButtonStyle = styled(Button)`
   width: 50px;
   height: 50px;
   display: flex;
@@ -43,102 +150,5 @@ export const RefreshButtonStyle = styled(Button)`
     height: 24px;
   }
 `;
-let fs, path;
-if (typeof window === "undefined") {
-  fs = require("fs");
-  path = require("path");
-}
-
-const downloadImage = async (url, localPath) => {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const buffer = Buffer.from(reader.result.split(",")[1], "base64");
-        fs.writeFile(localPath, buffer, (err) => {
-          if (err) {
-            console.log("Erreur lors de l'enregistrement de l'image :", err);
-            reject(err);
-          } else {
-            resolve(localPath);
-          }
-        });
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  } catch (error) {
-    console.log("Erreur lors du téléchargement de l'image :", error);
-    return null;
-  }
-};
-
-const getLocalImage = async (url) => {
-  const cache = JSON.parse(localStorage.getItem("imageCache")) || {};
-  const localFolder = path.join(__dirname, "images");
-
-  if (!fs.existsSync(localFolder)) {
-    fs.mkdirSync(localFolder);
-  }
-
-  if (cache[url]) {
-    return cache[url];
-  } else {
-    const fileName = path.basename(url);
-    const localPath = path.join(localFolder, fileName);
-
-    const downloadedImagePath = await downloadImage(url, localPath);
-    if (downloadedImagePath) {
-      cache[url] = downloadedImagePath;
-      localStorage.setItem("imageCache", JSON.stringify(cache));
-    }
-    return downloadedImagePath;
-  }
-};
-
-const Refresh = ({ onRefresh }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSearchModal, setShowSearchModal] = useState(false);
-
-  const handleRefreshPage = async () => {
-    setIsLoading(true);
-    try {
-      const response = await api.get("/process");
-
-      const updatedProducts = await Promise.all(
-        response.data.map(async (product) => ({
-          ...product,
-          localImage: await getLocalImage(product.image),
-        }))
-      );
-
-      onRefresh(updatedProducts);
-    } catch (error) {
-      console.log("Erreur de synchronisation :", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
-  return (
-    <RefreshButtonContainer>
-      <RefreshButtonStyle onClick={() => setShowSearchModal(true)}>
-        <Search size={22} />
-      </RefreshButtonStyle>
-
-      <RefreshButtonStyle onClick={handleRefreshPage} disabled={isLoading}>
-        {isLoading ? <BounceLoader size={20} color="#fff" /> : <ArrowClockwise size={22} />}
-      </RefreshButtonStyle>
-
-      <SearchResultsModal show={showSearchModal} handleClose={() => setShowSearchModal(false)} />
-
-      <UserProfile />
-    </RefreshButtonContainer>
-  );
-};
 
 export default Refresh;
