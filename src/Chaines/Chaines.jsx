@@ -251,7 +251,7 @@ const sortedProducts = filterAndSortProducts(products, chainNumber);
               >
                 <ProductContainer darkMode={darkMode}>
                   <ProductImage
-                    src={item.image || NoImage}
+                    src={item.localImage  || NoImage}
                     alt={item.style}
                     darkMode={darkMode}
                   />
@@ -406,7 +406,7 @@ export default function Chaines({ produits = [] }) {
       uniqueOrders.add(newOrder);
       return {
         ...product,
-        order: newOrder 
+        order: newOrder // Réindexation séquentielle unique
       };
     });
   };
@@ -416,19 +416,15 @@ export default function Chaines({ produits = [] }) {
     try {
       const groupedData = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
       
+      // D'abord regrouper tous les produits
       produits.forEach((produit) => {
-        if (produit.image) {
-          const segments = produit.image.split('/');
-          const filename = segments[segments.length - 1];
-          produit.image = `/images/${filename}`;
-        }
-        
-        const position = produit.position_id || 6;
+        const position = produit.position_id || 6; // Valeur par défaut 6
         if (groupedData[position]) {
           groupedData[position].push(produit);
         }
       });
   
+      // Ensuite appliquer le tri et réindexation pour chaque position
       Object.keys(groupedData).forEach((key) => {
         const chainNumber = parseInt(key);
         groupedData[key] = filterAndSortProducts(groupedData[key], chainNumber);
@@ -447,6 +443,8 @@ export default function Chaines({ produits = [] }) {
       setIsLoading(false);
     }
   };
+
+  
 
   useEffect(() => {
     isMounted.current = true;

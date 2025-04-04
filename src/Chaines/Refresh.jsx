@@ -43,6 +43,36 @@ export const RefreshButtonStyle = styled(Button)`
     height: 24px;
   }
 `;
+const downloadImage = async (url) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); 
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.log("Erreur lors du téléchargement de l'image :", error);
+    return null;
+  }
+};
+
+const getLocalImage = async (url) => {
+  const cache = JSON.parse(localStorage.getItem("imageCache")) || {};
+
+  if (cache[url]) {
+    return cache[url]; 
+  } else {
+    const downloadedImage = await downloadImage(url);
+    if (downloadedImage) {
+      cache[url] = downloadedImage; 
+      localStorage.setItem("imageCache", JSON.stringify(cache));
+    }
+    return downloadedImage;
+  }
+};
 
 const Refresh = ({ onRefresh }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -52,13 +82,22 @@ const Refresh = ({ onRefresh }) => {
     setIsLoading(true);
     try {
       const response = await api.get("/process");
-      onRefresh(response.data);
+
+      const updatedProducts = await Promise.all(
+        response.data.map(async (product) => ({
+          ...product,
+          localImage: await getLocalImage(product.image), 
+        }))
+      );
+
+      onRefresh(updatedProducts);
     } catch (error) {
-      console.error("Erreur de synchronisation :", error);
+      console.log("Erreur de synchronisation :", error);
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <RefreshButtonContainer>
