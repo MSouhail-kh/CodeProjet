@@ -121,7 +121,7 @@ export default function MySwiper() {
     };
 
     fetchProduitsByPosition();
-  }, [po]);
+  }, [id]);
 
   if (error) {
     return <div>{error}</div>;
@@ -151,7 +151,7 @@ export default function MySwiper() {
       >
         {produits.map((produit) => (
           <SwiperSlide key={produit.po}>
-            <Card onClick={() => handleCardClick(produit.po)}>
+            <Card onClick={() => handleCardClick(produit.id)}>
               <ImageContainer>
                 <img src={produit.image || NoImage} alt={produit.style} />
               </ImageContainer>
