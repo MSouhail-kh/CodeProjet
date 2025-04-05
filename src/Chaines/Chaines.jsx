@@ -736,12 +736,12 @@ export default function Chaines({ produits = [] }) {
               <RefreshButton onRefresh={handleRefresh} />
       </Col>
         
-      <HoverPreview
-        hoveredItem={hoveredItem}
-        hoverPosition={hoverPosition}
-        newPosition={newPosition}
-        show={!!hoveredItem}
-      />
+    <HoverPreview
+      hoveredItem={isModalLoading ? null : hoveredItem} // Désactiver HoverPreview si isModalLoading est true
+      hoverPosition={hoverPosition}
+      newPosition={newPosition}
+      show={!isModalLoading && !!hoveredItem} // Ne pas afficher HoverPreview si isModalLoading est true
+    />
     </>
   );
 }
