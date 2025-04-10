@@ -29,9 +29,6 @@ export const Register = ({ onRegisterSuccess }) => {
             const response = await api.post(
                 "/signup",
                 formData,
-                {
-                    headers: { "Content-Type": "application/json" },
-                }
             );
             setSuccess("Inscription réussie !");
             setLoading(false);

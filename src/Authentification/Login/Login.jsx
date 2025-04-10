@@ -24,9 +24,6 @@ const Login = ({ onLoginSuccess }) => {
       const response = await api.post(
         "/login",
         { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-        },
       );
       const token = response.data.token;
       login(token); 
