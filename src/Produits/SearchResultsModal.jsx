@@ -92,8 +92,6 @@ const SearchResultsModal = ({ show, handleClose }) => {
         searchValue,
       }, {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-        withXSRFToken: true
       });  
       setSearchResults(response.data.results);
       setSearchError(null);
