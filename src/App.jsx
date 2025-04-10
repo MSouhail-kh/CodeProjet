@@ -13,17 +13,15 @@ function App() {
                 <Routes>
                     <Route path="/" element={<LoginSignup />} />
                     <Route path="/Chaines"   
-                     element={<PrivateRoute element={<Chaines />} />}
+                      element={<Chaines />} 
                     />
                     <Route
                         path="/produit/:id"
-                        element={<PrivateRoute
-                                element={
-                                    <>
+                        element={<>
                                         <ProduitDetails />
                                         <MySwiper />
                                     </>}
-                            />}/>
+                            />
                 </Routes>
             </Router>
         </AuthProvider>
