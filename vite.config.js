@@ -8,6 +8,7 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets'
   },
+  publicDir: 'public',
   server: {
     historyApiFallback: true,
     proxy: {
@@ -18,6 +19,5 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
-  },
-  publicDir: 'public'
+  }
 });
