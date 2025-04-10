@@ -1,7 +1,7 @@
 // socket.js
 import { io } from 'socket.io-client';
 
-const socket = io("https://gestion-planning-back-end-1.onrender.com", {
+const socket = io("https://www.clever-davinci.3-148-113-97.plesk.page", {
   transports: ["websocket"],
   reconnection: true,
   reconnectionDelay: 5000,
