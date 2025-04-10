@@ -31,8 +31,6 @@ export const Register = ({ onRegisterSuccess }) => {
                 formData,
                 {
                     headers: { "Content-Type": "application/json" },
-                    withCredentials: true,
-                    withXSRFToken: true,
                 }
             );
             setSuccess("Inscription réussie !");
