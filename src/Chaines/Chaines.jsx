@@ -737,10 +737,10 @@ export default function Chaines({ produits = [] }) {
       </Col>
         
     <HoverPreview
-      hoveredItem={isModalLoading ? null : hoveredItem} // Désactiver HoverPreview si isModalLoading est true
+      hoveredItem={isModalLoading ? null : hoveredItem} 
       hoverPosition={hoverPosition}
       newPosition={newPosition}
-      show={!isModalLoading && !!hoveredItem} // Ne pas afficher HoverPreview si isModalLoading est true
+      show={!isModalLoading && !!hoveredItem}
     />
     </>
   );
