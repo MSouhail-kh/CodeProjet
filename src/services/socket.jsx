@@ -7,6 +7,7 @@ const socket = io("https://www.clever-davinci.3-148-113-97.plesk.page", {
   reconnectionDelay: 5000,
   reconnectionAttempts: Infinity,
   withCredentials: true,
+  withXSRFToken: true,
   autoConnect: true,
   extraHeaders: {
     "my-custom-header": "abcd",
